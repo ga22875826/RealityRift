@@ -73,7 +73,7 @@ public class MemberController {
 //	}
 	
 	@GetMapping("/registerpage")
-	public String MemberRegistPage() {
+	public String MemberRegistPage1() {
 		return "member/MemberRegister";
 	}
 
