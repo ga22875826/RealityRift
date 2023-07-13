@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.teamsix.model.bean.Category;
-import com.teamsix.model.bean.CategoryRequestDTO;
+import com.teamsix.model.bean.item.Category;
+import com.teamsix.model.bean.item.CategoryRequestDTO;
 import com.teamsix.service.CategoryService;
 
 @RestController

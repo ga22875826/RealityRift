@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title></title>
+	<style>
+		.li-product ul {
+			display: none;
+		}
+
+		.sidebar-list-item {
+			list-style: none;
+		}
+	</style>
+	    <link th:href="@{/css/ecom/dashboard2.css}" rel="stylesheet">
+	
+</head>
+<body>
+	<div class="sidebar" style="min-height:100vh">
+		<div class="sidebar-header">
+			<div class="app-icon">
+				<a th:href="@{/}"><img class="logoImg" th:src="@{/img/images/newlogo.png}"
+					alt="" width="170"></a>
+			</div>
+		</div>
+		<ul class="sidebar-list">
+			<!--<li class="sidebar-list-item li-main">
+	      <a href="#">
+	        <span>主頁</span>
+	      </a>
+	    </li>-->
+			<li class="sidebar-list-item li-member"><a
+				th:href="@{/db/member}"> <span>會員管理</span>
+			</a></li>
+			<li class="sidebar-list-item li-game"><a th:href="@{/db/GameSelectAll}">
+					<span>遊戲管理</span>
+			</a></li>
+			<li class="sidebar-list-item li-booking"><a th:href="@{/db/bookingmanager}">
+					<span>預約管理</span>
+			</a></li>
+			<li class="sidebar-list-item li-product">
+				<a href="#"><span>商品管理</span></a>
+				<ul>
+					<li class="sidebar-list-item li-product-admin"><a
+							th:href="@{/db/manager.showItemList.do}"><span>商品後台</span></a></li>
+					<li class="sidebar-list-item li-product-category"><a
+							th:href="@{/db/managePage/categoryManage}"><span>類別管理</span></a></li>
+					<li class="sidebar-list-item li-limited-time-sale"><a th:href="@{/db/managePage/saleManage.do}"><span>限時特賣</span></a></li>
+					<li class="sidebar-list-item li-limited-time-sale"><a th:href="@{/db/managePage/orderAdmin.do}"><span>訂單管理</span></a></li>
+					<li class="sidebar-list-item li-limited-time-sale"><a th:href="@{/db/managePage/analysis.do}"><span>數據分析</span></a></li>
+					<li class="sidebar-list-item li-online-mall"><a th:href="@{/managePage/ecomPage.do}"><span>商品前台</span></a></li>
+				</ul>
+			</li>
+			<li class="sidebar-list-item li-forum"><a th:href="@{/db/Article/ManagePage}">
+					<span>論壇管理</span>
+			</a></li>
+		</ul>
+		<div class="account-info">
+			<div class="account-info-picture">
+			<th:block th:switch="${session.member!=null}">
+				<img th:case="${true}" th:src="@{'/img/member/'+${session.member.memimg}} " alt="Account"
+					width="120">
+			</th:block>
+			</div>
+			<div class="account-info-name" th:text="${session.member}?${session.member.memname}"></div>
+			<div class="dropdown"></div>
+			<button class="account-info-more" data-bs-toggle="dropdown"
+				aria-expanded="false">
+				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+					viewBox="0 0 24 24" fill="none" stroke="currentColor"
+					stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+					class="feather feather-more-horizontal">
+	        <circle cx="12" cy="12" r="1" />
+	        <circle cx="19" cy="12" r="1" />
+	        <circle cx="5" cy="12" r="1" />
+	      </svg>
+			</button>
+			<!--  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+				<li><a class="dropdown-item" href="#" data-bs-toggle="modal"
+					data-bs-target="#loginModal">切換管理者</a></li>
+				<li><a class="dropdown-item" href="MemberLogout">登出</a></li>
+			</ul>-->
+		</div>
+	</div>
+	
+	<!--<div class="modal fade " id="loginModal" tabindex="-1"
+		aria-labelledby="ModalLabel" aria-hidden="true">
+		<div
+			class="modal-dialog modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="ModalLabel">切換管理者</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"
+						aria-label="Close"></button>
+				</div>
+				<main class="form-signin w-75 m-auto loginModal">
+					<form method="post" action="MemberLogin" id="MemberLogin">
+						<img class="mb-4" src="images/newlogo.png" alt="" width="250">
+						<h1 class="h3 mb-3 fw-normal">請輸入帳號密碼</h1>
+	
+						<div class="form-floating">
+							<input type="email" class="form-control" id="floatingInput"
+								placeholder="name@example.com" name="email"> <label
+								for="floatingInput">帳號</label>
+						</div>
+						<div class="form-floating">
+							<input type="password" class="form-control" id="floatingPassword"
+								placeholder="Password" name="password"> <label
+								for="floatingPassword">密碼</label>
+						</div>
+						<br>
+						<button class="w-100 btn btn-lg btn-primary" type="submit"
+							form="MemberLogin">登入</button>
+					</form>
+				</main>
+	
+			</div>
+		</div>
+	</div>-->
+<script th:src="@{/js/jquery-3.7.0.min.js}"></script>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script src="https://kit.fontawesome.com/7e347cd6cd.js" crossorigin="anonymous"></script>
+
+<script>
+  $(document).ready(function(){
+        $('.li-product > a').click(function(e){
+            e.preventDefault();
+            $(this).next('ul').slideToggle('slow');
+        });
+    });
+	
+	
+	
+</script>
+</body>
+</html>

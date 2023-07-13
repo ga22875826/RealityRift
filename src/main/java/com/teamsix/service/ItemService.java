@@ -7,11 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.teamsix.model.bean.Category;
-import com.teamsix.model.bean.ItemDTO;
-import com.teamsix.model.bean.Itemimg;
+import com.teamsix.model.bean.item.Category;
+import com.teamsix.model.bean.item.ItemDTO;
+import com.teamsix.model.bean.item.Itemimg;
 import com.teamsix.model.dao.CategoryRepository;
 import com.teamsix.model.dao.ImgRepository;
 import com.teamsix.model.dao.ItemRepository;
@@ -57,14 +58,12 @@ public class ItemService {
 		Category current = cRepo.findById(categoryId).orElse(null);
 
 		while (current != null) {
-			System.out.println("處理分類: " + current.getName());
 			if (path.length() > 0) {
 				path.insert(0, " > ");
 			}
 			path.insert(0, current.getName());
 			current = current.getParent();
 		}
-		System.out.println("生成路徑: " + path.toString());
 		return path.toString();
 	}
 
@@ -108,6 +107,9 @@ public class ItemService {
 			Item.setSalescount(item.getSalescount());
 			Item.setStock(item.getStock());
 			Item.setCategoryPath(categoryPath);
+			Item.setAdded(item.getAdded());
+			
+		
 
 			return Item;
 
@@ -126,8 +128,24 @@ public class ItemService {
 	}
 
 ////////////////////////////////前台API/////////////////////////
-	public Page<ItemDTO> getItemsByCategoryId(int categoryId, int page, int size) {
-		Pageable pageable = PageRequest.of(page, size);
+	public Page<ItemDTO> getItemsByCategoryId(int categoryId, int page, int size, String sort) {
+		Sort sortRequest = null;
+		if (sort.equals("price_desc")) {
+			sortRequest = Sort.by("price").descending();
+		}else if(sort.equals("price_asc")) {
+			sortRequest = Sort.by("price").ascending();
+		}else if(sort.equals("added_asc")) {
+			sortRequest = Sort.by("added").ascending();
+		}else if(sort.equals("added_desc")){
+			sortRequest = Sort.by("added").descending();
+		}else if(sort.equals("salescount_asc")) {
+			sortRequest = Sort.by("salescount").ascending();
+		}else {
+			sortRequest = Sort.by("salescount").descending();
+			
+		}
+		
+		Pageable pageable = PageRequest.of(page, size, sortRequest);
 		Page<ItemDTO> items = iRepo.findByCategoryIdAndItemstatusNot(categoryId, "停售", pageable);
 		for (ItemDTO item : items) {
 			String categoryPath = getCategoryPath(item.getCategory().getId());
@@ -136,8 +154,24 @@ public class ItemService {
 		return items;
 	}
 
-	public Page<ItemDTO> listItemPage(int page, int size) {
-		Pageable pageable = PageRequest.of(page, size);
+	public Page<ItemDTO> listItemPage(int page, int size, String sort) {
+		Sort sortRequest = null;
+		if (sort.equals("price_desc")) {
+			sortRequest = Sort.by("price").descending();
+		}else if(sort.equals("price_asc")) {
+			sortRequest = Sort.by("price").ascending();
+		}else if(sort.equals("added_asc")) {
+			sortRequest = Sort.by("added").ascending();
+		}else if(sort.equals("added_desc")){
+			sortRequest = Sort.by("added").descending();
+		}else if(sort.equals("salescount_asc")) {
+			sortRequest = Sort.by("salescount").ascending();
+		}else {
+			sortRequest = Sort.by("salescount").descending();
+			
+		}
+		
+		Pageable pageable = PageRequest.of(page, size, sortRequest);
 		Page<ItemDTO> items = iRepo.findByItemstatusNot("停售", pageable);
 
 		for (ItemDTO item : items) {

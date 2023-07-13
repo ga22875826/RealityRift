@@ -1,24 +1,18 @@
-@font-face {
-	font-family: noto-medium;
-	src: url(../fonts/NotoSansTC-Medium.otf);
-}
+  
 
-@font-face {
-	font-family: noto-light;
-	src: url(../fonts/NotoSansTC-Light.otf);
-}
+  @font-face {
+            font-family: 'Noto Sans TC Regular';
+            src: url('/rr/fonts/NotoSansTC-Regular.otf') format('opentype');
+        }
 
 * {
-	font-family: noto-light;
+	font-family: noto-regular;
 }
 
 .colorwhite {
 	color: rgb(224, 224, 228);
 }
 
-body {
-	background-color: #141414;
-}
 
 .inline_flex {
 	display: inline-flex;
@@ -106,10 +100,13 @@ top
 }
 
 .nav-link {
-	font-size: 1.4em;
+	font-size: 1.2em;
 }
 
 .loginModal {
 	margin-top: 1em;
 	margin-bottom: 5em;
 }
+
+
+

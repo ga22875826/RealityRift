@@ -1,13 +1,21 @@
 package com.teamsix.model.bean;
 
-import jakarta.persistence.Column;
+import java.util.Date;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 
 @Entity
 @Table(name = "booking")
@@ -15,71 +23,80 @@ public class Booking {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "bookingid")
-    private int bookingId;
+    private int bookingid;
 
     @ManyToOne
-    @JoinColumn(name = "userid")
+    @JoinColumn(name = "memno")
     private Member member;
 
     @ManyToOne
     @JoinColumn(name = "gameid")
     private GameBean gameBean;
 
-    @Column(name = "bookingdate")
-    private String bookingDate;
+    private String gameDate;
 
-    @Column(name = "bookingtime")
-    private String bookingTime;
+    private String gameTime;
+    
+	@JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss EEEE",timezone = "GMT+8")
+	@DateTimeFormat(pattern = "yyyy/MM/dd HH:mm:ss")
+	@Temporal(TemporalType.TIMESTAMP)
+    private Date bookingTime;
+    
+	@PrePersist
+	public void onCreate() {
+		if (bookingTime == null) {
+			bookingTime = new Date();
+		}
+	}
 
-    public int getBookingId() {
-        return bookingId;
-    }
+	public int getBookingid() {
+		return bookingid;
+	}
 
-    public void setBookingId(int bookingId) {
-        this.bookingId = bookingId;
-    }
+	public void setBookingid(int bookingid) {
+		this.bookingid = bookingid;
+	}
 
-    public Member getMemberBean() {
-        return member;
-    }
+	public Member getMember() {
+		return member;
+	}
 
-    public void setMemberBean(Member memberBean) {
-        this.member = memberBean;
-    }
+	public void setMember(Member member) {
+		this.member = member;
+	}
 
-    public GameBean getGameBean() {
-        return gameBean;
-    }
+	public GameBean getGameBean() {
+		return gameBean;
+	}
 
-    public void setGameBean(GameBean gameBean) {
-        this.gameBean = gameBean;
-    }
+	public void setGameBean(GameBean gameBean) {
+		this.gameBean = gameBean;
+	}
 
-    public String getBookingDate() {
-        return bookingDate;
-    }
+	public String getGameDate() {
+		return gameDate;
+	}
 
-    public void setBookingDate(String reservationDate) {
-        this.bookingDate = reservationDate;
-    }
+	public void setGameDate(String gameDate) {
+		this.gameDate = gameDate;
+	}
 
-    public String getBookingTime() {
-        return bookingTime;
-    }
+	public String getGameTime() {
+		return gameTime;
+	}
 
-    public void setBookingTime(String reservationTime) {
-        this.bookingTime = reservationTime;
-    }
+	public void setGameTime(String gameTime) {
+		this.gameTime = gameTime;
+	}
 
-    @Override
-    public String toString() {
-        return "Booking{" +
-                "bookingId=" + bookingId +
-                ", member=" + member +
-                ", gameBean=" + gameBean +
-                ", bookingDate='" + bookingDate + '\'' +
-                ", bookingTime='" + bookingTime + '\'' +
-                '}';
-    }
+	public Date getBookingTime() {
+		return bookingTime;
+	}
+
+	public void setBookingTime(Date bookingTime) {
+		this.bookingTime = bookingTime;
+	}
+
+
+	
 }

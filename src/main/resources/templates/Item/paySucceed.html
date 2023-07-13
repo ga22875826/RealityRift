@@ -1,0 +1,38 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" class=light>
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+
+    <title>支付成功</title>
+</head>
+
+<body>
+    <div class="jumbotron text-center">
+        <h1 class="display-4">感謝您的購買！</h1>
+        <img th:src="@{/img/assets/Line-pay.png}" alt="Line Pay" style="width: 100px; margin-top: 20px; margin-bottom:20px;">
+        <p class="lead"><strong>我們已經收到您的購買</strong>，並將立即為您處理。</p>
+        <hr>
+        <p>
+            有問題嗎？<a href="">聯繫我們</a>
+        </p>
+        <p class="lead">
+            <a class="btn btn-primary btn-sm" th:href="@{/managePage/ecomPage.do}" role="button">繼續購物</a>
+            <a class="btn btn-primary btn-sm" th:href="@{/managePage/orderManager.do}" role="button">檢查訂單</a>
+            
+        </p>
+    </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
+

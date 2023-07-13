@@ -1,10 +1,17 @@
 package com.teamsix.model.bean;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 
@@ -49,18 +56,14 @@ public class GameBean {
 	
 	@Column(name = "gameimg")
 	private String gameimg;
-
-//	@Transient
-//	private MultipartFile gameimg;
 	
+	@JsonManagedReference //由這邊做JSON序列化
+	@OneToMany(mappedBy = "gameBean",cascade = CascadeType.ALL,orphanRemoval = true /*fetch = FetchType.LAZY 預設lazy，可不寫，使用到圖片才去抓*/ )
+	private List<Booking> booking = new ArrayList<>();
 	
+	public GameBean() {	}
+
 	// ========================================================
-	public GameBean() {
-	}
-	// ========================================================
-
-
-
 	public int getGameid() { return gameid; }
 	public String getStudio() { return studio; }
 	public String getGname() { return gname; }
@@ -73,7 +76,6 @@ public class GameBean {
 	public String getPriceper() { return priceper; }
 	public String getTextdesc() { return textdesc; }
 	public String getGameimg() { return gameimg; }
-
 
 	public void setGameid(int gameid) { this.gameid = gameid; }
 	public void setStudio(String studio) { this.studio = studio; }
@@ -88,11 +90,5 @@ public class GameBean {
 	public void setTextdesc(String textdesc) { this.textdesc = textdesc; }
 	public void setGameimg(String fileName) { this.gameimg = fileName; }
 
-
-
-
-
-	
-	
 	
 }

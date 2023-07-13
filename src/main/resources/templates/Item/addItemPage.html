@@ -276,12 +276,12 @@
 				formData.append('stock', $('#stock').val());
 				formData.append('itemdetail', $('#itemdetail').val());
 				formData.append('itemstatus', $('#itemstatus').val());
-				
-				 var files = $('#imgUpload')[0].files;
-    for (var i = 0; i < files.length; i++) {
-        formData.append('images', files[i]);
-    }
-				
+
+				var files = $('#imgUpload')[0].files;
+				for (var i = 0; i < files.length; i++) {
+					formData.append('images', files[i]);
+				}
+
 
 				var categoryId;
 				if ($('#category-level-3').val()) {
@@ -330,10 +330,10 @@
 			document.getElementById('itemdetail').value = '這是預設的商品描述';
 			document.getElementById('itemstatus').value = '販售中';
 
-		
+
 			$('#category-level-1').val('2').change();
 
-			
+
 			setTimeout(function () {
 				$('#category-level-2').val('3').change();
 			}, 200);

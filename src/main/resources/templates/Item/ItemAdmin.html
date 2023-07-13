@@ -28,14 +28,32 @@
 			white-space: normal;
 			overflow: visible;
 		}
+
+		.hovereffect {
+			transition: transform 0.3s;
+		}
+
+		.hovereffect:hover {
+			transform: scale(1.3);
+		}
+
+		#myTable {
+			opacity: 0;
+			transition: opacity 0.2s ease-in;
+		}
+
+		#myTable.show {
+			opacity: 1;
+		}
 	</style>
 </head>
 
 <body>
+
 	<div class="app-container">
 		<div th:replace="~{layout/dashboard_sidebar}"></div>
 		<div class="app-content" style="min-height: 100vh">
-
+			<div class="loader"></div>
 			<div class="app-content-header">
 				<h1 class="app-content-headerText">商品管理</h1>
 				<button class="mode-switch" title="Switch Theme">
@@ -107,6 +125,7 @@
 					</button>
 				</div>
 			</div>
+
 			<!-------------------- 欄位區title ------------------->
 			<table id="myTable" class="display products-area-wrapper tableView">
 				<thead>
@@ -119,13 +138,17 @@
 								</svg>
 							</button>
 						</th>
-						<th class="product-cell image">圖片預覽</th>
+						<th class="product-cell image">圖片</th>
 
 
-						<th class="product-cell image">
-							<button class="sort-button"></button>
+						<th class="product-cell category">日期
+							<button class="sort-button">
+								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 512 512">
+									<path fill="currentColor"
+										d="M496.1 138.3L375.7 17.9c-7.9-7.9-20.6-7.9-28.5 0L226.9 138.3c-7.9 7.9-7.9 20.6 0 28.5 7.9 7.9 20.6 7.9 28.5 0l85.7-85.7v352.8c0 11.3 9.1 20.4 20.4 20.4 11.3 0 20.4-9.1 20.4-20.4V81.1l85.7 85.7c7.9 7.9 20.6 7.9 28.5 0 7.9-7.8 7.9-20.6 0-28.5zM287.1 347.2c-7.9-7.9-20.6-7.9-28.5 0l-85.7 85.7V80.1c0-11.3-9.1-20.4-20.4-20.4-11.3 0-20.4 9.1-20.4 20.4v352.8l-85.7-85.7c-7.9-7.9-20.6-7.9-28.5 0-7.9 7.9-7.9 20.6 0 28.5l120.4 120.4c7.9 7.9 20.6 7.9 28.5 0l120.4-120.4c7.8-7.9 7.8-20.7-.1-28.5z" />
+								</svg>
+							</button>
 						</th>
-
 
 						<th class="product-cell category">名稱
 							<button class="sort-button">
@@ -167,7 +190,7 @@
 								</svg>
 						</th>
 
-						<th class="product-cell sales">銷售量
+						<th class="product-cell sales">銷量
 							<button class="sort-button">
 								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 512 512">
 									<path fill="currentColor"
@@ -209,39 +232,37 @@
 						<td class="product-cell image"><span th:text="${item.itemid}"></span>
 						</td>
 
-						<td th:id="'tdItemimg'+${iterStat.index}" class="product-cell category">
+						<td th:id="'tdItemimg'+${iterStat.index}" class="product-cell category" data-bs-toggle="modal"
+							th:data-bs-target="'#imgModal'+${iterStat.index}">
 							<th:block th:switch="${item.images.size()}">
 								<th:block th:case="0">
-									<img th:id="'tdItemimg'+${iterStat.index}+'-0'" src="/rr/img/itemimgs/defaultPic.jpg"
-										alt="product" />
+									<img th:id="'tdItemimg'+${iterStat.index}+'-0'"
+										src="/rr/img/itemimgs/defaultPic.jpg" alt="product" class="hovereffect" />
 								</th:block>
 								<th:block th:case="1">
-									<img th:each="image : ${item.images}" th:src="'/rr/img/itemimgs/' + ${image.imagename}"
-										alt="product" />
+									<img th:each="image : ${item.images}"
+										th:src="'/rr/img/itemimgs/' + ${image.imagename}" alt="product"
+										class="hovereffect" />
 								</th:block>
 								<th:block th:case="2">
-									<img th:each="image : ${item.images}" th:src="'/rr/img/itemimgs/' + ${image.imagename}"
-										alt="product" />
+									<img th:each="image : ${item.images}"
+										th:src="'/rr/img/itemimgs/' + ${image.imagename}" alt="product"
+										class="hovereffect" />
 								</th:block>
 							</th:block>
 						</td>
 
+						<td class="product-cell category" th:id="'tdItemadded'+${iterStat.index}"><span
+								th:text="${#dates.format(item.added, 'yyyy-MM-dd')}"></span></td>
 
-
-						<td class="product-cell sales">
-							<button type="button" style="border: none;" data-bs-toggle="modal"
-								th:data-bs-target="'#imgModal'+${iterStat.index}">
-								<i class="fa-solid fa-image"></i>
-							</button>
-						</td>
 
 
 						<td class="product-cell category" th:id="'tdItemname'+${iterStat.index}"><span
 								th:text="${item.itemname}"></span></td>
 
 						<td class="product-cell status-cell" th:id="'tdcategoryPath'+${iterStat.index}">
-							<span  class="category-path"
-								th:text="${item.categoryPath}" th:data-original="${item.categoryPath}"
+							<span class="category-path" th:text="${item.categoryPath}"
+								th:data-original="${item.categoryPath}"
 								th:data-truncated="${item.categoryPath.substring(0, 10) + '...'}"></span>
 						</td>
 
@@ -406,8 +427,7 @@
 												</div>
 											</div>
 										</div>
-
-										<div class="row">
+										<!--  div class="row">
 											<div class="col-12">
 												<label for="imgUpload" class="form-label">圖片</label><br>
 
@@ -431,11 +451,8 @@
 													</th:block>
 												</th:block>
 											</div>
-										</div>
-
-
+										</div -->
 										<br>
-
 										<div class="row">
 											<div class="col-12">
 												<label for="itemdetail">商品描述</label> <br />
@@ -468,7 +485,6 @@
 				<!-- 修改modal -->
 
 				<!-- 詳細資訊modal -->
-
 				<div class="modal fade" tabindex="-1" th:id="'exampleModal'+${iterStat.index}" aria-hidden="true"
 					aria-labelledby="exampleModalLabel" data-bs-backdrop="static">
 					<div class="modal-dialog modal-dialog-scrollable modal-dialog modal-lg">
@@ -487,25 +503,19 @@
 											</p>
 										</div>
 									</div>
-
 								</div>
 								<div class="modal-footer">
 									<button type="button" id="savebtn<%=i %>" class="button-update"
 										data-bs-dismiss="modal">關閉</button>
 								</div>
-
-
 							</div>
 						</div>
 					</div>
 				</div>
-
-
 				<!-- 詳細資訊modal -->
 
 
 				<!-- 圖片管理modal -->
-
 				<div class="modal fade" tabindex="-1" th:id="'imgModal'+${iterStat.index}" aria-hidden="true"
 					aria-labelledby="imgModalLabel" data-bs-backdrop="static">
 					<div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg">
@@ -700,10 +710,24 @@
 		}
 
 
+		$(window).on('load', function () {
+			var table = $('#myTable').DataTable();
+
+ 			$('#loadingScreen').fadeOut(1000);
+
+			table.on('preDraw', function () {
+				$('#myTable').fadeOut(100);
+			});
+
+			table.on('draw', function () {
+				$('#myTable').fadeIn(200);
+			});
+
+			$('#myTable').addClass('show');
+		});
 
 
 
-		let table = new DataTable('#myTable');
 
 
 		var items = /*[[${itemList}]]*/ null; //預設為null
@@ -712,31 +736,36 @@
 
 		const selectedFiles = [];
 		$(document).ready(function () {
-	for (let i = 0; i < items.length; i++) {
-		initializeCategories(i);
-	}
-
-	$(document).on('click', '[id^="update-btn"]', function() {
-		let itemiid = $(this).attr('data-itemid');
-		let inddex = $(this).attr('data-i');
-		updateCategories(inddex);
-		setInitialDropdownValues(itemiid, inddex);
-	});
-
-	$(document).on("mouseover", ".category-path", function () {
-		var originalText = $(this).attr("data-original");
-		$(this).text(originalText);
-		$(this).addClass("show-full-text");
-	});
-
-					$(document).on("mouseout", ".category-path", function () {
-		var truncatedText = $(this).attr("data-truncated");
-		$(this).text(truncatedText);
-		$(this).removeClass("show-full-text");
-	});
 
 
-				//▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼更新確認▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
+			for (let i = 0; i < items.length; i++) {
+				initializeCategories(i);
+			}
+
+
+
+
+			$(document).on('click', '[id^="update-btn"]', function () {
+				let itemiid = $(this).attr('data-itemid');
+				let inddex = $(this).attr('data-i');
+				updateCategories(inddex);
+				setInitialDropdownValues(itemiid, inddex);
+			});
+
+			$(document).on("mouseover", ".category-path", function () {
+				var originalText = $(this).attr("data-original");
+				$(this).text(originalText);
+				$(this).addClass("show-full-text");
+			});
+
+			$(document).on("mouseout", ".category-path", function () {
+				var truncatedText = $(this).attr("data-truncated");
+				$(this).text(truncatedText);
+				$(this).removeClass("show-full-text");
+			});
+
+
+			//▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼更新確認▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
 			for (let i = 0; i < items.length; i++) {
 				let updateConfirmBtn = $("#updateConfirm" + i);
 
@@ -1056,9 +1085,6 @@
 					})
 				})
 
-
-				$
-
 				//當MODAL關閉，淨空form 和 previewontainer
 				$('#imgModal' + i).on('hidden.bs.modal', function () {
 
@@ -1168,10 +1194,10 @@
 			var newContent = '';
 
 			if (response.length === 0) {
-				newContent = '<img src="/rr/img/itemimgs/defaultPic.jpg" alt="product" />';
+				newContent = '<img class="hovereffect" src="/rr/img/itemimgs/defaultPic.jpg" alt="product" />';
 			} else if (response.length >= 1) {
 				response.forEach(function (image) {
-					newContent += '<img src="/rr/img/itemimgs/' + image.imagename + '" alt="product" />';
+					newContent += '<img class="hovereffect" src="/rr/img/itemimgs/' + image.imagename + '" alt="product" />';
 				});
 			}
 

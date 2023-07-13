@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" class="light">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+
+  <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+  <!-- Core theme CSS (includes Bootstrap)-->
+  <link th:href="@{/css/ecom/navItem.css}" rel="stylesheet" />
+  <link th:href="@{/css/ecom/toggleBtn.css}" rel="stylesheet" />
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        th {
+            background-color: lightblue;
+            color: white;
+        }
+        .container {
+  margin-top: 10px;
+  margin-left: 10px;
+}
+      
+    </style>
+</head>
+<body>
+<div id="loadingScreen"
+        style="position: fixed; left: 0; top: 0; width: 100%; height: 100%; background: #fff; z-index: 9999;">
+        <h1 style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">前往訂單管理...</h1>
+    </div>
+	<div class="app-container">
+	<div th:replace="~{layout/item_sidebar}"></div>
+    <div class="app-content" style="min-height: 100vh">
+			<div class="container">
+    <div class="app-content-header">
+				<h1 class="app-content-headerText">訂單管理</h1>
+				<button class="mode-switch" title="Switch Theme">
+					<svg class="moon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+						stroke-width="2" width="24" height="24" viewBox="0 0 24 24">
+						<defs></defs>
+						<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+					</svg>
+				</button>
+
+			</div>
+		<div class="selector-container">
+		    <select id="periodSelector">
+		        <option value="day">一天內</option>
+		        <option value="week">一星期內</option>
+		        <option value="month">一個月內</option>
+		        <option value="quarter">一季內</option>
+		        <option value="year">一年內</option>
+		        <option value="all" selected>全部時間</option>
+		    </select>
+		     <select id="statusSelector">
+		    <option value="all" selected>全部狀態</option>
+		    <option value="尚未付款">尚未付款</option>
+		    <option value="完成付款">完成付款</option>
+		</select>
+</div>
+
+
+	<input type="hidden" id="session" th:value="${session.member.memno}">
+
+   <table id="ordersTable">
+    <thead>
+        <tr>
+            <th>訂單編號</th>
+            <th>訂單日期</th>
+            <th>訂單狀態</th>
+            <th>總金額</th>
+            <th>信箱</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody id="ordersTableBody">
+        <!-- Table data will go here -->
+    </tbody>
+</table>
+
+
+      <div id="paginationContainer"></div>
+      
+      </div>
+      </div>
+      </div>
+    <!-- Modal -->
+<div class="modal fade" id="orderDetailModal" tabindex="-1" aria-labelledby="orderDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="orderDetailModalLabel">訂單明細</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+           <div class="modal-body" id="modalBody">
+   <table id="orderDetailsTable">
+    <thead>
+        <tr>
+            <th>商品編號</th>
+            <th>商品名稱</th>
+            <th>圖片</th>
+            <th>數量</th>
+            <th>單價</th>
+        </tr>
+    </thead>
+    <tbody id="orderDetailsTableBody">
+        <!-- Order details will be inserted here -->
+    </tbody>
+  
+</table>
+</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+      <script>
+
+   $(window).on('load', function () {
+            // Hide the loading screen after the page is loaded
+            $('#loadingScreen').fadeOut(1000);
+        });
+
+// Fetch order data
+const fetchOrders = (memno, page = 0, size = 10) => {
+    let api = memno === '1001' 
+        ? `/rr/api/orders?page=${page}&size=${size}`
+        : `/rr/api/orders?memno=${memno}&page=${page}&size=${size}`;
+
+    // if period or status is not 'all', append to API endpoint
+    const period = document.getElementById('periodSelector').value;
+    const status = document.getElementById('statusSelector').value;
+    if (period !== 'all') {
+        api += `&period=${period}`;
+    }
+    if (status !== 'all') {
+        api += `&status=${status}`;
+    }
+
+    return fetch(api)
+        .then(response => response.json())
+        .catch(error => console.error('Error:', error));
+}
+
+
+// Event handler for page buttons
+const onPageClick = page => {
+    const memno = document.querySelector('#session').value;
+    fetchOrders(memno, page)
+        .then(data => {
+            renderOrderTable(data.content);
+            renderPagination(data);
+        });
+}
+
+// Generate pagination buttons
+const renderPagination = data => {
+    const paginationContainer = document.getElementById('paginationContainer');
+    paginationContainer.innerHTML = '';
+
+    for(let i = 0; i < data.totalPages; i++) {
+        const pageButton = document.createElement('button');
+        pageButton.textContent = i + 1;
+        pageButton.className = 'btn btn-outline-primary';
+        pageButton.classList.toggle('active', i === data.number);
+        pageButton.addEventListener('click', () => onPageClick(i));
+        paginationContainer.appendChild(pageButton);
+    }
+}
+
+
+const onSelectorChange = () => {
+    const memno = document.querySelector('#session').value;
+    fetchOrders(memno)
+        .then(data => {
+            renderOrderTable(data.content);
+            renderPagination(data);
+        });
+}
+
+// Initialize
+const init = () => {
+    const memno = document.querySelector('#session').value;
+
+    // Fetch initial data
+    fetchOrders(memno)
+        .then(data => {
+            renderOrderTable(data.content);
+            renderPagination(data);
+        });
+
+    // Add event listeners to selectors
+    const periodSelector = document.getElementById('periodSelector');
+    periodSelector.addEventListener('change', onSelectorChange);
+
+    const statusSelector = document.getElementById('statusSelector');
+    statusSelector.addEventListener('change', onSelectorChange);
+}
+
+init();
+    
+   function renderOrderTable(orders) {
+      const tableBody = document.getElementById('ordersTableBody');
+       tableBody.innerHTML = '';
+       
+       
+       
+    if (orders.length === 0) {
+        const row = document.createElement('tr');
+        const cell = document.createElement('td');
+        cell.textContent = '查無訂單';
+        cell.setAttribute('colspan', '6'); 
+        cell.style.textAlign = 'center';
+        row.appendChild(cell);
+        tableBody.appendChild(row);
+    } else {
+    for (const order of orders) {
+        const row = document.createElement('tr');
+            
+            const orderIdCell = document.createElement('td');
+            orderIdCell.textContent = order.orderId;
+            row.appendChild(orderIdCell);
+            
+            const orderDateCell = document.createElement('td');
+            orderDateCell.textContent = order.orderDate;
+            row.appendChild(orderDateCell);
+            
+            const orderStatusCell = document.createElement('td');
+            orderStatusCell.textContent = order.orderStatus;
+            row.appendChild(orderStatusCell);
+            
+            const totalAmountCell = document.createElement('td');
+            totalAmountCell.textContent = order.totalAmount;
+            row.appendChild(totalAmountCell);
+            
+            const memberEmailCell = document.createElement('td');
+            memberEmailCell.textContent = order.member.email;
+            row.appendChild(memberEmailCell);
+
+            const detailCell = document.createElement('td');
+            const detailButton = document.createElement('button');
+            detailButton.textContent = '訂單明細';
+            detailButton.className = 'btn btn-outline-primary';
+            detailButton.setAttribute('data-bs-toggle', 'modal');
+            detailButton.setAttribute('data-bs-target', '#orderDetailModal');
+            detailButton.onclick = function() {
+            console.log(123)
+                fetch(`/rr/api/orders/orderdetails/${order.orderId}`)
+                    .then(response => response.json())
+                    .then(details => {
+                        displayOrderDetails(details);
+                    })
+                    .catch(error => console.error('Error:', error));
+            };
+            detailCell.appendChild(detailButton);
+            row.appendChild(detailCell);
+
+             tableBody.appendChild(row);
+    }
+    }
+} 
+
+function displayOrderDetails(details) {
+   const table = document.getElementById('orderDetailsTableBody');
+    table.innerHTML = ''; 
+    for (const detail of details) {
+        const row = document.createElement('tr');
+        
+        const itemIdCell = document.createElement('td');
+        itemIdCell.textContent = detail.itemid;
+        row.appendChild(itemIdCell);
+
+        const itemnameCell = document.createElement('td');
+        itemnameCell.textContent = detail.itemname;
+        row.appendChild(itemnameCell);
+        
+        const imageNameCell = document.createElement('td');
+			const img = document.createElement('img');
+			img.src = `/rr/img/itemimgs/${detail.imageName}`;  
+			img.alt = 'Product Image';  
+			img.style.width = '40px';   
+			img.style.height = '50px';  
+			imageNameCell.appendChild(img);
+			row.appendChild(imageNameCell);
+			        
+        
+        
+        const quantityCell = document.createElement('td');
+        quantityCell.textContent = detail.quantity;
+        row.appendChild(quantityCell);
+
+        const priceCell = document.createElement('td');
+        priceCell.textContent = detail.price;
+        row.appendChild(priceCell);
+        
+        table.appendChild(row);
+    }
+}
+
+
+
+
+
+    </script>
+    
+  <script src="https://kit.fontawesome.com/7e347cd6cd.js" crossorigin="anonymous"></script>
+  <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+  <script th:src="@{/js/jquery-3.7.0.min.js}"></script>
+   	<script th:src="@{/js/dashboard2.js}"></script>
+</body>
+</html>

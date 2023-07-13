@@ -20,11 +20,12 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.data.domain.PageImpl;
 
 import java.util.ArrayList;
+import java.util.Date;
 
-import com.teamsix.model.bean.Category;
-import com.teamsix.model.bean.ItemDTO;
-import com.teamsix.model.bean.ItemWithImages;
-import com.teamsix.model.bean.Itemimg;
+import com.teamsix.model.bean.item.Category;
+import com.teamsix.model.bean.item.ItemDTO;
+import com.teamsix.model.bean.item.ItemWithImages;
+import com.teamsix.model.bean.item.Itemimg;
 import com.teamsix.service.CategoryService;
 import com.teamsix.service.ItemService;
 
@@ -57,10 +58,15 @@ public class ItemController {
 
 	@ResponseBody
 	@PostMapping("/addItem.do")
-	public String addItem(@RequestParam("itemname") String itemname, @RequestParam("price") BigDecimal price,
-			@RequestParam("salescount") int salescount, @RequestParam("stock") int stock,
-			@RequestParam("itemstatus") String itemstatus, @RequestParam("itemdetail") String itemdetail,
+	public String addItem(
+			@RequestParam("itemname") String itemname, 
+			@RequestParam("price") BigDecimal price,
+			@RequestParam("salescount") int salescount, 
+			@RequestParam("stock") int stock,
+			@RequestParam("itemstatus") String itemstatus, 
+			@RequestParam("itemdetail") String itemdetail,
 			@RequestParam("categoryid") Integer categoryid,
+			@RequestParam(value = "added",required = false)Date added,
 			@RequestParam(value = "images", required = false) List<MultipartFile> images) throws IOException {
 
 		ItemDTO item = new ItemDTO();
@@ -70,6 +76,10 @@ public class ItemController {
 		item.setStock(stock);
 		item.setItemstatus(itemstatus);
 		item.setItemdetail(itemdetail);
+		
+		if(added != null){
+		    item.setAdded(added);
+		}
 
 		Category category = categoryService.getCategoryById(categoryid);
 		item.setCategory(category);
@@ -103,10 +113,16 @@ public class ItemController {
 
 	@PutMapping("/updateItemAjax.do")
 	@ResponseBody
-	public ItemDTO editItem(@RequestParam("itemid") int itemId, @RequestParam("itemname") String itemName,
-			@RequestParam("stock") int stock, @RequestParam("salescount") int salesCount,
-			@RequestParam("itemstatus") String itemStatus, @RequestParam("itemdetail") String itemDetail,
-			@RequestParam("price") BigDecimal price, @RequestParam("categoryid") int categoryId) {
+	public ItemDTO editItem(
+			@RequestParam("itemid") int itemId, 
+			@RequestParam("itemname") String itemName,
+			@RequestParam("stock") int stock, 
+			@RequestParam("salescount") int salesCount,
+			@RequestParam("itemstatus") String itemStatus, 
+			@RequestParam("itemdetail") String itemDetail,
+			@RequestParam("price") BigDecimal price, 
+			@RequestParam(value = "added",required = false)Date added,
+			@RequestParam("categoryid") int categoryId) {
 
 		ItemDTO bean = iService.findItemById(itemId);
 
@@ -116,6 +132,10 @@ public class ItemController {
 		bean.setPrice(price);
 		bean.setSalescount(salesCount);
 		bean.setStock(stock);
+		
+		if(added!=null){
+			bean.setAdded(added);
+		}
 
 		Category category = categoryService.getCategoryById(categoryId); // 透過服務從ID取得Category對象
 		bean.setCategory(category); // 將Category對象設定到bean中
@@ -149,8 +169,9 @@ public class ItemController {
 	@ResponseBody
 	public Page<ItemWithImages> getItemByCategoryId(@RequestParam("categoryId") int categoryId,
 			@RequestParam(value = "page", defaultValue = "0") int page,
-			@RequestParam(value = "size", defaultValue = "8") int size) {
-		Page<ItemDTO> itemPage = iService.getItemsByCategoryId(categoryId, page, size);
+			@RequestParam(value = "size", defaultValue = "8") int size,
+			@RequestParam(value = "sort", defaultValue = "added_desc") String sort) {
+		Page<ItemDTO> itemPage = iService.getItemsByCategoryId(categoryId, page, size, sort);
 		List<ItemWithImages> content = new ArrayList<>();
 		for (ItemDTO item : itemPage.getContent()) {
 			List<Itemimg> list = iService.getImgsByItemid(item.getItemid());
@@ -162,9 +183,10 @@ public class ItemController {
 	@PostMapping("pageAllItems.do")
 	@ResponseBody
 	public Page<ItemWithImages> getAllItemsPage(@RequestParam(value = "page", defaultValue = "0") int page,
-			@RequestParam(value = "size", defaultValue = "8") int size) {
+			@RequestParam(value = "size", defaultValue = "8") int size,
+			@RequestParam(value = "sort", defaultValue = "added_desc") String sort) {
 
-		Page<ItemDTO> itemPage = iService.listItemPage(page, size);
+		Page<ItemDTO> itemPage = iService.listItemPage(page, size, sort);
 		List<ItemWithImages> content = new ArrayList<>();
 
 		for (ItemDTO item : itemPage.getContent()) {
@@ -174,5 +196,7 @@ public class ItemController {
 
 		return new PageImpl<>(content, itemPage.getPageable(), itemPage.getTotalElements());
 	}
+	
+	
 
 }

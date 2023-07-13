@@ -4,7 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.teamsix.model.bean.ItemDTO;
+import com.teamsix.model.bean.item.ItemDTO;
 
 public interface ItemRepository extends JpaRepository<ItemDTO, Integer> {
 

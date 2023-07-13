@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.teamsix.model.bean.ItemDTO;
-import com.teamsix.model.bean.Itemimg;
-import com.teamsix.model.bean.ItemimgDTO;
+import com.teamsix.model.bean.item.ItemDTO;
+import com.teamsix.model.bean.item.Itemimg;
+import com.teamsix.model.bean.item.ItemimgDTO;
 import com.teamsix.service.ItemService;
 
 

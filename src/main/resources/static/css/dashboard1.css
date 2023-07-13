@@ -49,7 +49,7 @@
 
 .sidebar {
 	height: 100%;
-	width: 200px;
+	max-width: 100px;
 }
 
 body, html {
@@ -503,8 +503,8 @@ position:fixed為後加
 }
 
 .tableView .product-cell img {
-	width: 32px;
-	height: 32px;
+	width: 24px;
+	height: 30px;
 	border-radius: 6px;
 	margin-right: 6px;
 }

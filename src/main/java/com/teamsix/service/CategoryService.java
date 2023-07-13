@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.teamsix.model.bean.Category;
+import com.teamsix.model.bean.item.Category;
 import com.teamsix.model.dao.CategoryRepository;
 
 import jakarta.transaction.Transactional;

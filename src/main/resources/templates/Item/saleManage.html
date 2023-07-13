@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" class=light>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>saleManage</title>
+
+  <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+  <link th:href="@{/css/itemDataTable.css}" rel="stylesheet">
+  <link th:href="@{/css/cdn.jsdelivr.net_npm_sweetalert2@11.7.12_dist_sweetalert2.min.css}" rel="stylesheet">
+  <link th:href="@{/css/ecom/jquery-ui.min.css}" rel="stylesheet">
+  <link th:href="@{/css/ecom/jquery-ui.theme.min.css}" rel="stylesheet">
+  <style>
+    .ui-draggable-dragging {
+      display: table;
+    }
+
+    .ui-draggable-dragging td {
+      background: white;
+      border: 1px solid #ddd;
+      padding: 8px;
+      vertical-align: top;
+      font-size: 14px;
+    }
+
+    .ui-draggable-dragging img {
+      width: 50px;
+    }
+
+    .img-size {
+      height: 60px;
+      width: auto;
+    }
+
+    #dialog {
+      display: none;
+      background-color: #f9f9f9;
+      border-radius: 5px;
+      padding: 10px;
+      font-family: Arial, sans-serif;
+      color: #333;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .ui-dialog-titlebar {
+      background: #4a90e2;
+      color: #fff;
+      border: none;
+      padding: 10px;
+    }
+
+    .ui-dialog-titlebar-close {
+      display: none;
+    }
+
+    .ui-dialog-buttonpane .ui-button {
+      background: #4a90e2;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+    }
+
+    .ui-dialog {
+      z-index: 9999 !important;
+    }
+
+    #sale-table tbody tr {
+      position: relative;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    #sale-table tbody tr:hover {
+      background-color: #f5f5f5;
+    }
+
+    .action-buttons {
+      position: absolute;
+      top: 0;
+      right: 0;
+      opacity: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      transition: opacity 0.3s ease;
+    }
+
+    .action-button {
+      margin: 5px 0;
+      padding: 5px 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      z-index: 1005;
+    }
+
+    .action-button:hover {
+      background-color: #0056b3;
+    }
+
+    #item-table tbody tr {
+      transition: background-color 0.2s ease, transform 0.2s ease;
+      cursor: pointer;
+    }
+
+    #item-table tbody tr:hover {
+      background-color: #f5f5f5;
+      transform: scale(1.03);
+    }
+    button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+  </style>
+
+<body>
+  <!-- Modal -->
+  <div class="modal fade" id="saleModal" tabindex="-1" aria-labelledby="saleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="saleModalLabel">新增特賣活動</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="sale-form">
+            <label for="saleName">特價名稱:</label><br>
+            <input type="text" id="saleName" name="saleName"><br>
+            <label for="saleStart">特價開始時間:</label><br>
+            <input type="datetime-local" id="saleStart" name="saleStart"><br>
+            <label for="saleEnd">特價結束時間:</label><br>
+            <input type="datetime-local" id="saleEnd" name="saleEnd"><br>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+          <button type="submit" form="sale-form" class="btn btn-primary">建立特價活動</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal -->
+  <div class="modal fade" id="addItemModal" tabindex="-1" aria-labelledby="addItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addItemModalLabel">拖曳加入商品</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="max-height: 700px; overflow-y: auto; padding: 40px;">
+          <div id="drop-container" style="height: 200px; border: 1px solid #ccc; margin-top: 20px; overflow: auto;">
+            <table id="dropped-items-table" class="table">
+              <thead>
+                <tr>
+                  <th>商品編號</th>
+                  <th>名稱</th>
+                  <th>折扣</th>
+                  <th>折扣價</th>
+                  <th>圖片</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+          <div id="item-table-container" style="max-height: 400px; overflow-y: auto;">
+            <table class="table" id="item-table">
+              <thead>
+                <tr>
+                  <th>商品編號</th>
+                  <th>名稱</th>
+                  <th>價格</th>
+                  <th>圖片</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- 動態插入 -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div id="loadingScreen"
+    style="position: fixed; left: 0; top: 0; width: 100%; height: 100%; background: #fff; z-index: 9999;">
+    <h1 style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">前往特賣管理...</h1>
+  </div>
+  <div class="app-container">
+    <div th:replace="~{layout/item_sidebar}"></div>
+    <div class="app-content" style="min-height: 100vh">
+      <div class="app-content-header">
+        <h1 class="app-content-headerText">特賣管理</h1>
+        <button class="mode-switch" title="Switch Theme">
+          <svg class="moon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+            stroke-width="2" width="24" height="24" viewBox="0 0 24 24">
+            <defs></defs>
+            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+          </svg>
+        </button>
+      </div>
+
+      <div class="table-container container col-10">
+
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#saleModal">
+          新增特賣活動
+        </button>
+        <table id="sale-table" class="table">
+          <thead>
+            <tr>
+              <th>編號</th>
+              <th>特賣名稱</th>
+              <th>特價開始時間</th>
+              <th>特價結束時間</th>
+              <th>狀態</th>
+              <th></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- 資料將在此動態插入 -->
+          </tbody>
+        </table>
+
+      </div>
+
+    </div>
+  </div>
+
+  <div id="dialog" title="Enter a discount for this item">
+    <select id="discount-input">
+      <option value="1">不打折</option>
+      <option value="0.9">9折</option>
+      <option value="0.8">8折</option>
+      <option value="0.7">7折</option>
+      <option value="0.6">6折</option>
+      <option value="0.5">5折</option>
+      <option value="0.4">4折</option>
+      <option value="0.3">3折</option>
+      <option value="0.2">2折</option>
+      <option value="0.1">1折</option>
+    </select>
+  </div>
+
+  <script th:src="@{/js/jquery-3.7.0.min.js}"></script>
+  <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+  <script th:src="@{/js/cdn.jsdelivr.net_npm_sweetalert2@11.7.12_dist_sweetalert2.all.min.js}"></script>
+  <script src="https://kit.fontawesome.com/7e347cd6cd.js" crossorigin="anonymous"></script>
+  <script th:src="@{/js/dashboard2.js}"></script>
+  <script th:src="@{/js/ecom/jquery-ui.min.js}"></script>
+
+  <script>
+
+
+    let currentPage = 0;
+    let isLoading = false;
+    let noMorePages = false;
+    let saleId;
+
+    function loadItems(page) {
+      if (isLoading || noMorePages) {
+        return;
+      }
+      isLoading = true;
+      $.ajax({
+        url: '/rr/pageAllItems.do',
+        method: 'post',
+        data: {
+          page: page
+        },
+        success: function (data) {
+          const items = data.content;
+          if (items.length > 0) {
+            for (let item of items) {
+              let row = $('<tr>').addClass('draggable-item').attr('data-item-id', item.item.itemid);
+              let cell1 = $('<td>').text(item.item.itemid);
+              let cell2 = $('<td>').text(item.item.itemname);
+              let cell3 = $('<td>').text(item.item.price);
+              let cell4 = $('<td>');
+              if (item.images.length > 0) {
+                let img = $('<img>').attr('src', '/rr/img/itemimgs/' + item.images[0].imagename).addClass('img-size');
+                cell4.append(img);
+              } else {
+                let img = $('<img>').attr('src', '/rr/img/itemimgs/defaultPic.jpg').addClass('img-size');
+                cell4.append(img);
+              }
+              row.append(cell1, cell2, cell3, cell4);
+              $('#item-table tbody').append(row);
+            }
+
+            $('.draggable-item').draggable({
+              helper: 'clone',
+              revert: 'invalid'
+            });
+            $('#drop-container').droppable({
+              accept: '.draggable-item',
+              tolerance: 'fit',
+              drop: function (event, ui) {
+                let clone = ui.helper.clone();
+                clone.removeClass('draggable-item');
+
+                let itemId = clone.attr('data-item-id');
+
+                // Initialize the dialog
+                $('#dialog').dialog({
+                  autoOpen: false,
+                  modal: true,
+                  buttons: {
+                    'OK': function () {
+                      let discount = $('#discount-input').val();
+
+                      // Append the clone to the table body
+                      $('#dropped-items-table tbody').append(clone);
+
+                      $.ajax({
+                        url: '/rr/api/sales/addItemsToSale?saleId=' + saleId + '&discount=' + discount,
+                        method: 'post',
+                        data: JSON.stringify([itemId]),
+                        contentType: 'application/json',
+                        success: function () {
+                          console.log('Item ID', itemId, 'has been added to the sale');
+
+                          loadSaleItems(saleId);
+                        },
+                        error: function () {
+                          console.log('Failed to add Item ID', itemId, 'to the sale');
+                        }
+                      });
+
+                      console.log('Item ID', clone.attr('data-item-id'), 'has been dropped');
+
+                      // Close the dialog
+                      $(this).dialog('close');
+                    },
+                    'Cancel': function () {
+                      $(this).dialog('close');
+                    }
+                  }
+                });
+
+                // Open the dialog
+                $('#dialog').dialog('open');
+              }
+            });
+          } else {
+            noMorePages = true;
+          }
+          isLoading = false;
+        },
+        error: function () {
+          isLoading = false;
+        }
+      });
+    }
+    function loadSaleItems(saleId) {
+      $.ajax({
+        url: '/rr/api/sales/getSaleItems.do?saleId=' + saleId,
+        method: 'post',
+        success: function (data) {
+          console.log(JSON.stringify(data));
+          const items = data;
+          $('#dropped-items-table tbody').empty();
+          if (items.length === 0) {
+            let row = $('<tr>');
+            let cell = $('<td>').attr('colspan', '7').text('暫無商品');
+            row.append(cell);
+            $('#dropped-items-table tbody').append(row);
+          } else {
+            for (let itemObj of items) {
+              let row = $('<tr>');
+              let item = itemObj.item;
+              let cell1 = $('<td>').text(item.itemid);
+              let cell2 = $('<td>').text(item.itemname);
+              let cell5 = $('<td>').text(itemObj.discount);
+              let cell3 = $('<td>').text(itemObj.discountedPrice);
+              let cell4 = $('<td>');
+              if (itemObj.images && itemObj.images.length > 0) {
+                let img = $('<img>').attr('src', '/rr/img/itemimgs/' + itemObj.images[0].imagename).addClass('img-size');
+                cell4.append(img);
+              } else {
+                let img = $('<img>').attr('src', '/rr/img/itemimgs/defaultPic.jpg').addClass('img-size');
+              }
+              let cell6 = $('<td>').addClass('cell-square').css('text-align', 'center').css('vertical-align', 'middle');
+              let deleteButton = $('<button>').addClass('delete-btn').css('border', 'none').css('background-color', 'transparent');
+              let deleteIcon = $('<i>').addClass('fas fa-minus-circle').css('color', 'red');
+              deleteButton.append(deleteIcon).data('itemId', itemObj.id);
+              cell6.append(deleteButton);
+              row.append(cell1, cell2, cell5, cell3, cell4, cell6);
+              $('#dropped-items-table tbody').append(row);
+            }
+          }
+
+          // 刪除按鈕點擊事件處理函式
+          $('.delete-btn').click(function () {
+            let itemId = $(this).data('itemId');
+            deleteSaleItem(itemId);
+          });
+        }
+      });
+    }
+
+    function deleteSaleItem(saleItemId) {
+      $.ajax({
+        url: '/rr/api/sales/deleteSaleItem.do?saleItemId=' + saleItemId,
+        method: 'delete',
+        contentType: 'application/json',
+        success: function (response) {
+          console.log('123')
+          loadSaleItems(saleId);
+          console.log('Sale item deleted successfully');
+        },
+        error: function (xhr, status, error) {
+          // 在此處理刪除失敗後的動作
+          console.log('Failed to delete sale item:', error);
+        }
+      });
+    }
+
+
+
+    $('#item-table-container').on('scroll', function () {
+      if ($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight - 100) {
+        currentPage++;
+        loadItems(currentPage);
+      }
+    });
+    $('#addItemModal').on('show.bs.modal', function (event) {
+      let button = $(event.relatedTarget);
+      saleId = button.data('sale-id');
+      console.log('aa' + saleId);
+      loadItems(currentPage);
+      loadSaleItems(saleId);
+    });
+
+    function formatDate(dateString) {
+      let date = new Date(dateString);
+      return date.toLocaleDateString('zh-TW', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+    }
+// Function to render the table
+function renderTable() {
+
+    $("#sale-table tbody").empty();
+
+    $.ajax({
+        url: '/rr/api/sales',
+        method: 'get',
+        success: function (res) {
+            for (let i = 0; i < res.length; i++) {
+                let sale = res[i];
+            let newRow = `
+<tr>
+    <td>${sale.saleId}</td>
+    <td>${sale.saleName}</td>
+    <td>${formatDate(sale.saleStart)}</td>
+    <td>${formatDate(sale.saleEnd)}</td>
+    <td>${sale.saleStatus}</td>
+    <td><span id="countdown-${sale.saleId}"></span></td>
+    <td>
+        <div class='action-buttons'>
+            <button class='add-item-button action-button' data-bs-toggle='modal' data-bs-target='#addItemModal' data-sale-id='${sale.saleId}'>特賣商品</button>
+            <button id='start-button-${sale.saleId}' class='action-button start-button' data-sale-id='${sale.saleId}' ${sale.saleStatus !== '準備中' ? 'disabled' : ''}>立即開始</button>
+            <button id='end-button-${sale.saleId}' class='action-button end-button' data-sale-id='${sale.saleId}' ${sale.saleStatus !== '進行中' ? 'disabled' : ''}>立即結束</button>
+            <button id='pause-button-${sale.saleId}' class='action-button pause-button' data-sale-id='${sale.saleId}' ${sale.saleStatus !== '進行中' ? 'disabled' : ''}>特賣暫停</button>
+            <button id='resume-button-${sale.saleId}' class='action-button resume-button' data-sale-id='${sale.saleId}' ${sale.saleStatus !== '已暫停' ? 'disabled' : ''}>特賣繼續</button>
+        </div>
+    </td>
+</tr>`;
+                $("#sale-table tbody").append(newRow);
+                
+             
+
+                if (sale.saleStatus === '準備中') {
+                    updateCountdown(sale.saleId, new Date(sale.saleStart).getTime(), '距離開始');
+                } else {
+                    updateCountdown(sale.saleId, new Date(sale.saleEnd).getTime(), '距離結束');
+                }
+            }
+        },
+        error: function (err) {
+            console.error(err);
+        }
+    });
+}
+    
+function updateCountdown(saleId, time, status) {
+    let countdownSpan = document.getElementById('countdown-' + saleId);
+    let intervalId = setInterval(function() {
+        let now = new Date().getTime();
+        let distance = time - now;
+
+        if (distance < 0) {
+            clearInterval(intervalId);
+            countdownSpan.innerText = "----";
+            return;
+        }
+
+        let days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        countdownSpan.innerText = status + '：' + days + "天 " + hours + "時 " + minutes + "分 " + seconds + "秒 ";
+    }, 1000);
+}
+    
+    
+    $(document).ready(function () {
+      // 共用的事件處理器
+      function handleButtonClick(action) {
+    // 獲取 saleId
+    const saleId1 = $(this).data('sale-id');
+    // 調用共用的 Ajax 函數
+    updateSaleStatus(saleId1, action);
+}
+      // 設定按鈕的事件處理器
+      $('#sale-table').on('click', '.start-button', function () {
+        handleButtonClick.call(this, 'start');
+      });
+      $('#sale-table').on('click', '.end-button', function () {
+        handleButtonClick.call(this, 'end');
+      });
+      $('#sale-table').on('click', '.pause-button', function () {
+        handleButtonClick.call(this, 'pause');
+      });
+      $('#sale-table').on('click', '.resume-button', function () {
+        handleButtonClick.call(this, 'resume');
+      });
+    });
+
+    function updateSaleStatus(saleId, action) {
+      $.ajax({
+        url: '/rr/api/sales/' + saleId + '/actions/' + action,
+        method: 'post',
+        success: function () {
+          // 成功处理
+          console.log(`Sale ${saleId} ${action} successfully.`);
+          renderTable()
+
+          // 调用SweetAlert，基于action显示不同的信息
+          switch (action) {
+            case 'start':
+              Swal.fire('成功', '特賣成功開始', 'success');
+              break;
+            case 'end':
+              Swal.fire('成功', '特賣成功結束', 'success');
+              break;
+            case 'pause':
+              Swal.fire('成功', '特賣成功暫停', 'success');
+              break;
+            case 'resume':
+              Swal.fire('成功', '特賣成功繼續', 'success');
+              break;
+            default:
+              Swal.fire('成功', '操作成功', 'success');
+          }
+
+        },
+        error: function () {
+          // 错误处理
+          console.error(`Failed to ${action} sale ${saleId}.`);
+          Swal.fire('失敗', '操作失敗', 'error');
+        }
+      });
+    }
+
+    $(document).ready(function () {
+      var isClicked = false;
+      var currentRow;
+
+      $("#sale-table tbody").on('click', 'tr', function () {
+        if (isClicked && currentRow == this) {
+          // 如果已經點擊過，且點擊的是同一行，則隱藏按鈕並將 isClicked 設為 false
+          $(this).find('.action-buttons').css("opacity", "0");
+          isClicked = false;
+        } else {
+          // 如果是首次點擊或點擊的不是同一行
+          if (isClicked) {
+            // 如果已經點擊過，則隱藏之前點擊的行的按鈕
+            $(currentRow).find('.action-buttons').css("opacity", "0");
+          }
+          // 更新當前行並顯示按鈕
+          currentRow = this;
+          $(this).find('.action-buttons').css("opacity", "1");
+          isClicked = true;
+        }
+      });
+    });
+
+
+
+    $(window).on('load', function () {
+    $.ajax({
+        url: '/rr/api/sales/trigger',
+        method: 'post',
+        success: function () {
+            console.log('Sale statuses updated successfully.');
+            renderTable();
+        },
+        error: function () {
+            console.error('Failed to update sale statuses.');
+        }
+    });
+
+    $('#loadingScreen').fadeOut(1000);
+});
+
+
+    $("#sale-form").on('submit', function (e) {
+      e.preventDefault();
+
+
+      let sale = {
+        saleName: $("#saleName").val(),
+        saleStart: $("#saleStart").val(),
+        saleEnd: $("#saleEnd").val()
+      };
+
+      $.ajax({
+        url: '/rr/api/sales',
+        method: 'post',
+        data: JSON.stringify(sale),
+        contentType: 'application/json',
+        success: function (res) {
+          // Render
+          renderTable();
+        },
+        error: function (err) {
+          console.error(err);
+        }
+      });
+    });
+    
+    
+
+  </script>
+  <script th:src="@{/js/jquery.itemdataTables.js}"></script>
+</body>
+
+</html>

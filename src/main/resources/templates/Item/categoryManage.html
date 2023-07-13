@@ -1,135 +1,132 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" class=light>
 
 <head>
-     <meta charset="utf-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>CategoryManage</title>
 
-    <link th:href="@{/css/arrowbtn.css}" rel="stylesheet">
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
     <link th:href="@{/css/itemDataTable.css}" rel="stylesheet">
     <link th:href="@{/css/cdn.jsdelivr.net_npm_sweetalert2@11.7.12_dist_sweetalert2.min.css}" rel="stylesheet">
-   <style>
+    <style>
+        .block {
+            width: 380px;
+            padding: 10px;
+            margin-bottom: 5px;
+            border: 1px solid #ccc;
+        }
 
-.block {
-    width: 380px;
-    padding: 10px;
-    margin-bottom: 5px;
-    border: 1px solid #ccc;
-}
+        .level-0-block {
+            background-color: lightblue;
+            border-left: 5px solid blue;
+        }
 
-.level-0-block {
-    background-color: lightblue;
-    border-left: 5px solid blue;
-}
+        .level-1-block {
+            background-color: lightgreen;
+            border-left: 5px solid green;
+        }
 
-.level-1-block {
-    background-color: lightgreen;
-    border-left: 5px solid green;
-}
-
-.level-2-block {
-    background-color: lightyellow;
-    border-left: 5px solid orange;
-}
-
-</style>
+        .level-2-block {
+            background-color: lightyellow;
+            border-left: 5px solid orange;
+        }
+    </style>
 </head>
-
 <body>
-<div class ="row">
-<div class="button col-1">
-    <div class="button-container" style="margin-left: 40px">
-        <div class="col mt-3">
-                <h4 class="name">類別管理</h4>
-        </div>
-        <div class="col mt-3">
-            <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#addCategoryModal">
-                新增類別
-            </button>
-        </div>
-        <div class="col mt-3">
-            <button type="button" class="btn btn-outline-danger" onclick="window.location.href='/rr/db/manager.showItemList.do'">返回後台</button>
-           
-        </div>
+    <div id="loadingScreen"
+        style="position: fixed; left: 0; top: 0; width: 100%; height: 100%; background: #fff; z-index: 9999;">
+        <h1 style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">前往類別管理...</h1>
     </div>
-</div>
-<div class="container mt-4 col-10" style="background-color: lightgrey">
+<div class="app-container">
+    <div th:replace="~{layout/item_sidebar}"></div>
+    <div class="app-content" style="min-height: 100vh">
+    <div class="app-content-header">
+				<h1 class="app-content-headerText">類別管理</h1>
+				<button class="mode-switch" title="Switch Theme">
+					<svg class="moon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+						stroke-width="2" width="24" height="24" viewBox="0 0 24 24">
+						<defs></defs>
+						<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+					</svg>
+				</button>
 
-    <div class="row">
+			</div>
     
-        <div class="col-12">
-       
-            <div class="row mt-4">
-                <div class="col">
-                    <div id="categories">
-                        <!-- dynamically inserted here -->
+        <div class="row">
+            <div class="container mt-4 col-12" style="background-color: lightgrey">
+                <div class="row">
+                    <div class="col-6 mt-4">
+                        <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#addCategoryModal">
+                            新增
+                        </button>
+                       
+                    </div>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div id="categories">
+                            <!-- dynamically inserted here -->
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-</div>
 
-<!-- Modal -->
-<div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addCategoryModalLabel">新增類別</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="add-category-form">
-                    <div class="form-group">
-                        <label for="category-name">名稱:</label>
-                        <input type="text" id="category-name" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label for="parent-category">父類別:</label>
-                        <select id="parent-category" class="form-control">
-                            <option value="1">None</option>
-                        </select>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-primary" onclick="addCategory()">新增</button>
+    <!-- Modal -->
+    <div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addCategoryModalLabel">新增類別</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-category-form">
+                        <div class="form-group">
+                            <label for="category-name">名稱:</label>
+                            <input type="text" id="category-name" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="parent-category">父類別:</label>
+                            <select id="parent-category" class="form-control">
+                                <option value="1">None</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="addCategory()">新增</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
-
- 
-
-
-
-
-
-
-
-
     <script th:src="@{/js/jquery-3.7.0.min.js}"></script>
     <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
-   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script th:src="@{/js/cdn.jsdelivr.net_npm_sweetalert2@11.7.12_dist_sweetalert2.all.min.js}"></script>
     <script src="https://www.w3schools.com/lib/w3.js"></script>
     <script src="https://kit.fontawesome.com/7e347cd6cd.js" crossorigin="anonymous"></script>
     <script th:src="@{/js/jquery.itemdataTables.js}"></script>
+    <script th:src="@{/js/dashboard2.js}"></script>
 
     <script>
-        /////////////////////////動態顯示Category Tree///////////////////////
-function createCategoryElement(category, level = 0) {
-    // Determine the block class based on level
-    let blockClass = `level-${level}-block`;
-
-    let categoryElement = document.createElement('div');
-    categoryElement.innerHTML = `
+        $(window).on('load', function () {
+            // Hide the loading screen after the page is loaded
+            $('#loadingScreen').fadeOut(1000);
+        });
+        function createCategoryElement(category, level = 0) {
+            // Determine the block class based on level
+            let blockClass = `level-${level}-block`;
+            let categoryElement = document.createElement('div');
+            categoryElement.innerHTML = `
         <div id="category-${category.id}" class="block ${blockClass}" style="margin-left: ${level * 130}px">
             <p>
                 <span class="category-name" contenteditable="false">${category.name}</span> 
@@ -139,11 +136,9 @@ function createCategoryElement(category, level = 0) {
                 <button class="delete-button btn btn-warning btn-sm onclick="deleteCategory(${category.id})">刪除</button>
             </p>
         </div>`;
-    console.log(category.parentid);
-
-    return categoryElement;
-}
-
+            console.log(category.parentid);
+            return categoryElement;
+        }
         function displayCategories(categories, parentElement = null, level = 0) {
             if (!parentElement) {
                 const parentCategoryDropdown = document.getElementById('parent-category');
@@ -192,10 +187,6 @@ function createCategoryElement(category, level = 0) {
                 }
             });
         }
-
-
-      
-
         $(document).ready(function () {
             fetchCategories();
         });
@@ -224,8 +215,6 @@ function createCategoryElement(category, level = 0) {
             });
         }
 
-
-
         function deleteCategory(id) {
             // Your AJAX call to delete the category goes here
             console.log(`Delete category: ${id}`);
@@ -245,7 +234,6 @@ function createCategoryElement(category, level = 0) {
             const newCategoryName = categoryNameElement.textContent;
             const newParentId = parentCategoryIdSelect.value;
 
-            
             editButton.textContent = '編輯';
             editButton.onclick = function () {
                 editCategory(id);
@@ -295,30 +283,30 @@ function createCategoryElement(category, level = 0) {
             $.ajax({
                 url: '/rr/categories/1',
                 type: 'GET',
-                success: function (response)  {
-                
+                success: function (response) {
+
                     let noneOption = document.createElement('option');
-            noneOption.value = '1';  // Assuming '1' represents 'None' or root category
-            noneOption.text = 'None';
-            categorySelect.appendChild(noneOption);
-                
-                ////620////////
-        let allCategories = flattenCategories(response.subCategories, id);
-        allCategories.forEach(function (category) {
-            let optionElement = document.createElement('option');
-            optionElement.value = category.id;
-            optionElement.text = category.name;
-            categorySelect.appendChild(optionElement);
-        });
+                    noneOption.value = '1';  // Assuming '1' represents 'None' or root category
+                    noneOption.text = 'None';
+                    categorySelect.appendChild(noneOption);
 
-        // After all options are added, set the default value
-        categorySelect.value = parentCategoryIdElement.textContent;
+                    ////620////////
+                    let allCategories = flattenCategories(response.subCategories, id);
+                    allCategories.forEach(function (category) {
+                        let optionElement = document.createElement('option');
+                        optionElement.value = category.id;
+                        optionElement.text = category.name;
+                        categorySelect.appendChild(optionElement);
+                    });
 
-        // Replace the current parent id with the new select element
-        parentCategoryIdElement.style.display = "block";
-        parentCategoryIdElement.textContent = '';
-        parentCategoryIdElement.appendChild(categorySelect);
-    }
+                    // After all options are added, set the default value
+                    categorySelect.value = parentCategoryIdElement.textContent;
+
+                    // Replace the current parent id with the new select element
+                    parentCategoryIdElement.style.display = "block";
+                    parentCategoryIdElement.textContent = '';
+                    parentCategoryIdElement.appendChild(categorySelect);
+                }
             });
             // Change the text and the onclick event of the edit button to save the changes
             editButton.textContent = '保存';
@@ -327,21 +315,21 @@ function createCategoryElement(category, level = 0) {
             };
         }
         ////////620///////////
-      function flattenCategories(categories, editingCategoryId = null) {
-    let flatCategories = [];
+        function flattenCategories(categories, editingCategoryId = null) {
+            let flatCategories = [];
 
-    categories.forEach(function (category) {
-        if (category.id !== editingCategoryId) {
-            flatCategories.push(category);
-        }
-        if (category.subCategories && category.subCategories.length > 0) {
-            let subCategories = flattenCategories(category.subCategories, editingCategoryId);
-            flatCategories = flatCategories.concat(subCategories);
-        }
-    });
+            categories.forEach(function (category) {
+                if (category.id !== editingCategoryId) {
+                    flatCategories.push(category);
+                }
+                if (category.subCategories && category.subCategories.length > 0) {
+                    let subCategories = flattenCategories(category.subCategories, editingCategoryId);
+                    flatCategories = flatCategories.concat(subCategories);
+                }
+            });
 
-    return flatCategories;
-}
+            return flatCategories;
+        }
 
 
 

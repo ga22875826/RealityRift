@@ -1,6 +1,5 @@
 package com.teamsix.controller.booking;
 
-import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,78 +13,110 @@ import com.teamsix.service.BookingService;
 import com.teamsix.service.GameService;
 import com.teamsix.service.MemberService;
 
+import jakarta.servlet.http.HttpSession;
+
 
 @Controller
 public class BookingController {
 
 	@Autowired
-	private BookingService bookingService;
+	private BookingService bService;
 
 	@Autowired
-	private GameService gameService;
+	private GameService gService;
 
 	@Autowired
-	private MemberService memberService;
+	private MemberService mService;
+	
+//  ===== ===== ===== showBooking ===== ===== ===== ===== 
 
 	@GetMapping("/db/bookingmanager")
 	public String showBookingManager(Model model) {
 
-		List<Booking> bookings = bookingService.findAll();
-		List<GameBean> games = gameService.gameSelectAll();
-//		ArrayList<GameBean> gamesList = new ArrayList<GameBean>();
+		List<Booking> bookings = bService.findAll();
+		
+		List<GameBean> games = gService.gameSelectAll();
 		for(GameBean game:games) {
 			game.setGameimg("/rr/"+game.getGameimg());
 		}
+		
 		model.addAttribute("bookings", bookings);
 		model.addAttribute("games", games);
 
-		return "booking/bookingmanager";
+		return "booking/bkAdmin";
 	}
-
-	@RequestMapping("/mybooking")
-	public String myBooking(Model model) {
-
-		List<Booking> bookings = bookingService.findAll();
+	
+	//@RequestParam("memno") int memno
+	@GetMapping("/mybooking")
+	public String showBookingMember(HttpSession session, Model model) {
+		
+		Member member =(Member) session.getAttribute("member");
+		int memno = member.getMemno();
+		List<Booking> bookings = bService.findByMemberBeanMemno(memno);
+	
 		model.addAttribute("bookings", bookings);
-
-		return "booking/mybooking";
+		
+		return "booking/bkMember";
+		
 	}
+	
+//  ===== ===== =====  + 預約  ===== ===== ===== ===== 	
 
-	@RequestMapping("/booking")
-	public String booking(Model model) {
-
-		List<GameBean> games = gameService.gameSelectAll();
-//		GameBean curGame = gameService.findById(gameID);
-
-		model.addAttribute("games", games);
-//		model.addAttribute("curGame", curGame);
-		return "booking/booking";
-	}
-
-	@PostMapping("/updateBooking")
+	@PostMapping("/booking")
 	@ResponseBody
-	public String updateBooking(@RequestParam("bookingID") int bookingId, @RequestParam("gameName") String gameName,
-			@RequestParam("email") String email, @RequestParam("date") String bookingDate,
-			@RequestParam("time") String bookingTime) {
-
+	public String insertBooking(@RequestParam("memno") int memno, @RequestParam("gameid") int gameid, 
+								@RequestParam("gameDate") String gameDate, @RequestParam("gameTime") String gameTime) {
+		
+		Member member = mService.findById(memno);
+		GameBean game = gService.findById(gameid);
+		
+		if(bService.existsBooking(game, gameDate, gameTime)) {
+			return "bk-failed";
+		}
+		
 		Booking booking = new Booking();
-		Member member = memberService.findByEmail(email);
-		GameBean game = gameService.findByGname(gameName);
-
-		booking.setBookingId(bookingId);
-		booking.setMemberBean(member);
+		booking.setMember(member);
 		booking.setGameBean(game);
-		booking.setBookingDate(bookingDate);
-		booking.setBookingTime(bookingTime);
-		bookingService.update(booking);
-
-		String gameImg = "/rr/"+game.getGameimg();
-		return gameImg;
+		booking.setGameDate(gameDate);
+		booking.setGameTime(gameTime);
+		
+		bService.insertBooking(booking);
+		
+		return "bk-ok";
 	}
-
-	@PostMapping("/deleteBooking")
+	
+//  ===== ===== ===== 刪除、修改 ===== ===== ===== 
+	
+	@DeleteMapping("/bookingDelete")
 	@ResponseBody
-	public void deleteBooking(@RequestParam("bookingID") int bookingID) {
-			bookingService.deleteById(bookingID);
+	public String deleteBookingById(@RequestParam("bookingid") int bookingid) {
+		
+		bService.deleteBookingById(bookingid);
+		
+		return "ok-Delete";
 	}
+	
+	@PostMapping("/bookingUpdate")
+	@ResponseBody
+	public String updateBooking(@RequestParam("bookingid") int bookingid, @RequestParam("gameName") String gameName,
+								@RequestParam("gameDate") String gameDate, @RequestParam("gameTime") String gameTime) {
+		
+		GameBean gname = gService.findByGname(gameName);
+		
+		Booking bookingInfo = bService.checkBooking(gname, gameDate, gameTime);
+		if(bookingInfo != null) {
+			return "bk-failed";
+		}
+		
+		Booking booking = bService.findById(bookingid);
+		booking.setGameDate(gameDate);
+		booking.setGameTime(gameTime);
+		
+		bService.updateBooking(booking);
+		
+		return "ok-Update";
+		
+	}
+	
+
 }

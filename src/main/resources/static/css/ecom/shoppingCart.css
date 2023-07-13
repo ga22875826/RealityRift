@@ -8,11 +8,11 @@ body {
 }
 
 .size span {
-  font-size: 11px;
+  font-size: 14px;
 }
 
 .color span {
-  font-size: 11px;
+  font-size: 14px;
 }
 
 .product-deta {
@@ -37,9 +37,9 @@ body {
 }
 
 .text-grey {
-  color: #a39f9f;
+  color:black;
 }
 
 .qty i {
-  font-size: 11px;
+  font-size: 12px;
 }

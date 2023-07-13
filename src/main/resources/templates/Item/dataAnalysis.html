@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" class="light">
+
+<head>
+  <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+  <style>
+    .footer {
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      background-color: #f8f9fa;
+      padding: 20px 0;
+      text-align: center;
+    }
+  </style>
+</head>
+
+
+<body>
+  <div id="loadingScreen"
+    style="position: fixed; left: 0; top: 0; width: 100%; height: 100%; background: #fff; z-index: 9999;">
+    <h1 style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">前往數據分析...</h1>
+  </div>
+  <div class="app-container">
+    <div th:replace="~{layout/item_sidebar}"></div>
+    <div class="app-content" style="min-height: 100vh">
+      <div class="app-content-header" style="margin-bottom: 20px">
+        <h1 class="app-content-headerText">數據分析</h1>
+        <button class="mode-switch" title="Switch Theme">
+          <svg class="moon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+            stroke-width="2" width="24" height="24" viewBox="0 0 24 24">
+            <defs></defs>
+            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+          </svg>
+        </button>
+
+      </div>
+      <div class="container">
+        <div class="btn-group col-3">
+          <button id="pieBtn" class="btn btn-outline-primary" onclick="showPieChart()">按商品分析</button>
+          <button class="btn btn-outline-primary" onclick="showLineChart()">按時間分析</button>
+        </div>
+        <div class="chart-container" id="itemChart">
+          <div class="col-md-3 mt-3">
+            <button id="toggleBtn" class="btn btn-outline-danger" onclick="toggleCharts()">切換柱狀圖</button>
+            <div id="chart_div">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div id="bar_chart_div" style="display: none;"></div>
+          </div>
+        </div>
+        <div class="chart-container" id="lineChart">
+          <div class="row">
+            <div class="col-md-2 mt-5 offset-md-2">
+              <label for="year">選擇年份:</label>
+              <select id="year" class="form-select">
+                <option value="">請選擇年分</option>
+                <option value="2023">2023</option>
+                <option value="2022">2022</option>
+                <option value="2021">2021</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-11" style="margin-top:50px">
+              <div id="time_chart_div"></div>
+            </div>
+          </div>
+        </div>
+        <footer class="footer">
+          <div class="container">
+            <div style="display: flex; align-items: center;">
+              <h6 style="margin-left:20px; margin-right: 10px;">&copy; 第六組 張浩輔</h6>
+              <h4 style="margin-left:200px; margin-right: 10px;"></h4>
+              <img style="max-width: 150px; max-height: 100px;" src="/rr/img/assets/GoogleChart.png" alt="圖片描述">
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+  </div>
+
+  <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+  <script th:src="@{/js/jquery-3.7.0.min.js}"></script>
+  <!--Load the AJAX API-->
+  <!--Load the AJAX API-->
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script type="text/javascript" th:inline="javascript">
+
+    //<![CDATA[
+    $(window).on('load', function () {
+      $('#loadingScreen').fadeOut(1000);
+    });
+
+
+    $(document).ready(function () {
+      // 監聽年分選擇框的變更事件
+      $('#year').on('change', function () {
+        var selectedYear = $(this).val();
+        fetchData(selectedYear); // 根據所選年分重新繪製折線圖
+
+      });
+
+      $('#pieBtn').click();
+    });
+
+
+    function showPieChart() {
+      $('#itemChart').show();
+      $('#lineChart').hide();
+    }
+
+    function showLineChart() {
+      $('#itemChart').hide();
+      $('#lineChart').show();
+    }
+
+    function toggleCharts() {
+      var chartDiv = document.getElementById("chart_div");
+      var barChartDiv = document.getElementById("bar_chart_div");
+      var toggleBtn = document.getElementById("toggleBtn");
+
+      if (chartDiv.style.display === "none") {
+        chartDiv.style.display = "block";
+        barChartDiv.style.display = "none";
+        toggleBtn.innerHTML = "切換柱狀圖";
+      } else {
+        chartDiv.style.display = "none";
+        barChartDiv.style.display = "block";
+        toggleBtn.innerHTML = "切換圓餅圖";
+      }
+    }
+
+
+    google.charts.load('current', { 'packages': ['corechart'] });
+
+    google.charts.setOnLoadCallback(function () {
+      drawPieChart();
+      drawBarChart();
+    });
+
+
+    function drawPieChart() {
+      $.ajax({
+        url: '/rr/chart/itemSales',
+        type: 'GET',
+        success: function (salesData) {
+          var data = new google.visualization.DataTable();
+          data.addColumn('string', '商品名稱');
+          data.addColumn('number', '商品銷量');
+          data.addColumn({ type: 'string', role: 'tooltip' });
+
+          for (var item in salesData) {
+            data.addRow([item, salesData[item], item + ' 銷量: ' + salesData[item]]);
+          }
+
+          var options = {
+            'title': '商品總銷量圓餅圖',
+            'width': 800,
+            'height': 600
+          };
+
+          var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+          chart.draw(data, options);
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          console.error('Error:', errorThrown);
+        }
+      });
+    }
+
+
+    function fetchData(year) {
+      $.ajax({
+        url: '/rr/chart/amount/' + year, // 請根據您的後端 API 端點設定正確的 URL
+        type: 'GET',
+        success: function (response) {
+          var data = [
+            ['月份', '銷售額']
+          ];
+
+          // 從 API 回傳的資料中提取月份和銷售額
+          for (var i = 0; i < response.length; i++) {
+            var month = response[i].month;
+            var totalSales = response[i].totalSales;
+            data.push([month, totalSales]);
+          }
+
+          var options = {
+            title: '年度銷售額趨勢',
+            curveType: 'function',
+            legend: { position: 'bottom' }
+          };
+
+          var chart = new google.visualization.LineChart(document.getElementById('time_chart_div'));
+          var chartData = google.visualization.arrayToDataTable(data);
+          chart.draw(chartData, options);
+        },
+        error: function (xhr, status, error) {
+          console.log('API 呼叫失敗:', error);
+        }
+      });
+    }
+
+
+    function drawBarChart() {
+      $.ajax({
+        url: '/rr/chart/itemSales',
+        type: 'GET',
+        success: function (salesData) {
+          var data = new google.visualization.DataTable();
+          data.addColumn('string', '商品名稱');
+          data.addColumn('number', '商品銷量');
+          data.addColumn({ type: 'string', role: 'tooltip' });
+
+          for (var item in salesData) {
+            data.addRow([item, salesData[item], item + ' 銷量: ' + salesData[item]]);
+          }
+
+          var options = {
+            'title': '商品總銷量柱狀圖',
+            'width': 800,
+            'height': 600
+          };
+
+          var chart = new google.visualization.BarChart(document.getElementById('bar_chart_div'));
+          chart.draw(data, options);
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          console.error('Error:', errorThrown);
+        }
+      });
+    }
+//]]>
+  </script>
+</body>
+
+
+</html>

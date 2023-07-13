@@ -38,13 +38,19 @@
 <body>
   <div class="container mt-5 mb-5">
     <div class="d-flex justify-content-center row">
-      <div class="col-md-8">
+      <div class="col-md-10">
         <div class="p-2">
-          <h4>Shopping cart</h4>
-          <div class="d-flex flex-row align-items-center pull-right"><span class="mr-1">Sort by:</span><span
-              class="mr-1 font-weight-bold">Price</span><i class="fa fa-angle-down"></i></div>
+          <h4 th:text="${session.member.memname}+' 的購物車'"></h4>
+          <div id="sortByPrice" class="d-flex flex-row align-items-center pull-right">
+            <span class="mr-1">排序 :</span>
+            <span class="mr-1 font-weight-bold">單價</span>
+            <i id="sortOrderIcon" class="fa fa-angle-down"></i>
+          </div>
+
+
         </div>
         <div class="cart-container">
+          <input type="hidden" id="member" th:value="${session.member.memno}">
           <!--  div class="d-flex flex-row justify-content-between align-items-center p-2 bg-white mt-4 px-3 rounded">
                         <div class="mr-1"><img class="rounded" src="https://i.imgur.com/XiFJkhI.jpg" width="70"></div>
                         <div class="d-flex flex-column align-items-center product-details"><span class="font-weight-bold">Basic T-shirt</span>
@@ -64,7 +70,8 @@
         </div>
         <div class="d-flex flex-row align-items-center justify-content-end mt-3 p-4 bg-white rounded">
           <h5 class="total-price">Total：</h5>
-          <button class="btn btn-warning btn-block btn-lg ml-2 pay-button" type="button">結帳</button>
+          <button id="confirm-to-buy" class="btn btn-warning btn-block btn-lg ml-2 pay-button"
+            type="button">確認購買</button>
         </div>
 
 
@@ -72,122 +79,244 @@
             class="form-control border-0 gift-card" placeholder="discount code/gift card"><button
             class="btn btn-outline-warning btn-sm ml-2" type="button">Apply</button></div>
         <button class="btn btn-outline-dark mt-3" onclick="goToStore()">取消購買</button>
+           <button id="clear-cart" class="btn btn-outline-danger btn-block btn ml-2 mt-3" type="button">清空購物車</button>
 
       </div>
     </div>
   </div>
   <script>
+  
+
+    let sortOrder = 'ascending';
+    let cart = [];
     window.onload = function () {
-      let cart = localStorage.getItem('cart');
+      cart = localStorage.getItem('cart');
       cart = cart ? JSON.parse(cart) : [];
-      const cartContainer = document.querySelector('.cart-container');
-      cartContainer.innerHTML = '';
+      console.log(JSON.stringify(cart));
 
-      for (let i = 0; i < cart.length; i++) {
-        const product = cart[i];
-        const { item, images } = product;
-        const { itemname, price, itemstatus, itemid } = item;
+      renderCart();
+      
+      document.addEventListener('click', function(event) {
+  if (event.target && event.target.id === 'clear-cart') {
+    clearCart();
+    
+    renderCart();
+  }
+});
+      
+function clearCart() {
+  // Clear the cart array
+  cart = [];
+  localStorage.setItem('cart', JSON.stringify(cart));
+}
+  
 
-        let img = images.length > 0 ? images[0].imagename : "defaultPic.jpg";
-
-        const productHTML = `
-                    <div class="d-flex flex-row justify-content-between align-items-center p-2 bg-white mt-4 px-3 rounded product" data-index="${i}">
-                      <div class="mr-1"><img class="rounded" src="/rr/img/itemimgs/${img}" width="70"></div>
-                      <div class="d-flex flex-column align-items-center product-details"><span class="font-weight-bold">${itemname}</span>
-                        <div class="d-flex flex-row product-desc">
-                          <div class="size mr-1"><span class="text-grey">Size:</span><span class="font-weight-bold">&nbsp;M</span></div>
-                          <div class="color"><span class="text-grey">Color:</span><span class="font-weight-bold">&nbsp;Grey</span></div>
-                        </div>
-                      </div>
-                      <div class="d-flex flex-row align-items-center qty" data-index="${i}">
-                        <i class="fa fa-minus text-danger" data-action="decrease" data-index="${i}"></i>
-                        <h5 class="text-grey mt-1 mr-1 ml-1">${product.quantity}</h5>
-                        <i class="fa fa-plus text-success" data-action="increase" data-index="${i}"></i>
-                      </div>
-                      <div class="d-flex flex-column">
-                        <div>
-                          <h6 class="text-grey">單價: $${price.toFixed(2)}</h6>
-                        </div>
-                        <div>
-						  <h6 class="text-grey total-product-price">共計: $${(price * product.quantity).toFixed(2)}</h6>
-						</div>
-					</div>
-                      <div class="d-flex align-items-center">
-                        <i class="fa fa-trash mb-1 text-danger delete-action" data-action="remove" data-index="${i}"></i>
-                      </div>
-                    </div>
-                  `;
+      document.querySelector('#sortByPrice').addEventListener('click', sortCartByPrice);
 
 
-
-        cartContainer.innerHTML += productHTML;
-      }
-
-      bindEvents();
-
-      updateTotalPrice();
-
-      function changeQuantity(index, diff) {
-        const quantityElement = document.querySelector(`.qty[data-index="${index}"] h5`);
-        const newQuantity = parseInt(quantityElement.innerText) + diff;
-        if (newQuantity > 0) {
-          quantityElement.innerText = newQuantity;
-          cart[index].quantity = newQuantity;
-
-          const totalProductPriceElement = document.querySelector(`.product[data-index="${index}"] .total-product-price`);
-          totalProductPriceElement.innerText = `共計: ${(cart[index].item.price * cart[index].quantity).toFixed(2)}`;
-          ;
-
-
-          localStorage.setItem('cart', JSON.stringify(cart));
-          updateTotalPrice();  // 更新總價格
+      $('#confirm-to-buy').click(function () {
+        cart = JSON.parse(localStorage.getItem('cart'));
+        if (!cart || !Array.isArray(cart) || !cart.length) {
+          alert('Your cart is empty.');
+          return;
         }
-      }
 
-      // 刪除商品
-      function removeProduct(index) {
-        document.querySelector(`.product[data-index="${index}"]`).remove();
-        cart.splice(index, 1);
-        localStorage.setItem('cart', JSON.stringify(cart));
-        updateTotalPrice();  // 更新總價格
-      }
+       let totalAmount = cart.reduce((total, item) => {
+    if (item.isSaleItem) {
+        return total + (item.discountedPrice * item.quantity);
+    } else {
+        return total + (item.item.price * item.quantity);
+    }
+}, 0);
 
-      // 綁定事件的函數
-      function bindEvents() {
-        document.querySelectorAll('[data-action]').forEach(function (element) {
-          element.addEventListener('click', function (e) {
-            const action = this.getAttribute('data-action');
-            const index = this.getAttribute('data-index');
-            switch (action) {
-              case 'increase':
-                changeQuantity(index, 1);
-                break;
-              case 'decrease':
-                changeQuantity(index, -1);
-                break;
-              case 'remove':
-                removeProduct(index);
-                break;
-            }
-          });
+        let order = {
+          memno: JSON.parse(localStorage.getItem('session')),
+          cartItems: cart,
+          orderStatus: "尚未付款",
+          totalAmount: totalAmount
+        };
+
+        console.log(order)
+
+        $.ajax({
+          url: '/rr/api/orders',
+          method: 'POST',
+          data: JSON.stringify(order),
+          contentType: 'application/json',
+          success: function (response) {
+           Swal.fire({
+			    title: '訂單已經建立',
+			    text:'購買尚未完成',
+			    icon: 'warning',
+			    showCancelButton: true,
+			    confirmButtonColor: '#3085d6',
+			    cancelButtonColor: '#d33',
+			    confirmButtonText: '前去完成購買',
+			      cancelButtonText: '繼續購物' 
+			}).then((result) => {
+			    if (result.isConfirmed) {
+			        window.location.href = '/rr/managePage/orderManager.do'; 
+			    } else {
+			        window.location.href = '/rr/managePage/ecomPage.do'; 
+			    }
+			});
+            localStorage.removeItem('cart');
+            renderCart();
+          },
+          error: function (xhr, status, error) {
+            Swal.fire({
+            title: '失敗!',
+            text: '創建訂單失敗.',
+            icon: 'error',
+            confirmButtonColor: '#d33',
+            confirmButtonText: 'OK'
         });
-      }
-
-      function updateTotalPrice() {
-        let total = 0;
-        for (let product of cart) {
-          total += product.item.price * product.quantity;
-        }
-        document.querySelector('.total-price').innerText = '總金額 : $' + total.toFixed(2);
-      }
+          }
+        });
+      });
 
 
 
-    };
+    }
+   function renderCart() {
+  const cartContainer = document.querySelector('.cart-container');
+  cartContainer.innerHTML = '';
+
+  for (let i = 0; i < cart.length; i++) {
+    const product = cart[i];
+    const { item } = product;
+    const { itemname, price, itemstatus, itemid } = item;
+
+    // 根據產品類型來獲取圖片名稱和價格
+    let img;
+    let productPrice;
+    if (product.isSaleItem) {
+      img = product.images.length > 0 ? product.images[0].imagename : "defaultPic.jpg";
+      productPrice = product.discountedPrice;
+    } else {
+      img = product.images.length > 0 ? product.images[0].imagename : "defaultPic.jpg";
+      productPrice = price;
+    }
+
+const productHTML = `
+<div class="d-flex flex-row justify-content-between align-items-center p-2 bg-white mt-4 px-3 rounded product" data-index="${i}">
+  <div class="mr-1"><img class="rounded" src="/rr/img/itemimgs/${img}" width="80"></div>
+  <div class="d-flex flex-column align-items-center product-details"><span class="font-weight-bold">${itemname}</span>
+  </div>
+  <div class="d-flex flex-row align-items-center qty" data-index="${i}">
+    <i class="fa fa-minus text-danger" data-action="decrease" data-index="${i}"></i>
+    <h5 class="text-grey mt-1 mr-1 ml-1">${product.quantity}</h5>
+    <i class="fa fa-plus text-success" data-action="increase" data-index="${i}"></i>
+  </div>
+  <div class="d-flex flex-column">
+    ${product.isSaleItem ? `
+      <div>
+        <h6 class="text-grey">原價: <s>$${price}</s></h6>
+      </div>
+      <div>
+        <h6 class="text-success">特價: $${productPrice}</h6>
+      </div>` : `
+      <div>
+        <h6 class="text-grey">單價: $${productPrice}</h6>
+      </div>`}
+    <div>
+      <h6 class="text-grey total-product-price">共計: $${(productPrice * product.quantity)}</h6>
+    </div>
+  </div>
+  <div class="d-flex align-items-center">
+    <i class="fa fa-trash mb-1 text-danger delete-action" data-action="remove" data-index="${i}"></i>
+  </div>
+</div>
+`;
+
+    cartContainer.innerHTML += productHTML;
+  }
+
+  bindEvents();
+
+  updateTotalPrice();
+
+}
+
+
+ function changeQuantity(index, diff) {
+  const quantityElement = document.querySelector(`.qty[data-index="${index}"] h5`);
+  const newQuantity = parseInt(quantityElement.innerText) + diff;
+  if (newQuantity > 0) {
+    quantityElement.innerText = newQuantity;
+    cart[index].quantity = newQuantity;
+
+    const totalProductPriceElement = document.querySelector(`.product[data-index="${index}"] .total-product-price`);
+
+    // Use discounted price if the item is a sale item
+    let price = cart[index].isSaleItem ? cart[index].discountedPrice : cart[index].item.price;
+
+    totalProductPriceElement.innerText = `共計: ${(price * cart[index].quantity)}`;
+
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateTotalPrice();  // 更新總價格
+  }
+}
+
+    // 刪除商品
+    function removeProduct(index) {
+      document.querySelector(`.product[data-index="${index}"]`).remove();
+      cart.splice(index, 1);
+      localStorage.setItem('cart', JSON.stringify(cart));
+      //console.log(JSON.stringify(cart));
+      updateTotalPrice();  // 更新總價格
+    }
+
+    // 綁定事件的函數
+    function bindEvents() {
+      document.querySelectorAll('[data-action]').forEach(function (element) {
+        element.addEventListener('click', function (e) {
+          const action = this.getAttribute('data-action');
+          const index = this.getAttribute('data-index');
+          switch (action) {
+            case 'increase':
+              changeQuantity(index, 1);
+              break;
+            case 'decrease':
+              changeQuantity(index, -1);
+              break;
+            case 'remove':
+              removeProduct(index);
+              break;
+          }
+        });
+      });
+    }
+
+  function updateTotalPrice() {
+  let total = 0;
+  for (let product of cart) {
+    // Use discounted price if the item is a sale item
+    let price = product.isSaleItem ? product.discountedPrice : product.item.price;
+
+    total += price * product.quantity;
+  }
+  document.querySelector('.total-price').innerText = '總金額 : $' + total;
+}
+
+
     function goToStore() {
       window.location.href = "/rr/managePage/ecomPage.do";
     }
-    // 更新總價格
+    function sortCartByPrice() {
+      // Sort your cart array by price
+      cart.sort(function (a, b) {
+        return sortOrder === 'ascending' ? a.item.price - b.item.price : b.item.price - a.item.price;
+      });
+
+      localStorage.setItem('cart', JSON.stringify(cart));
+
+      renderCart();
+
+      sortOrder = sortOrder === 'ascending' ? 'descending' : 'ascending';
+
+      document.getElementById('sortOrderIcon').className = sortOrder === 'ascending' ? 'fa fa-angle-down' : 'fa fa-angle-up';
+    }
 
 
   </script>
@@ -196,6 +325,7 @@
   <script src="https://kit.fontawesome.com/7e347cd6cd.js" crossorigin="anonymous"></script>
   <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
   <script th:src="@{/js/jquery-3.7.0.min.js}"></script>
+  <script th:src="@{/js/cdn.jsdelivr.net_npm_sweetalert2@11.7.12_dist_sweetalert2.all.min.js}"></script>
 </body>
 
 </html>

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="${gameEach.gname}+' | RealityRift'"></title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
+    crossorigin="anonymous" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ">
+
+  <!-- Bootstrap Datepicker CSS 
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">-->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <link rel="stylesheet" th:href="@{/css/maincss.css}">
+  <link rel="stylesheet" th:href="@{/css/gamePage.css}">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/cwtexyen.css">
+  <script src="https://kit.fontawesome.com/c3891c01bf.js" crossorigin="anonymous"></script>
+
+  <style>
+
+  </style>
+</head>
+
+<body>
+  <!-- 導覽列 -->
+  <div th:replace="~{layout/main_navbar}"></div>
+
+  <!-- 返頂/底紐-->
+  <a id="toTop" class="btn btn-outline-light to-top-btn" role="button">
+    <i class="fa-solid fa-angles-up"></i>
+  </a>
+  <a id="toButton" class="btn btn-outline-light to-bottom-btn" role="button">
+    <i class="fa-solid fa-angles-down"></i>
+  </a>
+
+  <!-- ===============	遊 戲 名 稱  =============== -->
+  <div class="container" style="margin-top:10em">
+    <div class="d-flex justify-content-between align-items-center">
+      <h2 class="wh" th:text="${gameEach.gname}" style="padding-left: 40px; "></h2>
+      <button id="booking-login1" type="button" th:if="${session.member}==null" class="btn btn-outline-warning me-2 " data-bs-target="#loginModal" data-bs-toggle="modal">
+        我 想 玩 <i class="fa-solid fa-plane-departure" style="margin-left: 3px;"></i></button>
+      <button id="booking-btn1" type="button" th:if="${session.member}==null" class="btn btn-outline-warning me-2 hid" data-bs-target="#bookingModal" data-bs-toggle="modal">
+        我 想 玩 <i class="fa-solid fa-plane-departure" style="margin-left: 3px;"></i></button>
+      <button id="booking-btn1" type="button" th:if="${session.member}!=null" class="btn btn-outline-warning me-2 " data-bs-target="#bookingModal" data-bs-toggle="modal">
+        我 想 玩 <i class="fa-solid fa-plane-departure" style="margin-left: 3px;"></i></button>
+      <button id="booking-login1" type="button" th:if="${session.member}!=null" class="btn btn-outline-warning me-2 hid" data-bs-target="#loginModal" data-bs-toggle="modal">
+        我 想 玩 <i class="fa-solid fa-plane-departure" style="margin-left: 3px;"></i></button>
+    </div>
+  </div><br>
+  <hr class="wh">
+
+  <input type="hidden" id="memno" th:value="${session.member} ? ${session.member.memno}">
+
+  <!-- ===============	預 約 =============== -->
+
+  <!-- Booking Game -->
+  <div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true"
+    style="margin-top: 100px;">
+
+    <div class="modal-dialog modal-dialog-centered" style="--bs-modal-width: calc(2.5 * 500px); ">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <i class="fa-solid fa-gamepad me-2"></i>
+          <h4 class="modal-title" id="bookingModalLabel" style="color:#000" th:text="'預約：《 '+${gameEach.gname}+' 》'">
+          </h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body modal-dialog-centered modal-dialog-scrollable">
+          <input type="hidden" id="gameid" th:value="${gameEach.gameid}">
+          <div class="container">
+            <div class="row ">
+              <!-- ===============  左邊  =============== -->
+
+              <div class="col-6 d-flex align-items-center justify-content-center"
+                style="border-right: 1.5px solid #CCCCCC;">
+                <img class="" th:src="${'/rr/'+gameEach.gameimg}" alt="#"
+                  style="padding-right: 20px;width: 100%; height:80%">
+              </div>
+
+              <!-- ===============  右邊  =============== -->
+
+              <div class="col-6 mt-5 ">
+
+                <div class="row mt-2 ">
+                  <h4 class="col d-flex align-items-center justify-content-center text-success " id="bookingMsg"
+                    th:text="'預約：《 '+${gameEach.gname}+' 》'"></h4>
+                </div>
+                <hr>
+
+                <div class="row">
+                  <h4 class="col" th:text="'人數： '+${gameEach.player}"></h4>
+                  <h4 class="col" th:text="'時間： '+${gameEach.time}"></h4>
+                  <h4 class="col" th:text="'費用： $'+${gameEach.priceper}+' / 人'"></h4>
+                </div>
+                <hr><br>
+
+
+                <div id="chooseDate">
+                  <h5 class="bk ">選 擇 日 期</h5>
+                  <input type="date" class="form-control datepicker mt-3" id="datepicker" min="yyyy-mm-dd"
+                    max="yyyy-mm-dd">
+                </div><br>
+                <hr><br>
+
+                <div class="" id="">
+                  <h5 class="bk">選 擇 場 次</h5>
+                  <div class="row d-flex justify-content-between mt-3" id="optionsContainer">
+                    <button type="button" class="col btn btn-outline-dark">17：00</button>
+                    <button type="button" class="col btn btn-outline-dark">18：30</button>
+                    <button type="button" class="col btn btn-outline-dark">20：00</button>
+                    <button type="button" class="col btn btn-outline-dark">21：30</button>
+                  </div>
+                </div><br>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+          <button type="button" class="btn btn-primary" id="saveBooking">預約</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===============	圖 + 介紹	=============== -->
+  <div class="container">
+    <div class="row justify-items-between align-items-center mt-5">
+      <div class="col-1"></div>
+      <div class="col-5 " style="border-right: 1.5px solid #707070;">
+        <img th:src="${'/rr/'+gameEach.gameimg}" alt="#" style="padding-right: 80px;width: 100%; height:80%">
+      </div>
+      <div class="col-1"></div>
+      <div class="col-5">
+        <h4 class="text-center text-danger" th:text="'難 度 等 級 ： '+${gameEach.level}"> </h4>
+        <h5 class="mt-4">遊 戲 介 紹</h5>
+        <div class="wh" th:utext="${gameEach.textdesc}" style="color:#ffc107 "></div>
+      </div>
+    </div>
+  </div><br>
+
+  <hr class="wh">
+
+  <!-- ===============	info	=============== -->
+  <div class="container">
+    <div class="row justify-items-between align-items-center">
+      <div class="col-1"></div>
+      <div class="col-5 my-4" style="border-right: 1.5px solid #707070;">
+        <div>
+          <h5>遊 戲 時 間</h5>
+          <p th:text="${gameEach.time}"></p>
+        </div><br>
+        <div>
+          <h5>遊 戲 人 數</h5>
+          <p th:text="${gameEach.player}"></p>
+        </div><br>
+        <div>
+          <h5>費 用</h5>
+          <p><span>$ <span th:text="${gameEach.priceper}"></span> / 人</span></p>
+        </div>
+      </div>
+      <div class="col-1"></div>
+      <div class="col-5 my-4">
+        <div>
+          <h5>工 作 室</h5>
+          <p th:text="${gameEach.studio}"></p>
+        </div><br>
+        <div>
+          <h5>連 絡 電 話</h5>
+          <p th:text="${gameEach.phone}"></p>
+        </div><br>
+        <div>
+          <h5>地 址</h5>
+          <p th:text="${gameEach.address}"></p>
+        </div>
+      </div>
+    </div>
+  </div><br>
+  <hr class="wh">
+
+  <!-- ===============	info	=============== -->
+
+  <div class="container">
+    <div class="row justify-items-between align-items-center">
+      <div class="col-2"></div>
+      <div class="col-2">
+        <span><i class=" fa-solid fa-angles-left " style="color:#fff"></i></span>
+      </div>
+      <div class="col-4 d-flex align-items-center justify-content-center" style="height:150px">
+        <button th:if="${session.member}==null" id="booking-login2" type="button" class="btn btn-outline-warning me-2 " data-bs-target="#loginModal"
+          data-bs-toggle="modal">
+          <i class="fa-solid fa-plane-departure" style="margin-right:3px;"></i> 前 往 預 約 </button>
+        <button th:if="${session.member}==null" id="booking-btn2" type="button" class="btn btn-outline-warning me-2 hid" data-bs-target="#bookingModal"
+          data-bs-toggle="modal">
+          <i class="fa-solid fa-plane-departure" style="margin-right:3px;"></i> 前 往 預 約 </button>
+        <button th:if="${session.member}!=null" id="booking-login2" type="button" class="btn btn-outline-warning me-2 hid" data-bs-target="#loginModal"
+          data-bs-toggle="modal">
+          <i class="fa-solid fa-plane-departure" style="margin-right:3px;"></i> 前 往 預 約 </button>
+        <button th:if="${session.member}!=null" id="booking-btn2" type="button" class="btn btn-outline-warning me-2 " data-bs-target="#bookingModal"
+          data-bs-toggle="modal">
+          <i class="fa-solid fa-plane-departure" style="margin-right:3px;"></i> 前 往 預 約 </button>
+      </div>
+      <div class="col-2"></div>
+      <div class="col-2">
+        <span class=""><i class=" fa-solid fa-angles-right " style="color:#fff"></i></span>
+      </div>
+    </div>
+  </div><br>
+  <!-- Footer-->
+  <footer id="footer" class="bg-dark">
+    <div class="container ">
+      <p class="m-0 pb-4 text-center text-white">Copyright &copy; 實境裂谷 2023</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"
+    integrity="sha384-zYPOMqeu1DAVkHiLqWBUTcbYfZ8osu1Nd6Z89ify25QV9guujx43ITvfi12/QExE"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.min.js"
+    integrity="sha384-Y4oOpwW3duJdCWv5ly8SCFYWqFDsfob/3GkgExXKV4idmbt98QcxXYs9UoXAB7BZ"
+    crossorigin="anonymous"></script>
+  <!-- Bootstrap Datepicker JS 
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>-->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script th:src="@{/js/gamePage.js}"></script>
+
+  <script th:inline="javascript">
+
+    $(function () {
+
+      let gameName = /*[[${gameEach.gname}]]*/ null;
+      let memno = $('#memno').val();
+
+      var selectedDate = "";
+      var selectedTime = "";
+
+
+      //  ========== ========== ===== ===== ========== ==========
+
+      //datepicker
+      var today = new Date().toISOString().split("T")[0];
+
+      // maxDate-2M
+      var maxDate = new Date();
+      maxDate.setMonth(maxDate.getMonth() + 2);
+      maxDate = maxDate.toISOString().split("T")[0];
+
+      var dateInput = document.getElementById("datepicker");
+      dateInput.min = today;
+      dateInput.max = maxDate;
+
+      //  ========== ========== ===== ===== ========== ==========
+
+      //場次欄
+      $(document).ready(function () {
+        var $buttons = $('#optionsContainer button');
+
+        $buttons.click(function () {
+          if ($(this).hasClass('btn-danger')) {
+            // 反選按鈕，將選項還原成初始狀態
+            $(this).removeClass('btn-danger').addClass('btn-outline-dark');
+            $buttons.prop('disabled', false);
+            selectedTime = "";
+            updateBookingMsg();
+          } else {
+            // 選擇按鈕，處理選項的樣式與狀態
+            $buttons.removeClass('btn-outline-dark').addClass('btn-outline-light').prop('disabled', true);
+            $(this).removeClass('btn-outline-dark').addClass('btn-danger').prop('disabled', false);
+            selectedTime = $(this).text();
+            updateBookingMsg();
+          }
+        });
+
+        $('#datepicker').change(function () {
+          selectedDate = $(this).val();
+          updateBookingMsg();
+        });
+
+        function updateBookingMsg() {
+          var bookingMsg = "";
+          var gameName = "預約：《 " + bookingMsg + " 》";
+          if (selectedDate || selectedTime) {
+            bookingMsg = "日期：" + selectedDate + "	/	時間：" + selectedTime;
+          }
+          $('#bookingMsg').text(bookingMsg);
+        }
+      });
+
+      // =================================================================================
+
+      $(document).ready(function () {
+        $('#saveBooking').click(function () {
+
+          Swal.fire({
+            title: '確 認 預 約 《' + gameName + '》?',
+            text: "日期：" + selectedDate + "	/	時間：" + selectedTime,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#ffc107',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: '預 約',
+            cancelButtonText: '取 消'
+
+          }).then((result) => {
+            if (result.isConfirmed) {
+
+              $.ajax({
+                url: "/rr/booking",
+                type: "POST",
+                data: {
+                  memno: memno,
+                  gameid: $('#gameid').val(),
+                  gameDate: selectedDate,
+                  gameTime: selectedTime
+                },
+
+                success: function (response) {
+                  if (response === "bk-failed") {
+                    Swal.fire({
+                      title: '預 約 失 敗',
+                      text: "該場次已額滿，請另選時段",
+                      icon: 'error'
+                    });
+                  } else if (response === "bk-ok") {
+                    Swal.fire({
+                      title: '預 約 成 功 ！',
+                      text: '訂單已成立，期待與您見面',
+                      icon: 'success'
+                    }).then((result) => {
+                      if (result.isConfirmed) {
+                        window.location.href = "/rr/mybooking?memno=" + memno;
+                      }
+                    });
+                  } else {
+                    console.log(response);
+                  }
+                },
+              });
+            }
+          });
+        });
+      });
+      
+    	  
+      
+    })
+
+  </script>
+
+</body>
+</html>

@@ -32,8 +32,6 @@ tr th:hover{
 }
 
 tbody{
-	display:block;
-	height:60vh;
 	overflow:auto;
 }
 

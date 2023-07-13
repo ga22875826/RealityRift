@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+  <title>臥 的 預 約 | RealityRift</title>
+  <!-- Favicon
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />-->
+  <!-- Bootstrap icons-->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Bootstrap Datepicker CSS -->
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+  <!-- Core theme CSS (includes Bootstrap)-->
+  <script src="https://kit.fontawesome.com/c3891c01bf.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" th:href="@{/css/bk-member.css}">
+  <link rel="stylesheet" th:href="@{/css/bk-all.css}">
+  <link rel="stylesheet" th:href="@{/css/bk-style.css}">
+  <link rel="stylesheet" th:href="@{/css/maincss.css}">
+
+
+  <style>
+
+  </style>
+
+</head>
+
+<body class="">
+
+  <!-- 導覽列 -->
+  <div th:replace="~{layout/main_navbar}"></div>
+
+  <!-- Header-->
+  <header class="bg-dark pt-5" style="margin-top:3em">
+    <div class="container px-2 px-lg-3 my-1">
+      <div class="text-center text-white">
+        <h3 class="display-6 fw-bolder mt-4 typewriter" style="text-shadow: 0px 0px 8px rgba(255, 255, 255, 0.5);"
+          th:text="'午安！'+${session.member.memname}"></h3>
+        <p class="lead fw-normal text-white-50 mb-0"> _ _ _ _ _ _ _ _ _ _ </p>
+      </div>
+    </div>
+  </header>
+
+  <!-- 返頂/底紐-->
+  <a id="toTop" class="btn btn-outline-light to-top-btn" role="button">
+    <i class="fa-solid fa-angles-up"></i>
+  </a>
+  <a id="toButton" class="btn btn-outline-light to-bottom-btn " role="button">
+    <i class="fa-solid fa-angles-down"></i>
+  </a>
+
+  <!-- Section-->
+  <section class="">
+
+    <input type="hidden" id="memno" th:value="${session.member} ? ${session.member.memno}">
+
+    <div class="container py-4 my-5">
+
+      <nav aria-label="breadcrumb" style="--bs-breadcrumb-divider: '》'; font-size: 26px; ">
+        <ol class="breadcrumb" style="--bs-breadcrumb-divider-color:red">
+          <li class="breadcrumb-item"><a th:href="@{/}" style="color:teal"> 首 頁 </a></li>
+          <li class="breadcrumb-item"><a th:href="@{/profile}" style="color:teal"> 會 員 中 心 </a></li>
+          <li class="breadcrumb-item active" aria-current="page" style="color:cyan"> 我 的 預 約 </li>
+        </ol>
+      </nav>
+
+
+
+      <th:block th:each="booking : ${bookings}">
+
+        <div class="row my-5 px-2 py-5" style="box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.5); border-radius: 10px;">
+
+          <div class="col-5 d-flex justify-content-center align-items-center">
+            <img class="" th:src="${booking.gameBean.gameimg}" alt="" style="width: 80%;">
+          </div>
+
+
+          <div class="col-7">
+            <h2 class="card-title text-orange">
+              <span th:text="${booking.gameBean.gname}"></span>
+            </h2><br>
+
+
+            <ul class="post-meta my-3 " style="list-style-type: none;">
+              <li class="">
+                <h3>
+                  <span class="fas fa-clock text-primary"></span>
+                  <a class="ms-2 me-5" th:text="'預約日期：	'+${booking.gameDate}"></a>
+                  <span class="fas fa-list-alt text-primary ms-5"></span>
+                  <a class="ms-2 " th:text="'場次時間：	'+${booking.gameTime}"></a>
+                </h3><br>
+              </li>
+
+              <li class="" style="color:orange">
+                <h4 class="my-4 " th:text="'電話：'+${booking.gameBean.phone}"></h4>
+                <h4 class="my-4 " th:text="'地址：'+${booking.gameBean.address}"></h4>
+                <h4 class="my-4 " th:text="'費用： $' +${booking.gameBean.priceper}+' / 人'"></h4>
+              </li>
+
+              <li class="">
+                <hr>
+                <button class="btn btn-primary ml-1" id="delete"> 取消預約 </button>
+                <span class="booking-id" th:text="${booking.bookingid}" style="color:#141414"></span>
+              </li>
+
+
+            </ul>
+          </div>
+
+
+
+        </div>
+      </th:block>
+    </div>
+
+    <!-- ========== ========== ========== ========== ========== ========== ========== ========== ========== ========== -->
+
+  </section>
+
+
+
+
+
+
+  <!-- Footer-->
+  <footer id="footer" class="bg-dark">
+    <div class="container ">
+      <p class="m-0 text-center text-white">Copyright &copy; 實境裂谷 2023</p>
+    </div>
+  </footer>
+
+  <!-- ========== ========== ===== script ===== ========== ==========  -->
+
+  <!-- Bootstrap core JS-->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Bootstrap Datepicker JS -->
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+  <!-- Core theme JS-->
+  <script th:src="@{/js/bk-member.js}"></script>
+
+  <script th:inline="javascript">
+
+    $(function () {
+
+      $(".btn-primary").click(function () {
+
+        let bookingid = $(this).siblings(".booking-id").text();
+        console.log(bookingid);
+        
+        let btn = $(this);
+
+        Swal.fire({
+
+          title: '確定取消預約?',
+          html: '<p>取消預約後，若仍想參加遊戲，需重新進行預約。</p>',
+
+          showCancelButton: false,
+          showDenyButton: true,
+          denyButtonText: '保留',
+          confirmButtonText: '確定',
+
+        }).then((result) => {
+          /* Read more about isConfirmed, isDenied below */
+          if (result.isConfirmed) {
+            $.ajax({
+            
+              type: "delete",
+              url: "/rr/bookingDelete",
+              data: { bookingid: bookingid },
+              
+              success: function (response) {
+              
+                // 刪除成功時執行的代碼
+                btn.parent().parent().parent().parent().remove();
+                Swal.fire('刪除成功', '', 'success')
+              },
+              error: function (xhr, status, error) {
+              
+                // 刪除失敗時執行的代碼
+                console.log(error);
+              }
+            });
+
+          } else if (result.isDenied) {
+
+          }
+        })
+      });
+
+
+    });
+
+
+
+// <!-- ============================================================================= -->
+
+
+  </script>
+</body>
+
+</html>

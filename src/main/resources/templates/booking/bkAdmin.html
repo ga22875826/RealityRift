@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en" class="light" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>預 約 管 理 | RealityRift</title>
+    <!-- normalize.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/bk-admin.css}">
+    <!-- Fonts Awesome -->
+    <script src="https://kit.fontawesome.com/c3891c01bf.js" crossorigin="anonymous"></script>
+
+    <style>
+
+    </style>
+
+</head>
+
+<body>
+    <!-- partial:index.partial.html -->
+
+    <div class="app-container">
+        <div style="min-height:100vh">
+            <div th:replace="~{layout/dashboard_sidebar}"></div>
+        </div>
+        <div class="app-content" style="min-height:100vh">
+            <div class="app-content-header">
+                <h1 class="app-content-headerText"><i class="fa-solid fa-toggle-off"></i> 預 約 管 理</h1>
+                <button class="mode-switch" title="Switch Theme">
+                    <svg class="moon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2" width="24" height="24" viewBox="0 0 24 24">
+                        <defs></defs>
+                        <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="app-content-actions"></div>
+
+            <!-- ============================================================================= -->
+
+            <table class="display products-area-wrapper tableView" id="myTable">
+                <thead>
+                    <tr class="products-header">
+                        <th class="product-cell-id booking-id"><i class="fa-solid fa-filter"></i><span
+                                style="visibility:hidden" th:text="0"></span>預約編號</th>
+                        <th class="product-cell-main game-name">《 遊 戲 》<span style="visibility:hidden"
+                                th:text="0"></span><i class="fa-solid fa-sort"></i></th>
+                        <th class="product-cell-info memno " id="">會員編號<span style="visibility:hidden"
+                                th:text="0"></span><i class="fa-solid fa-sort"></i></th>
+                        <th class="product-cell-info memName ">會員<span style="visibility:hidden" th:text="0"></span><i
+                                class="fa-solid fa-sort"></i></th>
+                        <th class="product-cell-info gameDate">預約日期<span style="visibility:hidden" th:text="0"></span><i
+                                class="fa-solid fa-sort"></i></th>
+                        <th class="product-cell-info gameTime">預約場次<span style="visibility:hidden" th:text="0"></span><i
+                                class="fa-solid fa-sort"></i></th>
+                        <th class="product-cell-main bookingTime">下訂時間<span style="visibility:hidden"
+                                th:text="0"></span><i class="fa-solid fa-sort"></i></th>
+
+                        <th style="visibility:hidden" class="">
+                            <button>編輯</button>
+                            <button style="margin-right:60px">刪除</button>
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody class="overflowAuto" id="bookingList">
+                    <tr class="products-row mt-2" th:each="booking : ${bookings}">
+                        <td class="product-cell-id booking-id" th:text="${booking.bookingid}" id=""></td>
+                        <td class="product-cell-main image game-name">
+                            <img th:src="${booking.gameBean.gameimg}" alt="product"
+                                style="width:40px;height:40px;border-radius: 5px;">
+                            <span th:text="${booking.gameBean.gname}" class="ms-2"></span>
+                        </td>
+                        <td class="product-cell-info memno" th:text="${booking.member.memno}"></td>
+                        <td class="product-cell-info memName" th:text="${booking.member.memname}"></td>
+                        <td class="product-cell-info date datepicker" th:text="${booking.gameDate}"></td>
+                        <td class="product-cell-info time" th:text="${booking.gameTime}"></td>
+                        <td class="product-cell-main bookingTime"
+                            th:text="${#dates.format(booking.bookingTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                        <td>
+                            <button class="btn btn-success btn-sm " id="sava" style="display: none">儲存</button>
+                            <button class="btn btn-warning btn-sm " id="update">修改</button>
+                            <button class="btn btn-danger btn-sm ms-2" id="delete" style="margin-right:60px">刪除</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- ============================================================================= -->
+        </div>
+    </div>
+
+    <!-- partial -->
+    <script th:src="@{/js/dashboard.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"
+        integrity="sha384-zYPOMqeu1DAVkHiLqWBUTcbYfZ8osu1Nd6Z89ify25QV9guujx43ITvfi12/QExE"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.min.js"
+        integrity="sha384-Y4oOpwW3duJdCWv5ly8SCFYWqFDsfob/3GkgExXKV4idmbt98QcxXYs9UoXAB7BZ"
+        crossorigin="anonymous"></script>
+    <script th:src="@{/js/jquery-3.6.4.js}"></script>
+    <!-- <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script th:src="@{/js/bk-admin.js}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script th:inline="javascript">
+
+        let table = new DataTable('#myTable');
+
+        $(function () {
+
+            $(".btn-danger").click(function () {
+                let bookingid = $(this).parent().parent().find(".booking-id").text();
+                let btn = $(this);
+                Swal.fire({
+
+                    title: '確定取消預約?',
+                    showDenyButton: true,
+                    showCancelButton: false,
+                    confirmButtonText: '確定',
+                    denyButtonText: '取消',
+                    icon: 'question'
+
+                }).then((result) => {
+                    if (result.isConfirmed) {
+
+                        $.ajax({
+                            type: "delete",
+                            url: "/rr/bookingDelete",
+                            data: { bookingid: bookingid },
+                            success: function (response) {
+
+                                // 刪除成功時執行的代碼
+                                Swal.fire('預約已取消', '', 'success')
+                                    .then((result) => {
+                                        if (result.isConfirmed) {
+                                            window.location.href = "/rr/db/bookingmanager";
+                                        }
+                                    });
+                                console.log(response);
+                            },
+                            error: function (xhr, status, error) {
+                                // 刪除失敗時執行的代碼
+                                console.log(error);
+                            }
+                        });
+
+                    } else if (result.isDenied) {
+
+                    }
+                })
+            });
+            let oldTime = "";
+            $(".btn-warning").click(function () {
+                let row = $(this).closest("tr");
+				oldTime = row.find(".time").text();
+                let gameDate = row.find(".product-cell-info.date").text().trim();
+                let gameTime = row.find(".product-cell-info.time").text().trim();
+
+                var dateInput = $('<input type="date" class="product-cell-info" style="width:124px">').val(gameDate);
+                let timeInput = `<select class="product-cell-info" style="width:100px" value="${gameTime}" >
+                					<option value=`+gameTime+`>請選擇場次</option>
+            					    <option value="17：00">17：00</option>
+            					    <option value="18：30">18：30</option>
+            					    <option value="20：00">20：00</option>
+            					    <option value="21：30">21：30</option>
+            					  </select>
+            					`;
+
+                row.find(".product-cell-info.date").html(dateInput);
+                row.find(".product-cell-info.time").html(timeInput);
+
+
+                var today = new Date().toISOString().split('T')[0];
+                var maxDate = new Date();
+                maxDate.setMonth(maxDate.getMonth() + 2);
+                maxDate = maxDate.toISOString().split('T')[0];
+
+                dateInput.attr('min', today);
+                dateInput.attr('max', maxDate);
+
+                // 显示保存按钮，隐藏修改按钮
+                row.find(".btn-success").css("display", "inline-block");
+                row.find(".btn-warning").css("display", "none");
+            });
+
+
+            $(".btn-success").click(function () {
+
+                let row = $(this).parent().parent();
+                row.find(".btn-success").css("display", "none");
+                row.find(".btn-warning").css("display", "inline-block");
+				
+                let date = row.find(".date input").val();
+                let time = row.find(".time select").val();
+
+                row.find(".date").html(date);
+                row.find(".time").html(time);
+
+                let bookingid = $(this).parent().parent().find(".booking-id").text();
+                let gameName = $(this).parent().parent().find(".game-name span").text();
+                console.log(gameName);
+
+                $.ajax({
+                    type: "POST",
+                    url: "/rr/bookingUpdate",
+                    data: {
+                        bookingid: bookingid,
+                        gameName: gameName,
+
+                        gameDate: date,
+                        gameTime: time
+
+                    },
+                    success: function (response) {
+                    	console.log(response);
+                        if (response === "bk-failed") {
+                        	row.find(".time").text(oldTime);
+                            Swal.fire({
+                                title: '修 改 失 敗',
+                                text: "該場次已有預約，請另選時段",
+                                icon: 'error'
+                            });
+                        } else if (response === "ok-Update") {
+                            Swal.fire({
+                                title: '修 改 成 功 ！',
+                                icon: 'success'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = "/rr/db/bookingmanager";
+                                }
+                            });
+                        } else {
+                            console.log(response);
+                        }
+                    },
+
+                });
+            });
+        });
+
+        document.querySelector(".li-booking").classList.add("active");
+
+
+
+
+// <!-- ============================================================================= -->
+
+
+    </script>
+
+</body>
+
+</html>

@@ -101,7 +101,9 @@
 							th:href="@{/db/manager.showItemList.do}"><span>商品後台</span></a></li>
 					<li class="sidebar-list-item li-product-category"><a
 							th:href="@{/db/managePage/categoryManage}"><span>類別管理</span></a></li>
-					<li class="sidebar-list-item li-limited-time-sale"><a href="#"><span>限時特賣</span></a></li>
+					<li class="sidebar-list-item li-limited-time-sale"><a th:href="@{/db/managePage/saleManage.do}"><span>限時特賣</span></a></li>
+					<li class="sidebar-list-item li-limited-time-sale"><a th:href="@{/db/managePage/orderAdmin.do}"><span>訂單管理</span></a></li>
+					<li class="sidebar-list-item li-limited-time-sale"><a th:href="@{/db/managePage/analysis.do}"><span>數據分析</span></a></li>
 					<li class="sidebar-list-item li-online-mall"><a th:href="@{/managePage/ecomPage.do}"><span>商品前台</span></a></li>
 				</ul>
 			</li>

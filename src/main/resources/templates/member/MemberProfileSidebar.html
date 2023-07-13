@@ -20,6 +20,7 @@
         <li class="nav-item navli"><a class="nav-link" id="profile" th:href="@{/profile}">個人資料</a></li>
         <li th:if="${session.member.isgoogleaccount==0}" class="nav-item navli"><a class="nav-link" id="editPassword" th:href="@{/editpassword}">修改密碼</a></li>
         <li th:if="${session.member.isgoogleaccount==0}" class="nav-item navli"><a class="nav-link" id="second-authenticator" th:href="@{/secondauthenticatorpage}">兩階段驗證</a></li>
+        <li class="nav-item navli"><a class="nav-link" id="mybooking" th:href="@{/mybooking}">我的預約</a></li>
         <!--<li class="nav-item navli"><a class="nav-link" href="#">好友清單</a></li>-->
     </ul>
             
