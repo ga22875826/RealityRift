@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" class=light>
+
+<head>
+	<meta charset="UTF-8">
+	<title>商品後台</title>
+	<link th:href="@{/css/modal1.css}" rel="stylesheet">
+	<link th:href="@{/css/dashboard.css}" rel="stylesheet">
+	<link th:href="@{/css/dashboard1.css}" rel="stylesheet">
+	<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+	<link th:href="@{/css/itemDataTable.css}" rel="stylesheet">
+	<link th:href="@{/css/cdn.jsdelivr.net_npm_sweetalert2@11.7.12_dist_sweetalert2.min.css}" rel="stylesheet">
+	<style>
+		.imgUpload.uploaded-image {
+			width: 80px;
+			height: 100px;
+		}
+
+		.category-path {
+			display: inline-block;
+			width: 100px;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+
+		.show-full-text {
+			white-space: normal;
+			overflow: visible;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="app-container">
+		<div th:replace="~{layout/dashboard_sidebar}"></div>
+		<div class="app-content" style="min-height: 100vh">
+
+			<div class="app-content-header">
+				<h1 class="app-content-headerText">商品管理</h1>
+				<button class="mode-switch" title="Switch Theme">
+					<svg class="moon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+						stroke-width="2" width="24" height="24" viewBox="0 0 24 24">
+						<defs></defs>
+						<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+					</svg>
+				</button>
+				<a class="app-content-headerButton" th:href="@{/covertToAddItem.do}">新增商品</a>
+
+			</div>
+			<div class="app-content-actions">
+				<div class="app-content-actions-wrapper">
+					<div class="filter-button-wrapper">
+						<button class="action-button filter jsFilter">
+							<span>Filter</span>
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+								fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+								stroke-linejoin="round" class="feather feather-filter">
+								<polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+							</svg>
+						</button>
+						<div class="filter-menu">
+							<form method="Post" action="/Project2Hibernate/ItemFilterSearch">
+								<label>商品種類</label> <select class="form-select" id="category" name="category">
+									<option value="">所有種類</option>
+									<option value="服裝">服裝</option>
+									<option value="道具">道具</option>
+									<option value="周邊">周邊</option>
+									<option value="劇本">劇本</option>
+								</select>
+
+
+								<label>狀態</label> <select class="form-select" id="itemstatus" name="itemstatus">
+									<option value="">全部狀態</option>
+									<option value="販售中">販售中</option>
+									<option value="售完">售完</option>
+									<option value="停售">停售</option>
+								</select>
+								<div class="filter-menu-buttons">
+									<button type="reset" class="filter-button reset">重選</button>
+									<button type="submit" class="filter-button apply">應用</button>
+								</div>
+							</form>
+						</div>
+					</div>
+					<button class="action-button list active" title="List View">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+							stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+							class="feather feather-list">
+							<line x1="8" y1="6" x2="21" y2="6" />
+							<line x1="8" y1="12" x2="21" y2="12" />
+							<line x1="8" y1="18" x2="21" y2="18" />
+							<line x1="3" y1="6" x2="3.01" y2="6" />
+							<line x1="3" y1="12" x2="3.01" y2="12" />
+							<line x1="3" y1="18" x2="3.01" y2="18" />
+						</svg>
+					</button>
+					<button class="action-button grid" title="Grid View">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+							stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+							class="feather feather-grid">
+							<rect x="3" y="3" width="7" height="7" />
+							<rect x="14" y="3" width="7" height="7" />
+							<rect x="14" y="14" width="7" height="7" />
+							<rect x="3" y="14" width="7" height="7" />
+						</svg>
+					</button>
+				</div>
+			</div>
+			<!-------------------- 欄位區title ------------------->
+			<table id="myTable" class="display products-area-wrapper tableView">
+				<thead>
+					<tr class="products-header">
+						<th class="product-cell image">編號
+							<button class="sort-button">
+								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16 " viewBox="0 0 512 512">
+									<path fill="currentColor"
+										d="M496.1 138.3L375.7 17.9c-7.9-7.9-20.6-7.9-28.5 0L226.9 138.3c-7.9 7.9-7.9 20.6 0 28.5 7.9 7.9 20.6 7.9 28.5 0l85.7-85.7v352.8c0 11.3 9.1 20.4 20.4 20.4 11.3 0 20.4-9.1 20.4-20.4V81.1l85.7 85.7c7.9 7.9 20.6 7.9 28.5 0 7.9-7.8 7.9-20.6 0-28.5zM287.1 347.2c-7.9-7.9-20.6-7.9-28.5 0l-85.7 85.7V80.1c0-11.3-9.1-20.4-20.4-20.4-11.3 0-20.4 9.1-20.4 20.4v352.8l-85.7-85.7c-7.9-7.9-20.6-7.9-28.5 0-7.9 7.9-7.9 20.6 0 28.5l120.4 120.4c7.9 7.9 20.6 7.9 28.5 0l120.4-120.4c7.8-7.9 7.8-20.7-.1-28.5z" />
+								</svg>
+							</button>
+						</th>
+						<th class="product-cell image">圖片預覽</th>
+
+
+						<th class="product-cell image">
+							<button class="sort-button"></button>
+						</th>
+
+
+						<th class="product-cell category">名稱
+							<button class="sort-button">
+								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 512 512">
+									<path fill="currentColor"
+										d="M496.1 138.3L375.7 17.9c-7.9-7.9-20.6-7.9-28.5 0L226.9 138.3c-7.9 7.9-7.9 20.6 0 28.5 7.9 7.9 20.6 7.9 28.5 0l85.7-85.7v352.8c0 11.3 9.1 20.4 20.4 20.4 11.3 0 20.4-9.1 20.4-20.4V81.1l85.7 85.7c7.9 7.9 20.6 7.9 28.5 0 7.9-7.8 7.9-20.6 0-28.5zM287.1 347.2c-7.9-7.9-20.6-7.9-28.5 0l-85.7 85.7V80.1c0-11.3-9.1-20.4-20.4-20.4-11.3 0-20.4 9.1-20.4 20.4v352.8l-85.7-85.7c-7.9-7.9-20.6-7.9-28.5 0-7.9 7.9-7.9 20.6 0 28.5l120.4 120.4c7.9 7.9 20.6 7.9 28.5 0l120.4-120.4c7.8-7.9 7.8-20.7-.1-28.5z" />
+								</svg>
+							</button>
+						</th>
+						<th class="product-cell category">種類
+							<button class="sort-button">
+								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 512 512">
+									<path fill="currentColor"
+										d="M496.1 138.3L375.7 17.9c-7.9-7.9-20.6-7.9-28.5 0L226.9 138.3c-7.9 7.9-7.9 20.6 0 28.5 7.9 7.9 20.6 7.9 28.5 0l85.7-85.7v352.8c0 11.3 9.1 20.4 20.4 20.4 11.3 0 20.4-9.1 20.4-20.4V81.1l85.7 85.7c7.9 7.9 20.6 7.9 28.5 0 7.9-7.8 7.9-20.6 0-28.5zM287.1 347.2c-7.9-7.9-20.6-7.9-28.5 0l-85.7 85.7V80.1c0-11.3-9.1-20.4-20.4-20.4-11.3 0-20.4 9.1-20.4 20.4v352.8l-85.7-85.7c-7.9-7.9-20.6-7.9-28.5 0-7.9 7.9-7.9 20.6 0 28.5l120.4 120.4c7.9 7.9 20.6 7.9 28.5 0l120.4-120.4c7.8-7.9 7.8-20.7-.1-28.5z" />
+								</svg>
+							</button>
+						</th>
+						<th class="product-cell status-cell">狀態
+							<button class="sort-button">
+								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 512 512">
+									<path fill="currentColor"
+										d="M496.1 138.3L375.7 17.9c-7.9-7.9-20.6-7.9-28.5 0L226.9 138.3c-7.9 7.9-7.9 20.6 0 28.5 7.9 7.9 20.6 7.9 28.5 0l85.7-85.7v352.8c0 11.3 9.1 20.4 20.4 20.4 11.3 0 20.4-9.1 20.4-20.4V81.1l85.7 85.7c7.9 7.9 20.6 7.9 28.5 0 7.9-7.8 7.9-20.6 0-28.5zM287.1 347.2c-7.9-7.9-20.6-7.9-28.5 0l-85.7 85.7V80.1c0-11.3-9.1-20.4-20.4-20.4-11.3 0-20.4 9.1-20.4 20.4v352.8l-85.7-85.7c-7.9-7.9-20.6-7.9-28.5 0-7.9 7.9-7.9 20.6 0 28.5l120.4 120.4c7.9 7.9 20.6 7.9 28.5 0l120.4-120.4c7.8-7.9 7.8-20.7-.1-28.5z" />
+								</svg>
+							</button>
+						</th>
+						<th class="product-cell price">價格
+							<button class="sort-button">
+								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 512 512">
+									<path fill="currentColor"
+										d="M496.1 138.3L375.7 17.9c-7.9-7.9-20.6-7.9-28.5 0L226.9 138.3c-7.9 7.9-7.9 20.6 0 28.5 7.9 7.9 20.6 7.9 28.5 0l85.7-85.7v352.8c0 11.3 9.1 20.4 20.4 20.4 11.3 0 20.4-9.1 20.4-20.4V81.1l85.7 85.7c7.9 7.9 20.6 7.9 28.5 0 7.9-7.8 7.9-20.6 0-28.5zM287.1 347.2c-7.9-7.9-20.6-7.9-28.5 0l-85.7 85.7V80.1c0-11.3-9.1-20.4-20.4-20.4-11.3 0-20.4 9.1-20.4 20.4v352.8l-85.7-85.7c-7.9-7.9-20.6-7.9-28.5 0-7.9 7.9-7.9 20.6 0 28.5l120.4 120.4c7.9 7.9 20.6 7.9 28.5 0l120.4-120.4c7.8-7.9 7.8-20.7-.1-28.5z" />
+								</svg>
+							</button>
+						</th>
+						<th class="product-cell stock">庫存
+							<button class="sort-button">
+								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 512 512">
+									<path fill="currentColor"
+										d="M496.1 138.3L375.7 17.9c-7.9-7.9-20.6-7.9-28.5 0L226.9 138.3c-7.9 7.9-7.9 20.6 0 28.5 7.9 7.9 20.6 7.9 28.5 0l85.7-85.7v352.8c0 11.3 9.1 20.4 20.4 20.4 11.3 0 20.4-9.1 20.4-20.4V81.1l85.7 85.7c7.9 7.9 20.6 7.9 28.5 0 7.9-7.8 7.9-20.6 0-28.5zM287.1 347.2c-7.9-7.9-20.6-7.9-28.5 0l-85.7 85.7V80.1c0-11.3-9.1-20.4-20.4-20.4-11.3 0-20.4 9.1-20.4 20.4v352.8l-85.7-85.7c-7.9-7.9-20.6-7.9-28.5 0-7.9 7.9-7.9 20.6 0 28.5l120.4 120.4c7.9 7.9 20.6 7.9 28.5 0l120.4-120.4c7.8-7.9 7.8-20.7-.1-28.5z" />
+								</svg>
+						</th>
+
+						<th class="product-cell sales">銷售量
+							<button class="sort-button">
+								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 512 512">
+									<path fill="currentColor"
+										d="M496.1 138.3L375.7 17.9c-7.9-7.9-20.6-7.9-28.5 0L226.9 138.3c-7.9 7.9-7.9 20.6 0 28.5 7.9 7.9 20.6 7.9 28.5 0l85.7-85.7v352.8c0 11.3 9.1 20.4 20.4 20.4 11.3 0 20.4-9.1 20.4-20.4V81.1l85.7 85.7c7.9 7.9 20.6 7.9 28.5 0 7.9-7.8 7.9-20.6 0-28.5zM287.1 347.2c-7.9-7.9-20.6-7.9-28.5 0l-85.7 85.7V80.1c0-11.3-9.1-20.4-20.4-20.4-11.3 0-20.4 9.1-20.4 20.4v352.8l-85.7-85.7c-7.9-7.9-20.6-7.9-28.5 0-7.9 7.9-7.9 20.6 0 28.5l120.4 120.4c7.9 7.9 20.6 7.9 28.5 0l120.4-120.4c7.8-7.9 7.8-20.7-.1-28.5z" />
+								</svg>
+							</button>
+						</th>
+						<th class="product-cell sales">
+							<button id="detail" class="detailButton" style='visibility: hidden'>
+								<i style="background-color: transparent;" class="fa-solid fa-circle-info fa-lg"></i>
+							</button>
+						</th>
+
+						<th>
+							<form action="<%=request.getContextPath()%>/ItemController">
+
+								<input type="hidden" name="action" value="edit" method="get">
+								<button class="button-update" style='visibility: hidden'>
+									<i class="fa-solid fa-marker"></i>
+								</button>
+							</form>
+						<th>
+							<form action="<%=request.getContextPath()%>/ItemController">
+
+								<input type="hidden" name="action" value="delete" method="get">
+								<button class="button-close" style='visibility: hidden'>刪除</button>
+							</form>
+						</th>
+
+					</tr>
+
+				</thead>
+
+				<!--               迴圈開始                       -->
+
+				<tbody>
+					<tr class="products-row" th:each="item, iterStat : ${itemList}" th:id="'tr' + ${iterStat.index}">
+
+						<td class="product-cell image"><span th:text="${item.itemid}"></span>
+						</td>
+
+						<td th:id="'tdItemimg'+${iterStat.index}" class="product-cell category">
+							<th:block th:switch="${item.images.size()}">
+								<th:block th:case="0">
+									<img th:id="'tdItemimg'+${iterStat.index}+'-0'" src="/rr/img/itemimgs/defaultPic.jpg"
+										alt="product" />
+								</th:block>
+								<th:block th:case="1">
+									<img th:each="image : ${item.images}" th:src="'/rr/img/itemimgs/' + ${image.imagename}"
+										alt="product" />
+								</th:block>
+								<th:block th:case="2">
+									<img th:each="image : ${item.images}" th:src="'/rr/img/itemimgs/' + ${image.imagename}"
+										alt="product" />
+								</th:block>
+							</th:block>
+						</td>
+
+
+
+						<td class="product-cell sales">
+							<button type="button" style="border: none;" data-bs-toggle="modal"
+								th:data-bs-target="'#imgModal'+${iterStat.index}">
+								<i class="fa-solid fa-image"></i>
+							</button>
+						</td>
+
+
+						<td class="product-cell category" th:id="'tdItemname'+${iterStat.index}"><span
+								th:text="${item.itemname}"></span></td>
+
+						<td class="product-cell status-cell" th:id="'tdcategoryPath'+${iterStat.index}">
+							<span  class="category-path"
+								th:text="${item.categoryPath}" th:data-original="${item.categoryPath}"
+								th:data-truncated="${item.categoryPath.substring(0, 10) + '...'}"></span>
+						</td>
+
+
+						<td class="product-cell status-cell" th:id="'tdItemstatus'+${iterStat.index}"
+							th:switch="${item.itemstatus}"><span th:case='販售中' th:text="販售中"
+								class="status active"></span> <span th:case='售完' th:text="售完"
+								class="status soldout"></span> <span th:case='停售' th:text="停售"
+								class="status disabled"></span></td>
+						<td class="product-cell price" th:id="'tdItemprice'+${iterStat.index}"><span
+								th:text="${item.price}"></span></td>
+
+						<td class="product-cell stock" th:id="'tdItemstock'+${iterStat.index}"><span
+								th:text="${item.stock}"></span></td>
+
+						<td class="product-cell sales" th:id="'tdItemsalescount'+${iterStat.index}"><span
+								th:text="${item.salescount}"></span></td>
+
+
+
+						<td class="product-cell sales">
+							<button type="button" style="border: none;" data-bs-toggle="modal"
+								th:data-bs-target="'#exampleModal'+${iterStat.index}">
+								<i class="fa-solid fa-circle-info fa-lg"></i>
+							</button>
+						</td>
+						<td>
+							<button class="button-update" type="button" data-bs-toggle="modal"
+								th:id="'update-btn'+${iterStat.index}"
+								th:data-bs-target="'#editItemModal'+${iterStat.index}" th:data-itemid="${item.itemid}"
+								th:data-i="${iterStat.index}">
+								<i class="fa-solid fa-marker"></i>
+							</button>
+						</td>
+						<td th:switch="${item.itemstatus}">
+							<button th:case="'販售中'" th:id="'offshelves'+${iterStat.index}" class="button-offshelf"
+								th:data-itemid="${item.itemid}" data-itemstatus='停售' th:data-i="${iterStat.index}">
+								<i style="color: red" class="fa-solid fa-arrow-down"></i>
+							</button>
+
+							<button th:case="'售完'" th:id="'offshelves'+${iterStat.index}" class="button-offshelf"
+								th:data-itemid="${item.itemid}" data-itemstatus='停售' th:data-i="${iterStat.index}">
+								<i style="color: red" class="fa-solid fa-arrow-down"></i>
+							</button>
+							<button th:case="'停售'" th:id="'onshelves'+${iterStat.index}" class="button-onshelf"
+								th:data-itemid="${item.itemid}" data-itemstatus='販售中' th:data-i="${iterStat.index}">
+								<i style="color: green" class="fa-sharp fa-solid fa-arrow-up"></i>
+							</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<!-- 修改modal -->
+			<th:block th:each="item, iterStat : ${itemList}">
+
+				<div class="modal fade" th:id="'editItemModal'+${iterStat.index}" tabindex="-1"
+					aria-labelledby="editItemModalLabel" aria-hidden="true">
+					<div class="modal-dialog" role="document"
+						style="max-width: 700px; max-height: 270; margin-left: 30%; margin-top: 2%;">
+						<div class="modal-content">
+							<div class="modal-header myModal-header">
+								<h5 class="modal-title myModal-header-front" id="editItemModalLabel">修改商品</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal"
+									aria-label="Close"></button>
+							</div>
+							<div class="modal-body myModal-body">
+								<div class="form" th:id="'form'+${iterStat.index}">
+									<form action="updateItem.do" method="POST" accept-charset="UTF-8"
+										enctype="multipart/form-data">
+										<div class="form">
+											<div class="col-6">
+												<div class="form-floating mb-3">
+													<input type="hidden" th:id="'updateItemid'+${iterStat.index}"
+														th:value="${item.itemid}" /> <input type="text"
+														class="form-control" th:id="'updateItemname'+${iterStat.index}"
+														maxlength="10" name="itemname" placeholder="itemname"
+														th:value="${item.itemname}" required> <label for="itemname"
+														class="form-label">商品名稱</label>
+												</div>
+											</div>
+										</div>
+
+										<div class="row">
+											<div class="col-6">
+												<div class="form-floating mb-3">
+													<select class="form-select"
+														th:id="'category-level-1'+${iterStat.index}"
+														name="category-level-1" required>
+														<option value="">-- 請選擇商品種類 --</option>
+													</select>
+													<label for="category-level-1" class="form-label">商品種類</label>
+												</div>
+												<div class="form-floating mb-3">
+													<select class="form-select"
+														th:id="'category-level-2'+${iterStat.index}"
+														name="category-level-2" required>
+														<option value="">-- 請選擇商品子種類 --</option>
+													</select>
+													<label for="category-level-2" class="form-label">商品子種類</label>
+												</div>
+												<div class="form-floating mb-3">
+													<select class="form-select"
+														th:id="'category-level-3'+${iterStat.index}"
+														name="category-level-3" required>
+														<option value="">-- 請選擇商品子種類 --</option>
+													</select>
+													<label for="category-level-3" class="form-label">商品子種類</label>
+												</div>
+											</div>
+										</div>
+
+
+										<div class="form-group">
+											<div class="col-6">
+												<div class="form-floating mb-3">
+													<select class="form-select"
+														th:id="'updateItemstatus'+${iterStat.index}" name="itemstatus">
+														<option value="">-- 請選擇商品狀態 --</option>
+														<option th:value="販售中"
+															th:selected="${item.itemstatus == '販售中'}">販售中</option>
+														<option th:value="售完" th:selected="${item.itemstatus == '售完'}">
+															售完</option>
+														<option th:value="停售" th:selected="${item.itemstatus == '停售'}">
+															停售</option>
+
+													</select> <label for="itemstatus" class="form-label">商品狀態</label>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<div class="col-6">
+												<div class="form-floating mb-3">
+													<input type="number" class="form-control"
+														th:id="'updateprice'+${iterStat.index}" max="99999" name="price"
+														placeholder="產品價格" th:value="${item.price}">
+													<label for="price" class="form-label">價格</label> <span
+														id="price-error" style="color: red;"></span>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<div class="col-6">
+												<div class="form-floating mb-3">
+													<input type="number" class="form-control"
+														th:id="'updatesalescount'+${iterStat.index}" max="99999"
+														name="salescount" placeholder="產品銷量"
+														th:value="${item.salescount}"> <label for="salescount"
+														class="form-label">商品銷量</label> <span id="salescount-error"
+														style="color: red;"></span>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<div class="col-6">
+												<div class="form-floating mb-3">
+													<input type="number" class="form-control"
+														th:id="'updatestock'+${iterStat.index}" max="99999" name="stock"
+														placeholder="stock" th:value="${item.stock}" />
+													<label for="stock" class="form-label">庫存</label> <span
+														id="stock-error" style="color: red;"></span>
+												</div>
+											</div>
+										</div>
+
+										<div class="row">
+											<div class="col-12">
+												<label for="imgUpload" class="form-label">圖片</label><br>
+
+												<div class="imageContainer" th:id="'uploadError'+${iterStat.index}">
+												</div>
+												<th:block th:switch="${item.images.size()}">
+													<th:block th:case="2">
+														<div class="image-container"
+															th:each="image, innerState : ${item.images}">
+															<img class="imgUpload uploaded-image"
+																th:id="'filePic' + ${innerState.index}"
+																th:src="'/rr/img/itemimgs/' + ${image.imagename}"
+																alt="圖片" />
+														</div>
+													</th:block>
+													<th:block th:case="0">
+														<div class="image-container">
+															<img class="imgUpload uploaded-image" id="filePic0"
+																src="/rr/img/itemimgs/defaultPic.jpg" alt="預設圖片" />
+														</div>
+													</th:block>
+												</th:block>
+											</div>
+										</div>
+
+
+										<br>
+
+										<div class="row">
+											<div class="col-12">
+												<label for="itemdetail">商品描述</label> <br />
+												<textarea class="form-control" name="itemdetail"
+													th:id="'updateItemdetail'+${iterStat.index}" maxlength="200"
+													cols="30" rows="10" placeholder="商品描述" th:value="${item.itemdetail}"
+													th:text="${item.itemdetail}"
+													onfocus="if(this.value=='請輸入商品描述')this.value='';"
+													onblur="if(this.value=='')this.value='請輸入商品描述';"></textarea>
+											</div>
+										</div>
+
+										<!-- hidden input -->
+										<input type="hidden" name="itemid" th:value="${item.itemid}">
+										<!-- hidden input -->
+										<br>
+										<div class="col-6">
+											<button th:id="'updateConfirm'+${iterStat.index}" type="submit"
+												class="btn btn-primary"
+												th:data-modal-index="${iterStat.index}">完成</button>
+											<button th:id="updateCloseBtn+${iterStat.index}" type="button"
+												class="btn btn-primary" data-bs-dismiss="modal">取消</button>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- 修改modal -->
+
+				<!-- 詳細資訊modal -->
+
+				<div class="modal fade" tabindex="-1" th:id="'exampleModal'+${iterStat.index}" aria-hidden="true"
+					aria-labelledby="exampleModalLabel" data-bs-backdrop="static">
+					<div class="modal-dialog modal-dialog-scrollable modal-dialog modal-lg">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title">詳細資訊</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal"
+									aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								<div class="container-fluid">
+									<div class="row">
+										<div class="col-md-12 me-auto">
+											<h6>商品描述:</h6>
+											<p th:id="'tdItemdetail'+${iterStat.index}" th:text="${item.itemdetail}">
+											</p>
+										</div>
+									</div>
+
+								</div>
+								<div class="modal-footer">
+									<button type="button" id="savebtn<%=i %>" class="button-update"
+										data-bs-dismiss="modal">關閉</button>
+								</div>
+
+
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+				<!-- 詳細資訊modal -->
+
+
+				<!-- 圖片管理modal -->
+
+				<div class="modal fade" tabindex="-1" th:id="'imgModal'+${iterStat.index}" aria-hidden="true"
+					aria-labelledby="imgModalLabel" data-bs-backdrop="static">
+					<div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title">圖片管理</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal"
+									aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								<div class="container-fluid">
+									<div class="row">
+										<div class="col-md-5 me-auto">
+											<form th:id="'imageUploadForm'+${iterStat.index}"
+												enctype="multipart/form-data">
+												<label for="imgUpload" class="form-label">新增圖片</label>
+												<input type="file" accept="image/*" class="image-row"
+													th:id="'manageImgUpload'+${iterStat.index}" name="imgUpload"
+													multiple>
+												<button th:id="'confirmImgUpload'+${iterStat.index}"
+													th:data-itemid="${item.itemid}"
+													class="btn btn-outline-primary btn-sm"
+													style="display: none;">確認新增</button>
+												<button th:id="'dismissImgUpload'+${iterStat.index}"
+													th:data-itemid="${item.itemid}"
+													class="btn btn-outline-danger btn-sm"
+													style="display: none;">取消新增</button>
+											</form>
+										</div>
+										<div class="col-md-7 me-auto previewContainer"
+											th:id="'previewContainer'+${iterStat.index}">
+										</div>
+										<div th:id="'announceBlock'+${iterStat.index}">
+
+										</div>
+
+									</div>
+									<br />
+									<br />
+									<br />
+									<br />
+									<div th:id="'uploadedImages'+${iterStat.index}">
+										<div th:each="image, innerState : ${item.images}" class="row image-row"
+											style="margin-bottom: 20px">
+											<div class="col-md-4">
+												<img th:src="'/rr/img/itemimgs/' + ${image.imagename}" alt="圖片" />
+											</div>
+											<div class="col-md-8 d-flex align-items-center justify-content-center">
+												<button type="button"
+													class="btn btn-outline-danger btn-sm delete-image-btn"
+													th:data-image-id="${image.id}">刪除</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" th:id="'savebtn'+${iterStat.index}" class="button-update"
+									data-bs-dismiss="modal">關閉</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- 圖片管理modal -->
+			</th:block>
+		</div>
+	</div>
+	<script th:src="@{/js/jquery-3.7.0.min.js}"></script>
+	<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+	<script th:src="@{/js/cdn.jsdelivr.net_npm_sweetalert2@11.7.12_dist_sweetalert2.all.min.js}"></script>
+	<script src="https://www.w3schools.com/lib/w3.js"></script>
+	<script src="https://kit.fontawesome.com/7e347cd6cd.js" crossorigin="anonymous"></script>
+	<script th:src="@{/js/jquery.itemdataTables.js}"></script>
+	<script th:src="@{/js/dashboard1.js}"></script>
+
+
+	<script th:inline="javascript">
+		//▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼類別初始或 賦值 與遞迴▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
+		// 初始化類別的函數
+		function initializeCategories(index) {
+			return new Promise((resolve, reject) => {
+				$.ajax({
+					url: '/rr/categories/1',
+					type: 'GET',
+					dataType: 'json',
+					success: function (data) {
+						populateDropdown('#category-level-1' + index, data.subCategories).then(() => {
+							$('#category-level-1' + index).change(function () {
+								var selectedId = $(this).val();
+								var subCategories = getSubCategoriesById(data.subCategories, selectedId);
+								return populateDropdown('#category-level-2' + index, subCategories);
+							});
+
+							$('#category-level-2' + index).change(function () {
+								var selectedId = $(this).val();
+								var subCategories = getSubCategoriesById(data.subCategories, selectedId);
+								return populateDropdown('#category-level-3' + index, subCategories);
+							});
+
+							resolve();
+						});
+					},
+					error: function (jqXHR, textStatus, errorThrown) {
+						console.log(textStatus, errorThrown);
+						reject(errorThrown);
+					}
+				});
+			});
+		}
+
+		// 填充下拉選單的函數
+		function populateDropdown(selector, optionsData) {
+			return new Promise((resolve) => {
+				$(selector).empty().append($('<option>', {
+					value: "",
+					text: "-- 請選擇商品種類 --"
+				}));
+				$.each(optionsData, function (i, category) {
+					$(selector).append($('<option>', {
+						value: category.id,
+						text: category.name,
+						'data-subCategories': JSON.stringify(category.subCategories)
+					}));
+				});
+				resolve();
+			});
+		}
+
+		// 獲取子類別的函數
+		function getSubCategoriesById(categories, id) {
+			for (var i = 0; i < categories.length; i++) {
+				if (categories[i].id == id) {
+					return categories[i].subCategories;
+				} else {
+					var found = getSubCategoriesById(categories[i].subCategories, id);
+					if (found.length > 0) {
+						return found;
+					}
+				}
+			}
+			return [];
+		}
+
+		// 設定初始下拉選單的值
+		function setInitialDropdownValues(id, index) {
+			initializeCategories(index).then(() => {
+				$.ajax({
+					url: '/rr/getItemById.do',
+					type: 'GET',
+					dataType: 'json',
+					data: { itemid: id },
+					success: function (item) {
+						var categoryIdPath = item.categoryIdPath;
+						categoryIdPath.shift(); // Remove the first element
+
+						if (categoryIdPath.length >= 1) {
+							$('#category-level-1' + index).val(categoryIdPath[0]).trigger('change');
+
+							setTimeout(function () {
+								if (categoryIdPath.length >= 2) {
+									$('#category-level-2' + index).val(categoryIdPath[1]).trigger('change');
+
+									setTimeout(function () {
+										if (categoryIdPath.length >= 3) {
+											$('#category-level-3' + index).val(categoryIdPath[2]).trigger('change');
+										}
+									}, 500);
+								}
+							}, 500);
+						}
+					},
+					error: function (jqXHR, textStatus, errorThrown) {
+						console.log(textStatus, errorThrown);
+					}
+				});
+			}).catch((error) => {
+				console.log('initializeCategories failed with error:', error);
+			});
+		}
+		function updateCategories(index) {
+			$.ajax({
+				url: '/rr/categories/1',
+				type: 'GET',
+				dataType: 'json',
+				success: function (data) {
+					populateDropdown('#category-level-1' + index, data.subCategories);
+				},
+				error: function (jqXHR, textStatus, errorThrown) {
+					console.log(textStatus, errorThrown);
+				}
+			});
+		}
+
+
+
+
+
+		let table = new DataTable('#myTable');
+
+
+		var items = /*[[${itemList}]]*/ null; //預設為null
+		console.log(items);
+
+
+		const selectedFiles = [];
+		$(document).ready(function () {
+	for (let i = 0; i < items.length; i++) {
+		initializeCategories(i);
+	}
+
+	$(document).on('click', '[id^="update-btn"]', function() {
+		let itemiid = $(this).attr('data-itemid');
+		let inddex = $(this).attr('data-i');
+		updateCategories(inddex);
+		setInitialDropdownValues(itemiid, inddex);
+	});
+
+	$(document).on("mouseover", ".category-path", function () {
+		var originalText = $(this).attr("data-original");
+		$(this).text(originalText);
+		$(this).addClass("show-full-text");
+	});
+
+					$(document).on("mouseout", ".category-path", function () {
+		var truncatedText = $(this).attr("data-truncated");
+		$(this).text(truncatedText);
+		$(this).removeClass("show-full-text");
+	});
+
+
+				//▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼更新確認▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
+			for (let i = 0; i < items.length; i++) {
+				let updateConfirmBtn = $("#updateConfirm" + i);
+
+				updateConfirmBtn.click(function (event) {
+
+					var isValid = true;
+					console.log($('#form' + i).find('select[required]'));
+					$('#form' + i).find('select[required]').each(function (index, ele) {
+						if ((ele.value) === '') {
+
+
+							alert('尚有資料未填入')
+							isValid = false;
+							return false;  // 退出 each 循环
+						}
+					});
+
+					if (!isValid) {
+						return;
+					} else {
+
+						event.preventDefault();
+
+
+						var formData = new FormData();
+
+
+
+						var formData = new FormData();
+
+						formData.append('itemid', $('#updateItemid' + i).val());
+						formData.append('itemname', $('#updateItemname' + i).val());
+						formData.append('stock', $('#updatestock' + i).val());
+						formData.append('salescount', $('#updatesalescount' + i).val());
+						formData.append('itemstatus', $('#updateItemstatus' + i).val());
+						formData.append('itemdetail', $('#updateItemdetail' + i).val());
+						formData.append('price', $('#updateprice' + i).val());
+						formData.append('itemtype', $('#updateItemtype' + i).val());
+
+						// 從表單中獲取 categoryId 
+						let categoryLevel3 = $('#category-level-3' + i).val();
+						let categoryLevel2 = $('#category-level-2' + i).val();
+
+						// 如果有第三級的分類，就取第三級，否則就取第二級
+						let categoryId = categoryLevel3 ? categoryLevel3 : categoryLevel2;
+
+						formData.append('categoryid', categoryId);
+
+						$.ajax({
+							dataType: 'json',
+							type: 'Put',
+							url: '/rr/updateItemAjax.do',
+							data: formData,
+							processData: false,
+							contentType: false,
+							success: function (response) {
+
+								if (response.itemname !== '更新失敗') {
+									$('#tdItemname' + i).text(response.itemname)
+
+									var statustext = $('#tdItemstatus' + i).text();
+
+									var newStatus = response.itemstatus;
+									var tdElement = $('#tdItemstatus' + i);
+									tdElement.find('span').removeClass('status active status soldout status disabled')
+									tdElement.find('span').text(newStatus);
+									if (newStatus === "販售中") {
+										tdElement.find('span').addClass('status active');
+									} else if (newStatus === "售完") {
+										tdElement.find('span').addClass('status soldout');
+									} else if (newStatus === "停售") {
+										tdElement.find('span').addClass('status disabled');
+									}
+
+									$('#tdItemtype' + i).text(response.itemtype);
+									$('#tdItemstock' + i).text(response.stock);
+									$('#tdItemsalescount' + i).text(response.salescount);
+									$('#tdItemprice' + i).text(response.price);
+									$('#tdItemdetail' + i).text(response.itemdetail);
+									console.log(response.categoryPath);
+									$('#updateCloseBtn' + i).click();
+									/////////////////////////620///////////////////////           
+									if (response.categoryPath) {
+										$('#tdcategoryPath' + i).find('.category-path')
+											.text(response.categoryPath)
+											.attr('data-original', response.categoryPath)
+											.attr('data-truncated', response.categoryPath.substring(0, 10) + '...');
+									}
+
+									Swal.fire({
+										title: '成功修改 ID:' + response.itemid,
+										text: 'update success',
+										icon: 'success',
+										confirmButtonColor: '#3085d6',
+										confirmButtonText: 'OK'
+									});
+								} else {
+									Swal.fire({
+										title: '修改商品:' + $('#updateItemid' + i).val() + "失敗",
+										text: 'update fail',
+										icon: 'error',
+										confirmButtonColor: '#3085d6',
+										confirmButtonText: 'OK'
+									});
+								}
+							},
+							error: function (response) {
+								alert("error responsing,Please check again");
+							}
+						});
+					}
+				});
+
+
+				//▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+				//▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼上下架▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
+
+				$(document).on('click', '#offshelves' + i, function () {
+					var itemId = $(this).data("itemid");
+					itemId = parseInt(itemId);
+					var itemStatus = $(this).data("itemstatus");
+					var i = $(this).data("i");
+					var $button = $(this);
+					var tdElement = $('#tdItemstatus' + i);
+
+					console.log(tdElement);
+					$.ajax({
+						dataType: 'json',
+						type: 'Put',
+						url: '/rr/switchStatus.do',
+						data: {
+							itemid: itemId,
+							itemstatus: itemStatus
+						},
+						success: function (response) {
+							if (response.itemname != '更新失敗') {
+								$('#tdItemstatus' + i).find('span').text(itemStatus);
+								$('#tdItemstatus' + i).find('span').removeClass('status active status soldout status disabled');
+								if (response.itemstatus === "販售中") {
+									$('#tdItemstatus' + i).find('span').addClass('status active');
+								} else if (response.itemstatus === "售完") {
+									$('#tdItemstatus' + i).find('span').addClass('status soldout');
+								} else if (response.itemstatus === "停售") {
+									$('#tdItemstatus' + i).find('span').addClass('status disabled');
+								}
+
+
+
+
+								var newButton = $("<button>")
+									.attr("type", "button")
+									.attr("id", "onshelves" + i)
+									.addClass("button-onshelf")
+									.attr('data-itemid', itemId)
+									.attr('data-itemstatus', '販售中')
+									.attr('data-i', i)
+								var iElement = document.createElement('i');
+								var iElement = $("<i>")
+									.attr('style', 'color: green')
+									.addClass('fa-sharp fa-solid fa-arrow-up');
+
+								newButton.append(iElement);
+
+								$button.replaceWith(newButton);
+
+								$('#savebtn' + i).click();
+								Swal.fire({
+									title: '成功下架',
+									text: '商品已經成功下架',
+									icon: 'success',
+									confirmButtonColor: '#3085d6',
+									confirmButtonText: 'OK'
+								});
+							} else {
+								alert('下架失敗');
+							}
+						}
+					});
+				});
+
+
+				$(document).on('click', '#onshelves' + i, function () {
+					var itemId = $(this).data("itemid");
+					itemId = parseInt(itemId);
+					var itemStatus = $(this).data("itemstatus");
+					var i = $(this).data("i");
+					var $button = $(this);
+
+
+					$.ajax({
+						dataType: 'json',
+						type: 'Put',
+						url: '/rr/switchStatus.do',
+						data: {
+							itemid: itemId,
+							itemstatus: itemStatus
+						},
+						success: function (response) {
+							console.log(response)
+							if (response.itemname != '成功上架') {
+
+								$('#tdItemstatus' + i).find('span').text(itemStatus);
+								$('#tdItemstatus' + i).find('span').removeClass('status active status soldout status disabled');
+
+								if (response.itemstatus === '販售中') {
+									$('#tdItemstatus' + i).find('span').addClass('status active');
+								} else if (response.itemstatus === '售完') {
+									$('#tdItemstatus' + i).find('span').addClass('status soldout');
+								} else if (response.itemstatus === '停售') {
+									$('#tdItemstatus' + i).find('span').addClass('status disabled');
+								}
+
+
+
+								var newButton = $("<button>")
+									.attr("type", "button")
+									.attr("id", "offshelves" + i)
+									.addClass("button-offshelf")
+									.attr('data-itemid', itemId)
+									.attr('data-itemstatus', '停售')
+									.attr('data-i', i)
+								var iElement = document.createElement('i');
+								var iElement = $("<i>")
+									.attr('style', 'color: red')
+									.addClass('fa-solid fa-arrow-down');
+
+								newButton.append(iElement);
+
+								$button.replaceWith(newButton);
+
+								$('#savebtn' + i).click();
+								Swal.fire({
+									title: '成功上架',
+									text: '商品已經成功上架',
+									icon: 'success',
+									confirmButtonColor: '#3085d6',
+									confirmButtonText: 'OK'
+								});
+							} else {
+								alert('下架失敗');
+							}
+						}
+					});
+				});
+
+				//▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+				//同步顯示
+
+				$('#manageImgUpload' + i).change(function (event) {
+					handleFileSelect(event, i);
+					var fileInput = event.target;
+					console.log(fileInput);
+
+					var files = fileInput.files;
+					selectedFiles[i] = files;
+
+					// 取得已上傳的圖片數量和新增圖片的數量
+					var uploadedImages = document.getElementById('uploadedImages' + i);
+					var uploadedImageCount = uploadedImages.getElementsByClassName('image-row').length;
+					var newImageCount = document.getElementById('manageImgUpload' + i).files.length;
+
+					// 移除警告和圖片數量提示
+					var announceBlock = document.getElementById('announceBlock' + i);
+					announceBlock.innerHTML = '';
+
+					// 檢查總圖片數量是否超過限制
+					if (uploadedImageCount + newImageCount > 2) {
+						// 超過限制數量，顯示警告
+						var warningElement = document.createElement('div');
+						warningElement.classList.add('alert', 'alert-warning');
+						warningElement.textContent = '已超過限制數量';
+						announceBlock.appendChild(warningElement);
+					} else {
+						// 顯示圖片數量合乎限制
+						var countElement = document.createElement('div');
+						countElement.classList.add('image-count');
+						countElement.textContent = '圖片數量: ' + (uploadedImageCount + newImageCount);
+						announceBlock.appendChild(countElement);
+						updateConfirmButtonVisibility(i);
+					}
+
+				});
+
+
+				//▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼圖片上傳▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
+
+				$('#confirmImgUpload' + i).click(function (event) {
+					event.preventDefault();
+					var files = selectedFiles[i];
+					var formData = new FormData();
+
+
+					let itemid = $('#confirmImgUpload' + i)[0].getAttribute('data-itemid');
+
+
+					for (let x = 0; x < files.length; x++) {
+						const file = files[x];
+						formData.append('images', file);
+					}
+					formData.append("itemid", itemid);
+					$('#imageUploadForm' + i)[0].reset();
+					clearPreviewContainer(i);
+
+					$.ajax({
+						url: '/rr/api/imgUpload',
+						method: 'POST',
+						data: formData,
+						processData: false,
+						contentType: false,
+						success: function (response) {
+
+							renderImages(response, i)
+
+						}
+					})
+				})
+
+
+				$
+
+				//當MODAL關閉，淨空form 和 previewontainer
+				$('#imgModal' + i).on('hidden.bs.modal', function () {
+
+					$('#imageUploadForm' + i)[0].reset();
+					clearPreviewContainer(i);
+					var announceBlock = document.getElementById('announceBlock' + i);
+					announceBlock.innerHTML = '';
+				});
+
+				$('#dismissImgUpload' + i).click(function (event) {
+					event.preventDefault(event);
+					$('#imageUploadForm' + i)[0].reset();
+					clearPreviewContainer(i);
+				})
+
+				const uploadedImagesContainer = document.getElementById('uploadedImages' + i);
+				uploadedImagesContainer.addEventListener('click', function (event) {
+
+					console.log(123);
+					var target = event.target;
+					if (target.classList.contains('delete-image-btn')) {
+						var imageId = target.getAttribute('data-image-id');
+						deleteImage(imageId, i);
+					}
+				});
+
+
+			}
+		});
+
+		function handleFileSelect(event, index) {
+			console.log('進入圖片預覽方法');
+
+			var files = event.target.files;
+			var previewContainer = document.getElementById('previewContainer' + index);
+			previewContainer.innerHTML = '<h4>圖片預覽<h4>';
+
+			for (var i = 0; i < files.length; i++) {
+				var file = files[i];
+				var reader = new FileReader();
+
+				reader.onload = function (event) {
+					var img = document.createElement('img');
+					img.src = event.target.result;
+					img.classList.add('imgUpload', 'uploaded-image');
+					previewContainer.appendChild(img);
+				};
+
+				reader.readAsDataURL(file);
+			}
+		}
+
+
+		function updateConfirmButtonVisibility(index) {
+			var confirmButton = $('#confirmImgUpload' + index);
+			var dismissButton = $('#dismissImgUpload' + index);
+			if (selectedFiles[index] && selectedFiles[index].length > 0) {
+				confirmButton.show();  // 顯示確認按鈕
+				dismissButton.show();
+			} else {
+				confirmButton.hide();  // 隱藏確認按鈕
+				dismissButton.hide();
+			}
+		}
+
+
+		function clearPreviewContainer(index) {
+			var confirmButton = $('#confirmImgUpload' + index);
+			var dismissButton = $('#dismissImgUpload' + index);
+			confirmButton.hide();
+			dismissButton.hide();
+
+			var previewContainer = document.getElementById('previewContainer' + index);
+			previewContainer.innerHTML = ''; // Clear the content of the preview container
+		}
+		function renderImages(images, index) {
+			var uploadedImagesContainer = document.getElementById('uploadedImages' + index);
+			uploadedImagesContainer.innerHTML = '';
+
+			var newContent = '';
+			if (images.length != 0) {
+				for (var j = 0; j < images.length; j++) {
+					var image = images[j];
+					newContent += '<div class="row image-row" style="margin-bottom: 20px">';
+					newContent += '<div class="col-md-4">';
+					newContent += '<img src="/rr/img/itemimgs/' + image.imagename + '" alt="圖片" />';
+					newContent += '</div>';
+					newContent += '<div class="col-md-8 d-flex align-items-center justify-content-center">';
+					newContent += '<button type="button" class="btn btn-outline-danger btn-sm delete-image-btn" data-image-id="' + image.id + '">刪除</button>';
+					newContent += '</div>';
+					newContent += '</div>';
+				}
+			} else {
+				newContent += '<div class="row">';
+				newContent += '<div class="col-md-12">';
+				newContent += '請新增圖片';
+				newContent += '</div>';
+				newContent += '</div>';
+			}
+
+			uploadedImagesContainer.innerHTML = newContent;
+			updateTdElement('tdItemimg' + index, images);
+		}
+
+		function updateTdElement(elementId, response) {
+			var tdElement = document.getElementById(elementId);
+			var newContent = '';
+
+			if (response.length === 0) {
+				newContent = '<img src="/rr/img/itemimgs/defaultPic.jpg" alt="product" />';
+			} else if (response.length >= 1) {
+				response.forEach(function (image) {
+					newContent += '<img src="/rr/img/itemimgs/' + image.imagename + '" alt="product" />';
+				});
+			}
+
+			tdElement.innerHTML = newContent;
+		}
+
+		function deleteImage(imageId, index) {
+			Swal.fire({
+				title: 'Though they would NEVER get back',
+				text: 'you sure abt dat?',
+				imageUrl: '/rr/img/itemimgs/kobe.jpg',
+				imageWidth: 380,
+				imageHeight: 200,
+				imageAlt: 'Custom image',
+				showCancelButton: true,
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+				confirmButtonText: 'Yes, delete it!'
+			}).then((result) => {
+				if (result.isConfirmed) {
+
+
+					$.ajax({
+						url: '/rr/api/deleteImg',
+						method: 'Delete',
+						data: { 'id': imageId },
+						dataType: 'json',
+						success: function (response) {
+							console.log(123);
+							renderImages(response, index);
+
+							Swal.fire(
+								'Legends will forever be ingrained in our hearts',
+								'Your file has been deleted.',
+								'success'
+							)
+						}
+					})
+				}
+			})
+
+		}
+
+
+
+
+
+
+	</script>
+
+
+
+</body>
+
+</html>

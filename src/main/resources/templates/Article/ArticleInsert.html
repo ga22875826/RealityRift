@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/maincss.css}">
+    <link rel="stylesheet" th:href="@{/css/topicscss.css}">
+    <script src="https://www.w3schools.com/lib/w3.js"></script>
+    <script src="https://kit.fontawesome.com/68f8681dba.js" crossorigin="anonymous"></script>
+    <!-- jQuery -->
+    <script th:src="@{/js/jquery-3.6.4.js}"></script>
+    <!-- sweetalert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <title>發文</title>
+</head>
+
+
+
+<body>
+        <!-- 導覽列 -->
+        <div th:replace="~{layout/main_navbar}"></div>
+
+    <!-- 論壇發文 -->
+    <main>
+        <section>
+            <br>
+            <h1>論壇發文</h1>
+            <div class="form">
+                <form action="ArticleServlet" method="post">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-floating mb-3">
+                                <input type="text" name="title" class="form-control" id="title" placeholder="title" value="">
+                                <label for="title" class="form-label">文章標題</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-floating mb-3">
+                                <textarea class="form-control" name="content" id="content"
+                                    placeholder="content"></textarea>
+                                <label for="content" class="form-label">文章內容</label>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="col-12 btn-end">
+                        <div class="d-flex justify-content-end">
+                        	<button id="clickInput" type="button" class="btn btn-warning">一鍵輸入</button>
+                            <button id="insert" type="submit" class="btn btn-primary">發文</button>
+                            <button id="cancel" type="button" class="btn btn-secondary">取消</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+
+
+    <!-- btn-to-top -->
+    <a href="#" class="btn btn-to-top">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-up"
+            viewBox="0 0 16 16">
+            <path fill-rule="evenodd"
+                d="M8 10a.5.5 0 0 0 .5-.5V3.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 3.707V9.5a.5.5 0 0 0 .5.5zm-7 2.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5z" />
+        </svg>
+    </a>
+
+    <!-- footer -->
+    <div th:replace="~{layout/main_footer.html}"></div>
+    
+    <script>
+        const onClickInput = {
+            title: "《殭屍獵人》",
+            content: "《殭屍獵人》是一款驚險刺激的實境遊戲，讓我們置身於殭屍世界中。遊戲中，我們需要在逼真的場景中與殭屍對抗，利用武器和策略來生存下來。這種遊戲方式帶來了一種真實的冒險感，讓我感受到了被追逐和生存壓力的刺激。"
+        }
+
+        $('#clickInput').on('click', function (event) {
+            event.preventDefault();
+            $('#title').val(onClickInput.title);
+            $('#content').val(onClickInput.content);
+        })
+    </script>
+    
+	<script>
+		$(document).on('click', '#cancel', function(event) {
+	    	event.preventDefault(); 
+	    	window.location.href = 'main.jsp';
+	  	});
+		
+	
+	    $(document).on('click', '#insert', function(event) {
+	        event.preventDefault();
+	
+	        let insertTitle = $('#title').val();
+	        let insertContent = $('#content').val();
+	 
+	        Swal.fire({
+	            title: '確認',
+	            text: '是否要發布此資料？',
+	            icon: 'question',
+	            showCancelButton: true,
+	            confirmButtonText: '確定',
+	            cancelButtonText: '取消'
+	        }).then((result) => {
+	            if (result.isConfirmed) {
+	                insertTopic(insertTitle, insertContent);
+	            }
+	        });
+	    });
+	
+	    function insertTopic(insertTitle, insertContent) {
+	        $.ajax({
+	            url: 'http://localhost:8080/rr/Article/insertArticle',
+	            type: 'POST',
+	            data: {
+	                title: insertTitle,
+	                content: insertContent
+	            },
+	            success: function(response) {
+	                Swal.fire({
+	                    title: '成功',
+	                    text: '新增成功',
+	                    icon: 'success'
+	                }).then((result) => {
+	                    if (result.isConfirmed) {
+	                        window.location.href = 'http://localhost:8080/rr/';
+	                    }
+	                });
+	            },
+	            error: function(xhr, status, error) {
+	                Swal.fire({
+	                    title: '錯誤',
+	                    text: '新增失敗',
+	                    icon: 'error'
+	                });
+	            }
+	        });
+	    }
+    </script>
+   
+    
+    
+    <script>
+        imgUpload.onchange = function () {
+            const [file] = imgUpload.files
+            if (file) {
+                filePic.src = URL.createObjectURL(file)
+                document.querySelector("#filePic").style.display = "inline"
+            }
+        }
+
+    </script>
+    <script>
+        w3.includeHTML();
+    </script>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"
+        integrity="sha384-zYPOMqeu1DAVkHiLqWBUTcbYfZ8osu1Nd6Z89ify25QV9guujx43ITvfi12/QExE"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.min.js"
+        integrity="sha384-Y4oOpwW3duJdCWv5ly8SCFYWqFDsfob/3GkgExXKV4idmbt98QcxXYs9UoXAB7BZ"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

@@ -1,0 +1,24 @@
+main section h1 {
+	text-align: center;
+	font-weight: bold;
+}
+
+.form {
+	color: black;
+	margin: 2em auto;
+	width: 50%;
+	background-color: white;
+	border-radius: 5%;
+	border: 8px double rgb(77, 77, 77);
+	padding: 2em;
+}
+
+.flex {
+	display: flex;
+}
+
+textarea {
+	resize: none;
+	white-space: pre-line
+}
+

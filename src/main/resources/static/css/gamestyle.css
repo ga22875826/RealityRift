@@ -1,0 +1,117 @@
+#myTable_length {
+    display: inline-block;
+}
+
+#myTable_filter {
+    display: inline-block;
+
+}
+
+tr th:hover {
+    cursor: pointer;
+}
+
+tbody {
+    display: block;
+    overflow: auto;
+    height: 60vh;
+    margin-bottom: 65px
+}
+
+.app-content-header {
+    margin-bottom: 20px;
+}
+
+.dataTables_filter {
+    position: relative;
+    bottom: 3em;
+}
+
+#myTable_paginate a {
+    margin-right: 2px;
+}
+
+.dataTables_length {
+    float: right;
+    margin-right: 10px;
+    color: var(--app-content-main-color)
+}
+
+select[name="myTable_length"] {
+    background-color: transparent;
+    border: none;
+    outline: none;
+    color: var(--app-content-main-color)
+}
+
+.dataTables_info,
+.dataTables_empty {
+    color: var(--app-content-main-color);
+}
+
+.tableView .product-cell-gameid {
+    flex: 0.2;
+    padding: 8px 16px;
+    color: var(--app-content-main-color);
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+}
+
+.tableView .product-cell-main {
+    flex: 0.8;
+    padding: 8px 16px;
+    color: var(--app-content-main-color);
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+}
+
+
+.tableView .product-cell-info {
+    flex: 0.5;
+    padding: 8px 16px;
+    color: var(--app-content-main-color); 
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+}
+
+.tableView .product-cell-address {
+    flex: 1.2;
+    padding: 8px 16px;
+    color: var(--app-content-main-color);
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+}
+
+form.delete-form {
+    display: inline;
+    visibility: hidden;
+    height: 0;
+}
+
+.dataTables_empty {
+    color: rgb(200, 195, 70);
+    position: relative;
+    top: 30%;
+    display: flex;
+    justify-content: center;
+    font-size: 30px;
+}
+
+
+.gamestatus {
+    padding: 2px 10px;
+    border-radius: 3px;
+}
+
+.gamelevel {
+    padding: 2px 10px;
+    border-radius: 20px;
+}
+
+tbody>tr>td {
+    color: var(--app-content-main-color);
+}

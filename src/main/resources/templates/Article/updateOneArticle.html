@@ -1,0 +1,456 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" class="h-100" data-bs-theme="auto">
+
+<head>
+    <!-- <script src="/js/Article/color-modes.js"></script> -->
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.112.5">
+    <title>討論區-發文</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/cover/">
+
+    <link th:href="@{/css/maincss.css}" rel="stylesheet">
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <script th:src="@{/js/jquery-3.7.0.min.js}"></script>
+    <script src="https://kit.fontawesome.com/a260a05f7c.js" crossorigin="anonymous"></script>
+
+    <!-- sweetalert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+
+        .b-example-divider {
+            width: 100%;
+            height: 3rem;
+            background-color: rgba(0, 0, 0, .1);
+            border: solid rgba(0, 0, 0, .15);
+            border-width: 1px 0;
+            box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
+        }
+
+        .b-example-vr {
+            flex-shrink: 0;
+            width: 1.5rem;
+            height: 100vh;
+        }
+
+        .bi {
+            vertical-align: -.125em;
+            fill: currentColor;
+        }
+
+        .nav-scroller {
+            position: relative;
+            z-index: 2;
+            height: 2.75rem;
+            overflow-y: hidden;
+        }
+
+        .nav-scroller .nav {
+            display: flex;
+            flex-wrap: nowrap;
+            padding-bottom: 1rem;
+            margin-top: -1px;
+            overflow-x: auto;
+            text-align: center;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .btn-bd-primary {
+            --bd-violet-bg: #712cf9;
+            --bd-violet-rgb: 112.520718, 44.062154, 249.437846;
+
+            --bs-btn-font-weight: 600;
+            --bs-btn-color: var(--bs-white);
+            --bs-btn-bg: var(--bd-violet-bg);
+            --bs-btn-border-color: var(--bd-violet-bg);
+            --bs-btn-hover-color: var(--bs-white);
+            --bs-btn-hover-bg: #6528e0;
+            --bs-btn-hover-border-color: #6528e0;
+            --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
+            --bs-btn-active-color: var(--bs-btn-hover-color);
+            --bs-btn-active-bg: #5a23c8;
+            --bs-btn-active-border-color: #5a23c8;
+        }
+
+        .bd-mode-toggle {
+            z-index: 1500;
+        }
+
+        #previewContainer img {
+            margin-right: 1px;
+        }
+
+        .slide-pic {
+            width: 50%;
+            height: 400px;
+        }
+    </style>
+
+</head>
+
+<body class="text-center text-bg-dark">
+
+    <div th:replace="~{layout/main_navbar}"></div>
+
+    <div class="cover-container" style="margin-bottom:3em">
+
+        <div style="position: relative; display: flex; justify-content: center;">
+            <section
+                style="background-color: white; color:black; width:70%; border-radius:15px ; padding:10px;margin-bottom: 50px;margin-top:20px">
+                <h1>文章修改</h1>
+                <div class="form">
+                    <form id="updateForm" action="#" method="put">
+                        <input type="hidden" name="topicId" th:value="${topicId}" />
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-floating mb-3">
+                                    <input type="text" name="title" class="form-control" id="title" placeholder="title"
+                                        th:value="${title}">
+                                    <label for="title" class="form-label">文章標題</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-floating mb-3">
+                                    <textarea class="form-control" name="content" id="content" style="height: 300px;"
+                                        th:text="${content}"></textarea>
+                                    <label for="content" class="form-label">文章內容</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 圖片輪播 -->
+                        <div id="slideshow" class="carousel slide" data-bs-ride="carousel" th:data-id="${topicId}">
+                            <div id="photo_output">
+
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-floating mb-3"
+                                    style="float: left; margin-bottom:1em; margin-left:12px">
+                                    <div>
+                                        新增圖片: <input name="photoFile" id="photoFile" type="file" multiple
+                                            onchange="previewImages(event)" />
+                                        <div id="previewContainer"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="col-12 btn-end">
+                            <div class="d-flex justify-content-end">
+                                <button th:id="'update-' + ${topicId}" type="submit" class="btn btn-primary">修改</button>
+                                <button th:id="cancelButton" type="button" class="btn btn-secondary ml-2">取消</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </div>
+
+
+        <!-- <div th:replace="~{layout/Article/Article_main_footer}"></div>  -->
+        <div th:replace="~{layout/main_footer}"></div>
+    </div>
+
+    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/js/axios.min.js}"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script> -->
+
+
+    <script>//顯示目前文章圖片
+        document.addEventListener('DOMContentLoaded', function () {
+            let slideshow = document.getElementById('slideshow');
+            let topicId = slideshow.getAttribute('data-id');
+
+            // console.log(topicId);
+            findArticlePhoto(topicId);
+        });
+
+        function findArticlePhoto(topicId) {
+            axios({
+                method: 'GET',
+                url: '/rr/Article/photoIds',
+                params: {
+                    topicId: topicId
+                }
+            })
+                .then((res) => {
+                    // console.log('res: ' + res.data);
+                    htmlMaker1(res.data)
+                })
+                .catch(err => {
+                    // console.log('err: ' + err);
+                })
+        }
+
+        function htmlMaker1(arrayId) {
+            let photoOutput = document.getElementById('photo_output');
+
+            let htmlString = '';
+            if (arrayId.length != 0) {
+                htmlString += '<div class="carousel-inner">';
+                for (i = 0; i < arrayId.length; i++) {
+                    // console.log(arrayId.length);
+                    if (i == 0) {
+                        htmlString += '<div class="carousel-item active">';//沒進來
+                        htmlString += '<img class="slide-pic" src="/rr/Article/photo?id=' + arrayId[i] + '" alt="slide' + i + '">';
+                        htmlString += '<div class="carousel-caption">';
+                        htmlString += '<button id="deletePhotoBtn-' + arrayId[i] + '" type="button" class="btn btn-danger ml-2">刪除圖片</button>';
+                        htmlString += '</div>';
+                        htmlString += '</div>';
+                    } else {
+                        htmlString += '<div class="carousel-item">';
+                        htmlString += '<img class="slide-pic" src="/rr/Article/photo?id=' + arrayId[i] + '" alt="slide' + i + '">';
+                        htmlString += '<div class="carousel-caption">';
+                        htmlString += '<button id="deletePhotoBtn-' + arrayId[i] + '" type="button" class="btn btn-danger ml-2">刪除圖片</button>';
+                        htmlString += '</div>';
+                        htmlString += '</div>';
+                    }
+                }
+                htmlString += '</div>';
+
+
+                htmlString += '<button class="carousel-control-prev" type="button" data-bs-target="#slideshow" data-bs-slide="prev">';
+                htmlString += '<span class="fa-solid fa-circle-chevron-left fa-2xl" style="color: #000000;"></span>';
+                htmlString += '</button>';
+
+                htmlString += '<button class="carousel-control-next" type="button" data-bs-target="#slideshow" data-bs-slide="next">';
+                htmlString += '<span class="fa-solid fa-circle-chevron-right fa-2xl" style="color: #000000;"></span>';
+                htmlString += '</button>';
+
+
+                htmlString += '<div class="carousel-indicators">';
+                for (i = 0; i < arrayId.length; i++) {
+                    if (i == 0) {
+                        htmlString += '<button type="button" data-bs-target="#slideshow" data-bs-slide-to="' + i + '" class="active">';
+                        htmlString += '</button>';
+                    } else {
+                        htmlString += '<button type="button" data-bs-target="#slideshow" data-bs-slide-to="' + i + '">';
+                        htmlString += '</button>';
+                    }
+                }
+                htmlString += '</div>';
+            }
+
+            photoOutput.innerHTML = htmlString;
+
+            for (i = 0; i < arrayId.length; i++) {
+                let button = document.getElementById('deletePhotoBtn-' + arrayId[i]);
+                button.addEventListener('click', function (event) {
+                    event.preventDefault();
+
+                    const bottonId = button.id;
+                    const topicPhotoId = bottonId.split('-')[1];
+                    console.log(topicPhotoId);
+
+                    Swal.fire({
+                        title: '確認',
+                        text: '是否要刪除此資料？',
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: '確定',
+                        cancelButtonText: '取消'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            deletePhotoByTopicPhotoId(topicPhotoId);
+
+                        }
+                    });
+
+                });
+            }
+
+            function deletePhotoByTopicPhotoId(topicPhotoId) {
+                axios({
+                    method: 'DELETE',
+                    url: '/rr/Article/deletePhoto',
+                    params: {
+                        topicPhotoId: topicPhotoId
+                    }
+                })
+                    .then((res) => {
+                        Swal.fire({
+                            title: '成功',
+                            text: '圖片刪除成功',
+                            icon: 'success'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.reload();
+                            }
+                        });
+                    })
+                    .catch(err => {
+                        Swal.fire({
+                            title: '錯誤',
+                            text: '圖片刪除失敗',
+                            icon: 'error'
+                        });
+                    })
+            }
+        }
+    </script>
+
+
+
+
+
+    <script>
+        function previewImages(event) {
+            let input = event.target;
+            let previewContainer = document.getElementById('previewContainer');
+            previewContainer.innerHTML = ''; // 清空預覽容器
+
+            if (input.files && input.files.length > 0 && input.files.length < 6) {
+                for (let i = 0; i < input.files.length; i++) {
+                    let reader = new FileReader();
+                    reader.onload = function (e) {
+                        let previewImage = document.createElement('img');
+                        previewImage.src = e.target.result;
+                        previewImage.alt = '圖片預覽';
+                        previewImage.style.maxHeight = '100px';
+                        previewContainer.appendChild(previewImage);
+                    };
+                    reader.readAsDataURL(input.files[i]);
+                }
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: '錯誤',
+                    text: '最多只能選擇5張圖片',
+                });
+
+                $('#photoFile').val('');
+            }
+        }
+    </script>
+    <script>
+        const updateButtons = document.querySelectorAll('[id^="update-"]');
+        updateButtons.forEach((button) => {
+            button.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                const buttonId = button.id;
+                const topicId = buttonId.split('-')[1];
+
+                let updateTitle = $('#title').val();
+                let updateContent = $('#content').val();
+
+                let fileInput = document.getElementById('photoFile');
+                let files = fileInput.files;
+                // console.log(files)
+                // console.log(updateContent)
+
+                let form = document.getElementById('updateForm');
+                let formDataObject = new FormData(form);
+                // console.log(formDataObject.entries());
+
+                Swal.fire({
+                    title: '確認',
+                    text: '是否要修改此資料？',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: '確定',
+                    cancelButtonText: '取消'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        updateContentByTopicId(formDataObject, topicId);
+                    }
+                });
+            });
+        });
+
+        function updateContentByTopicId(formDataObject, topicId) {
+            axios({
+                method: 'PUT',
+                url: '/rr/Article/updateArticleAndImage',
+                data: formDataObject
+            })
+                .then((response) => {
+                    Swal.fire({
+                        title: '成功',
+                        text: '修改成功',
+                        icon: 'success'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = '/rr/Article/Select/' + topicId;
+                        }
+                    });
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        title: '錯誤',
+                        text: '發布失敗',
+                        icon: 'error'
+                    });
+                })
+
+
+        }
+
+        // function updateContentByTopicId(topicId, updateTitle, updateContent) {
+        //     $.ajax({
+        //         url: 'http://localhost:8080/rr/Article/UpdateToArticle',
+        //         type: 'PUT',
+        //         data: {
+        //             topicId: topicId,
+        //             title: updateTitle,
+        //             content: updateContent
+
+
+        //         },
+        //         success: function (response) {
+        //             Swal.fire({
+        //                 title: '成功',
+        //                 text: '修改成功',
+        //                 icon: 'success'
+        //             }).then((result) => {
+        //                 if (result.isConfirmed) {
+        //                     window.location.href = 'http://localhost:8080/rr/Article/Select/' + topicId;
+        //                 }
+        //             });
+        //         },
+        //         error: function (xhr, status, error) {
+        //             Swal.fire({
+        //                 title: '錯誤',
+        //                 text: '修改失敗',
+        //                 icon: 'error'
+        //             });
+        //         }
+        //     });
+        // }
+    </script>
+
+    <script>
+        const cancelButton = document.getElementById('cancelButton');
+        cancelButton.addEventListener('click', function () {
+            history.back();
+        });
+    </script>
+</body>
+
+</html>

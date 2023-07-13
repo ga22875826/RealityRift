@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ"
+	crossorigin="anonymous">
+<link rel="stylesheet" th:href="@{/css/maincss.css}">
+<script src="https://kit.fontawesome.com/68f8681dba.js"
+	crossorigin="anonymous"></script>
+<style>
+.bannerimg {
+	height: 500px;
+}
+
+.card {
+	margin: 20px;
+	border-radius: 10%;
+}
+</style>
+
+<title>實境裂谷</title>
+</head>
+
+<body>
+	<!-- 導覽列 -->
+	<div th:replace="~{layout/main_navbar}"></div>
+	<!-- banner -->
+	<section class="intro colorwhite">
+		<div id="myCarousel" class="carousel slide carousel-fade"
+			data-bs-ride="carousel">
+			<div class="carousel-indicators">
+				<button type="button" data-bs-target="#myCarousel"
+					data-bs-slide-to="0" class="active" aria-current="true"
+					aria-label="Slide 1"></button>
+				<button type="button" data-bs-target="#myCarousel"
+					data-bs-slide-to="1" aria-label="Slide 2"></button>
+				<button type="button" data-bs-target="#myCarousel"
+					data-bs-slide-to="2" aria-label="Slide 3"></button>
+			</div>
+			<div class="carousel-inner">
+				<div class="carousel-item active">
+					<img src="img/images/scaredbg2.jpg" class="d-block w-100 bannerimg"
+						alt="...">
+					<div class="container">
+						<div class="carousel-caption d-none d-md-block text-start">
+							<h1>開啟冒險</h1>
+							<p>迎接實境裂谷的挑戰吧!!</p>
+							<p>
+								<a class="btn btn-lg btn-primary" href="#">立即加入</a>
+							</p>
+						</div>
+					</div>
+				</div>
+				<div class="carousel-item">
+					<img src="img/images/scaredbg3.jpg" class="d-block w-100 bannerimg"
+						alt="...">
+					<div class="container">
+						<div class="carousel-caption d-none d-md-block text-start">
+							<h1>Another example headline.</h1>
+							<p>Some representative placeholder content for the second
+								slide of the carousel.</p>
+							<p>
+								<a class="btn btn-lg btn-primary" href="#">Learn more</a>
+							</p>
+						</div>
+					</div>
+				</div>
+				<div class="carousel-item">
+					<img src="img/images/scaredbg1.jpeg" class="d-block w-100 bannerimg"
+						alt="...">
+					<div class="container">
+						<div class="carousel-caption d-none d-md-block text-start">
+							<h1>One more for good measure.</h1>
+							<p>Some representative placeholder content for the third
+								slide of this carousel.</p>
+							<p>
+								<a class="btn btn-lg btn-primary" href="#">Browse gallery</a>
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+			<button class="carousel-control-prev" type="button"
+				data-bs-target="#myCarousel" data-bs-slide="prev">
+				<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+				<span class="visually-hidden">Previous</span>
+			</button>
+			<button class="carousel-control-next" type="button"
+				data-bs-target="#myCarousel" data-bs-slide="next">
+				<span class="carousel-control-next-icon" aria-hidden="true"></span>
+				<span class="visually-hidden">Next</span>
+			</button>
+		</div>
+	</section>
+	<main class="colorwhite">
+		<!-- 熱門1 
+            <section class="hito ">
+                <div class="container">
+                    <div class="row">
+                        <h2 class="text-center font-weight-bold">熱 門 推 薦</h2>
+                    </div>
+                    <div class="row hito_row">
+                        <div class="col-md">
+                            <div class="card bg-dark text-white card-height shadow p-3 mb-5 ">
+                                <div class="card-img-overlay card-bgimg1">
+                                    <h5 class="card-title">這個Case有點Big</h5>
+                                    <p class="card-text">『一場發生在行李箱中的奇幻冒險，世界上怎麼會有那麼大的行李箱啊？
+														再不逃出去，就要被永遠困在這裡了！』</p>
+                                    <p class="card-text">Last updated 3 mins ago</p>
+                                    <button type="button" class="btn btn-primary">GO</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md">
+                            <div class="card bg-dark text-white card-height shadow p-3 mb-5">
+                                <div class="card-img-overlay card-bgimg2">
+                                    <h5 class="card-title">Card title</h5>
+                                    <p class="card-text">This is a wider card with supporting text below as a natural
+                                        lead-in to
+                                        additional content. This content is a little bit longer.</p>
+                                    <p class="card-text">Last updated 3 mins ago</p>
+                                    <button type="button" class="btn btn-primary">GO</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md">
+                            <div class="card bg-dark text-white card-height shadow p-3 mb-5">
+                                <div class="card-img-overlay card-bgimg3">
+                                    <h5 class="card-title">Card title</h5>
+                                    <p class="card-text">This is a wider card with supporting text below as a natural
+                                        lead-in to
+                                        additional content. This content is a little bit longer.</p>
+                                    <p class="card-text">Last updated 3 mins ago</p>
+                                    <button type="button" class="btn btn-primary">GO</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>-->
+		<!--熱門2 
+            <section class="hito">
+                <div class="container">
+                    <div class="row ">
+                        <h2 class="text-center font-weight-bold">話 題 店 家</h2>
+                    </div>
+                    <div class="row hito_row">
+                        <div class="col-md">
+                            <div class="card bg-dark text-white card-height shadow p-3 mb-5">
+                                <div class="card-img-overlay card-bgimg4">
+                                    <h5 class="card-title">Card title</h5>
+                                    <p class="card-text">This is a wider card with supporting text below as a natural
+                                        lead-in to
+                                        additional content. This content is a little bit longer.</p>
+                                    <p class="card-text">Last updated 3 mins ago</p>
+                                    <button type="button" class="btn btn-primary">GO</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md">
+                            <div class="card bg-dark text-white card-height shadow p-3 mb-5">
+                                <div class="card-img-overlay card-bgimg5">
+                                    <h5 class="card-title">Card title</h5>
+                                    <p class="card-text">This is a wider card with supporting text below as a natural
+                                        lead-in to
+                                        additional content. This content is a little bit longer.</p>
+                                    <p class="card-text">Last updated 3 mins ago</p>
+                                    <button type="button" class="btn btn-primary">GO</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md">
+                            <div class="card bg-dark text-white card-height shadow p-3 mb-5">
+                                <div class="card-img-overlay card-bgimg6">
+                                    <h5 class="card-title">Card title</h5>
+                                    <p class="card-text">This is a wider card with supporting text below as a natural
+                                        lead-in to
+                                        additional content. This content is a little bit longer.</p>
+                                    <p class="card-text">Last updated 3 mins ago</p>
+                                    <button type="button" class="btn btn-primary">GO</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="hito">
+                <div class="container">
+                    <div class="row ">
+                        <h2 class="text-center font-weight-bold">討 論 話 題</h2>
+                    </div>
+                    <div class="row hito_row">
+                        <div class="col-md">
+                            <div class="card bg-dark text-white card-height shadow p-3 mb-5">
+                                <div class="card-img-overlay card-bgimg7">
+                                    <h5 class="card-title">Card title</h5>
+                                    <p class="card-text">This is a wider card with supporting text below as a natural
+                                        lead-in to
+                                        additional content. This content is a little bit longer.</p>
+                                    <p class="card-text">Last updated 3 mins ago</p>
+                                    <button type="button" class="btn btn-primary">GO</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md">
+                            <div class="card bg-dark text-white card-height shadow p-3 mb-5">
+                                <div class="card-img-overlay card-bgimg8">
+                                    <h5 class="card-title">Card title</h5>
+                                    <p class="card-text">This is a wider card with supporting text below as a natural
+                                        lead-in to
+                                        additional content. This content is a little bit longer.</p>
+                                    <p class="card-text">Last updated 3 mins ago</p>
+                                    <button type="button" class="btn btn-primary">GO</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md">
+                            <div class="card bg-dark text-white card-height shadow p-3 mb-5">
+                                <div class="card-img-overlay card-bgimg9">
+                                    <h5 class="card-title">Card title</h5>
+                                    <p class="card-text">This is a wider card with supporting text below as a natural
+                                        lead-in to
+                                        additional content. This content is a little bit longer.</p>
+                                    <p class="card-text">Last updated 3 mins ago</p>
+                                    <button type="button" class="btn btn-primary">GO</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section> -->
+
+		<!-- 娛樂高手(連結到社交或排行榜) -->
+		<section id='second'>
+			<div class="container">
+				<div class='row'>
+					<div class='col-md-8 offset-md-2 text-center'>
+						<h3 class="text-center font-weight-bold">娛 樂 高 手</h3>
+						<div class='row'>
+							<div class='col-md-4 text-center'>
+								<img src='img/images/coolBrian.jpg'>
+								<h5>BrianChang</h5>
+							</div>
+							<div class='col-md-8 text-left '>
+								<p class="lead text-start" style="color: aliceblue;">
+									參加這個實境遊戲是個非常特別和難忘的經驗。我們不僅在遊戲中獲得了趣味和刺激，還學到了很多關於協作和合作的重要教訓</p>
+								<p class="text-start" style="color: #ffffffa7;">
+									當我和我的朋友們一起參加這個實境遊戲時，我們沉浸在這個獨特的世界裡，一邊探索著未知的地方，一邊解決各種謎題和挑戰。整個遊戲過程讓我們感到非常刺激和充滿驚喜。
+									我們的遊戲導遊非常專業和友好，他們引領我們進入這個世界，並協助我們克服所有的挑戰。他們非常熱情地與我們互動，讓整個遊戲過程更加有趣和難忘。
+									在整個遊戲過程中，我們需要協作和合作來解決不同的謎題和挑戰。這不僅讓我們的團隊更加團結和緊密，也讓我們更好地體驗到彼此的能力和才華。我們真正體驗到了團隊合作的重要性，這對我們未來的人生和職業發展都有著很大的啟示。
+								</p>
+							</div>
+						</div>
+					</div>
+					<div></div>
+		</section>
+
+
+	</main>
+
+	<!-- 最新揪團(連結到社交) -->
+	<section id='latest'>
+		<div class="container">
+			<div class='row'>
+				<div class='col-md-12 text-center'>
+					<h3 class="text-center font-weight-bold">最 新 揪 團</h3>
+					<div class='row'>
+						<div class='col-md-4 text-left'>
+							<div class='outer'>
+								<a href='single.html'>
+									<div class='upper'>
+										<img src='img/images/marrige.jpg'>
+										<div class='innertext'>
+											<span>可報名</span>
+											<h4>男女不限：NT380</h4>
+										</div>
+									</div>
+									<div class='lower'>
+										<h3 style="color: black;">冥婚-恐怖寫實</h3>
+										<span><i class="fas fa-map-marker-alt"></i>
+											A5密室逃脫中壢中原店: 桃園市中壢區中北路二段434號8樓</span><br> <span><i
+											class="far fa-clock"></i> Aril 23, 2023 06:00PM</span>
+									</div>
+								</a>
+							</div>
+						</div>
+						<div class='col-md-4 text-left'>
+							<div class='outer'>
+								<a href='single.html'>
+									<div class='upper'>
+										<img src='img/images/crazyHospital.jpg'>
+										<div class='innertext'>
+											<span>可報名</span>
+											<h4>男女不限：NT500</h4>
+										</div>
+									</div>
+									<div class='lower'>
+										<h3 style="color: black;">奎蕾精神病院</h3>
+										<span><i class="fas fa-map-marker-alt"></i>
+											A5密室逃脫中壢中原店: 桃園市中壢區中北路二段434號8樓</span><br> <span><i
+											class="far fa-clock"></i> Aril 23, 2023 8:00PM</span>
+									</div>
+								</a>
+							</div>
+						</div>
+						<div class='col-md-4 text-left'>
+							<div class='outer'>
+								<a href='single.html'>
+									<div class='upper'>
+										<img src='img/images/zombie.jpg'>
+										<div class='innertext'>
+											<span>可報名</span>
+											<h4>限女：NT380</h4>
+										</div>
+									</div>
+									<div class='lower'>
+										<h3 style="color: black;">殭屍-恐怖寫實</h3>
+										<span><i class="fas fa-map-marker-alt"></i>
+											A5密室逃脫中壢中原店: 桃園市中壢區中北路二段434號8樓</span><br> <span><i
+											class="far fa-clock"></i> Aril 23, 2023 08:00AM</span>
+									</div>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+	</section>
+
+
+	<!-- btn-to-top -->
+	<a href="#" class="btn btn-to-top"> <svg
+			xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+			fill="currentColor" class="bi bi-arrow-bar-up" viewBox="0 0 16 16">
+                <path fill-rule="evenodd"
+				d="M8 10a.5.5 0 0 0 .5-.5V3.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 3.707V9.5a.5.5 0 0 0 .5.5zm-7 2.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5z" />
+            </svg>
+	</a>
+
+	<!-- footer -->
+	<div th:replace="~{layout/main_footer}"></div>
+	
+
+
+	<script
+		src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"
+		integrity="sha384-zYPOMqeu1DAVkHiLqWBUTcbYfZ8osu1Nd6Z89ify25QV9guujx43ITvfi12/QExE"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.min.js"
+		integrity="sha384-Y4oOpwW3duJdCWv5ly8SCFYWqFDsfob/3GkgExXKV4idmbt98QcxXYs9UoXAB7BZ"
+		crossorigin="anonymous"></script>
+		
+		<script th:inline="javascript">
+		$(function(){
+			
+			
+			//email驗證成功提示
+   		var verified = /*[[${verified}]]*/ null; 
+   		console.log(verified);
+		if(verified){
+				Swal.fire({
+	    		  title: '信箱驗證成功',
+	    		  icon: 'success',
+	    		  text: '您現在可以登入帳號囉',
+	    		  confirmButtonColor: '#3085d6',
+	    		  confirmButtonText: 'OK'
+	    		})
+		}
+		
+		var tokenTimeOut = /*[[${tokenTimeOut}]]*/ null; 
+		console.log(tokenTimeOut);
+		const token = /*[[${token}]]*/ null;
+		$('#hiddenDiv').html(`<input id="tokenid" type="hidden" value="${token}"/>`);
+		if(tokenTimeOut){
+				Swal.fire({
+	    		  title: '您的驗證連結已過期',
+	    		  icon: 'error',
+	    		  html: `請點擊下方連結寄送新的驗證信<br/>
+	    		  <a id="resendVerificationEmailLink" href="#">重新寄送驗證信</a>`,
+	    		  confirmButtonColor: '#3085d6',
+	    		  confirmButtonText: 'OK'
+	    		})
+		}
+		
+	   	$(document).on('click','#resendVerificationEmailLink',function(){
+	   		$.ajax({
+	   			url:'/rr/api/resendverificationemail',
+	   			type:'GET',
+	   			data:{
+	   				token:$('#tokenid').val()
+	   			},
+		   		success:function(result){
+		   			console.log('OK');
+		   			Swal.fire({
+		    		  title: '驗證郵件已重新送出',
+		    		  icon: 'success',
+		    		  confirmButtonColor: '#3085d6',
+		    		  confirmButtonText: 'OK'
+		    		})
+		   		},
+		   		error:function(){
+		   			console.log('NOT GOOD');
+		   		}
+		   	})
+	   	})
+			
+		})
+			
+			   	
+			
+		</script>
+		
+</body>
+
+</html>

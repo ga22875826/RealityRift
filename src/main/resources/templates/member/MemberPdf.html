@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Your PDF Template</title>
+</head>
+<body>
+    <h1>Your PDF Content</h1>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>ID測試</th>
+                <th>Name</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="member : ${members}">
+                <td th:text="${member.memno}"></td>
+                <td th:text="${member.memname}"></td>
+                <td th:text="${member.email}"></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <style>
+
+    </style>
+
+    <title>會員個人資料</title>
+</head>
+
+<body>
+    <!-- 導覽列 -->
+    <div th:replace="~{layout/main_navbar}"></div>
+
+
+    <!-- 會員個人資料 -->
+    <section class="profile">
+        <div class="container">
+            <div class="row main-content">
+                <div class="col-2 left">
+					<div th:replace="~{member/MemberProfileSidebar}"></div>
+                </div>
+                <div class="row col-10 right">
+                    <div class="col-md-10 offset-md-4">
+                        <div class="main">
+                        <h2 class="h2Font text-center title ">個人資料</h2>
+                              <div class="row">
+                                  <div class="col-md-4 img-div">
+                                      <img id="memimg" th:src="${member.memimg}" alt="Profile Picture"
+                                          class="img-fluid rounded-circle">
+                                          <div id="updateMemimgDiv">
+		                                      
+										  </div>
+                                  </div>
+                                  <div th:if="${member.isgoogleaccount==0}" class="member-info col-md-8">
+									  <table>
+										  <tbody>
+											  <input type="hidden" id="memno" th:value="${member.memno}"/>
+											  <tr>
+												  <td><span class="info-title">姓名</span></td><td ><span id="memname-span">[[${member.memname}]]</span></td>
+											  </tr>
+											  <tr>
+												  <td><span class="info-title">email</span></td><td><span id="email-span">[[${member.email}]]</span></td>
+											  </tr>
+											  <tr>
+												  <td><span class="info-title">身分證字號</span></td><td><span id="memid-span">[[${member.memid}]]</span></td>
+											  </tr>
+											  <tr>
+												  <td><span class="info-title">生日</span></td><td><span id="birthdate-span">[[${member.birthdate}]]</span></td>
+											  </tr>
+											  <tr>
+												  <td><span class="info-title">電話</span></td><td><span id="phone-span">[[${member.phone}?${member.phone}:無]]</span></td>
+											  </tr>
+											  <tr>
+												  <td><span class="info-title">地址</span></td><td><span id="memaddress-span">[[${member.memaddress}?${member.memaddress}:無]]</span></td>
+											  </tr>
+											  <tr>
+												  <td><span class="info-title">註冊日期</span></td><td><span id="registerdate-span">[[${member.registerdate}]]</span></td>
+											  </tr>
+										  </tbody>
+									  </table>
+									  <div class="update-btn-div row"><button class="col-2 offset-md-10 btn btn-sm btn-outline-warning" id="edit-btn">編輯</button></div>
+                                  </div>
+                                  <div th:if="${member.isgoogleaccount==1}" class="member-info col-md-8">
+									  <table>
+										  <tbody>
+											  <input type="hidden" id="memno" th:value="${member.memno}"/>
+											  <tr>
+												  <td><span class="info-title">姓名</span></td><td ><span id="memname-span">[[${member.memname}]]</span></td>
+											  </tr>
+											  <tr>
+												  <td><span class="info-title">email</span></td><td><span id="email-span">[[${member.email}]]</span></td>
+											  </tr>
+											  <tr>
+												  <td><span class="info-title">身分證字號</span></td><td><span id="memid-span2">[[${member.memid}]]</span></td>
+											  </tr>
+											  <tr>
+												  <td><span class="info-title">生日</span></td><td><span id="birthdate-span">[[${member.birthdate}]]</span></td>
+											  </tr>
+											  <tr>
+												  <td><span class="info-title">電話</span></td><td><span id="phone-span">[[${member.phone}?${member.phone}:無]]</span></td>
+											  </tr>
+											  <tr>
+												  <td><span class="info-title">地址</span></td><td><span id="memaddress-span">[[${member.memaddress}?${member.memaddress}:無]]</span></td>
+											  </tr>
+											  <tr>
+												  <td><span class="info-title">註冊日期</span></td><td><span id="registerdate-span">[[${member.registerdate}]]</span></td>
+											  </tr>
+										  </tbody>
+									  </table>
+                                  </div>
+                              </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    	<!-- footer -->
+	<div th:replace="~{layout/main_footer}"></div>
+
+    <script>
+		
+		$(function () {
+			
+			$('#profile').addClass('active');
+			
+			let memimg = $('#memimg').attr('src');
+			let imgUpload;
+			$(document).on('change','#updateMemimg',function() {
+				  let file = this.files[0];
+	       		  let reader = new FileReader();
+	
+	       		  reader.onload = function(e) {
+		       		    $('#memimg').attr('src', e.target.result);
+		       		 	imgUpload=e.target.result;
+	       		  	}
+	
+	       		  reader.readAsDataURL(file);
+			
+			})
+			
+			//身分證僅部分顯示
+			const memid = $('#memid-span').text();
+			if(memid != ""){
+				const displayLength = 5;
+				const maskedId = memid.substring(0,displayLength) + "*".repeat(memid.length - displayLength);
+				$('#memid-span').text(maskedId);
+			}
+			
+			
+			let memname = $('#memname-span').text();
+			let birthdate = $('#birthdate-span').text();
+			let phone = $('#phone-span').text();
+			let memaddress = $('#memaddress-span').text();
+			let memno = $('#memno').val();
+			
+			//編輯按鈕
+			$('.update-btn-div').on('click','#edit-btn',function(){
+				$('#memname-span').parent().html(`<input type="text" class="form-control" id="memname-input" value="${memname}"><div id="validationServerMemname"
+									class="invalid-feedback">姓名不能為空</div>`);
+				$('#birthdate-span').parent().html(`<input type="date" class="form-control" id="birthdate-input" min="1980-01-01" value="${birthdate}">`);
+				$('#phone-span').parent().html(`<input type="text" class="form-control" id="phone-input" value="${phone=='無'?'':phone}">`);
+				$('#memaddress-span').parent().html(`<input type="text" class="form-control" id="memaddress-input" value="${memaddress=='無'?'':memaddress}">`);
+				$('#edit-btn').parent().html(`<button class="col-2 offset-md-7 btn btn-sm btn-outline-secondary" id="cancel-btn">取消</button>
+				<button class="col-2 offset-md-1 btn btn-sm btn-outline-info" id="update-btn">送出</button>`);
+				$('#birthdate-input').attr('max',new Date().toLocaleDateString('en-CA'));
+				$('#updateMemimgDiv').html(`<label for="img" class="form-label">變更頭像</label><br>
+		                      				  <input accept="image/*" type='file' id="updateMemimg" name="img" />`);
+			})
+			
+			$(document).on('blur','#memname-input',function(){
+				if($('#memname-input').val()==''){
+					$('#memname-input').addClass('is-invalid');
+					$('#update-btn').attr('id','update-warning')
+				}else{
+					$('#memname-input').removeClass('is-invalid');
+					$('#update-warning').attr('id','update-btn')
+				}
+			})
+			
+			//編輯送出按鈕
+			$('.update-btn-div').on('click','#update-warning',function(){
+                	Swal.fire({
+                		  title: '欄位資料發生錯誤',
+                		  html: "<div style=color:red>姓名不能為空</div>",
+                		  icon: 'error'
+                		})
+                })
+            $('.update-btn-div').on('click','#update-btn',function(){
+				let newMemname = $('#memname-input').val();
+				let newBirthdate = $('#birthdate-input').val();
+				let newPhone = $('#phone-input').val();
+				let newMemaddress = $('#memaddress-input').val();
+				let formData = new FormData();
+				formData.append('memno',memno);
+				formData.append('memname',newMemname);
+				formData.append('birthdate',newBirthdate);
+				formData.append('phone',newPhone);
+				formData.append('memaddress',newMemaddress);
+				formData.append('memimg',$('#updateMemimg')[0].files[0]);
+            	axios({
+					method:'put',
+					url:'/rr/api/profile/update',
+					data: formData
+				})
+				.then(response=>{
+					memimg = $('#memimg').attr('src')
+					memname = newMemname;
+					birthdate = newBirthdate;
+					phone = newPhone;
+					memaddress = newMemaddress;
+					$('#loginMemname').text(newMemname);
+					$('#loginMemimg').attr('src',imgUpload);
+					Swal.fire({
+            		  title: '修改成功',
+            		  icon: 'success',
+            		  confirmButtonColor: '#3085d6',
+            		  confirmButtonText: 'OK'
+            		})
+				})
+				.catch(err=>{
+					Swal.fire({
+	                    title: '修改失敗',
+	                    icon: 'error',
+	                    confirmButtonColor: '#3085d6',
+	                    confirmButtonText: 'OK'
+	                  })
+				})
+            	$('#memname-input').parent().html(`<span id="memname-span">${newMemname}</span>`);
+				$('#birthdate-input').parent().html(`<span id="birthdate-span">${newBirthdate}</span>`);
+				$('#phone-input').parent().html(`<span id="phone-span">${newPhone==''?'無':newPhone}</span>`);
+				$('#memaddress-input').parent().html(`<span id="memaddress-span">${newMemaddress==''?'無':newMemaddress}</span>`);
+				$('#update-btn').parent().html(`<button class="col-2 offset-md-10 btn btn-sm btn-outline-warning" id="edit-btn">編輯</button>`);
+				$('#updateMemimgDiv').html(``);
+				
+            })
+            //取消按鈕
+            $('.update-btn-div').on('click','#cancel-btn',function(){
+				$('#memname-input').parent().html(`<span id="memname-span">${memname}</span>`);
+				$('#birthdate-input').parent().html(`<span id="birthdate-span">${birthdate}</span>`);
+				$('#phone-input').parent().html(`<span id="phone-span">${phone}</span>`);
+				$('#memaddress-input').parent().html(`<span id="memaddress-span">${memaddress}</span>`);
+				$('#update-btn').parent().html(`<button class="col-2 offset-md-10 btn btn-sm btn-outline-warning" id="edit-btn">編輯</button>`);
+				$('#updateMemimgDiv').html(``);
+				$('#memimg').attr('src', memimg);
+			})
+			
+			
+		})
+		
+	</script>
+</body>
+
+</html>

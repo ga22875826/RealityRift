@@ -1,0 +1,794 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" class="h-100" data-bs-theme="auto">
+
+<head>
+  <!-- <script src="/js/Article/color-modes.js"></script> -->
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+  <meta name="generator" content="Hugo 0.112.5">
+  <title th:text="${Article.title}">文章標題</title>
+
+  <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/cover/">
+
+  <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+  <link th:href="@{/css/maincss.css}" rel="stylesheet">
+  <!-- Custom styles for this template -->
+  <!-- <link th:href="@{/css/Article/cover.css}" rel="stylesheet"> -->
+  <script th:src="@{/js/jquery-3.7.0.min.js}"></script>
+
+  <!-- LINE 官方 SDK -->
+  <script src="https://d.line-scdn.net/r/web/social-plugin/js/thirdparty/loader.min.js" async defer></script>
+  <!-- sweetalert -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://kit.fontawesome.com/a260a05f7c.js" crossorigin="anonymous"></script>
+
+  <style>
+    .flex-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .icon-button {
+      display: flex;
+      align-items: center;
+    }
+
+    .icon-button>* {
+      margin-right: 5px;
+    }
+
+    .divider::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 1px;
+      background-color: black;
+      z-index: 1;
+    }
+
+    .button-container {
+      display: flex;
+    }
+
+    button {
+      white-space: nowrap;
+    }
+
+    #topicReport {
+      position: fixed;
+      display: none;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .slide-pic {
+      width: 70%;
+      height: 500px;
+    }
+
+    .slide-message-pic {
+      width: 35%;
+      height: 200px;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .left {
+      order: 1;
+    }
+
+    .right {
+      order: 2;
+    }
+    
+ 	.container-div{
+		margin-top:10em;
+	}
+	
+	.google-btn .google-icon {
+	  position:absolute;
+	  right:10px;
+	}
+	
+  </style>
+
+</head>
+
+<body class=" text-center bg-dark">
+
+  <div th:replace="~{layout/main_navbar}"></div>
+
+  <div class="container container-div text-bg-dark" style="margin-bottom:3em">
+
+
+    <div style="position: relative; display: flex; justify-content: center ;">
+      <section style="background-color: white; color:black; width:70%; border-radius:10px 10px 0 0 ; padding:10px;">
+        <div class="flex-container">
+
+          <div>
+            <h2 id="articleTitle" th:text="${Article.title}" style="text-align: left;"></h2><br>
+            <div style="text-align: left;">
+	            <span th:text="'會員' + ${Article.memno} + ' 於 ' + ${#dates.format(Article.publishTime,'yyyy/MM/dd HH:mm:ss')} + ' 創建'"></span>
+            </div>
+          </div>
+          <!--   <th:block th:switch="${memno == Article.memno}"> -->
+          <div>
+            <div th:if="${memno != null}">
+              <button type="button" th:id="'report-' + ${Article.topicId}" class="btn btn-secondary"
+                data-bs-toggle="modal" data-bs-target="#topicReport">檢舉</button>
+
+              <div class="modal fade" id="topicReport">
+                <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content">
+                    <!-- header -->
+                    <div class="modal-header">
+                      <h3>檢舉內容</h3>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <!-- body -->
+                    <div class="modal-body">
+                      <form id="reportForm">
+                        <div class="form-group" style="margin-bottom: 10px;">
+                          <select class="form-control" name="reportReason" id="reportReason">
+                            <option value="" selected disabled hidden>請選擇檢舉原因</option>
+                            <option value="垃圾訊息">垃圾訊息</option>
+                            <option value="不實資訊">不實資訊</option>
+                            <option value="其他">其他</option>
+                          </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 10px;">
+                          <textarea class="form-control" name="reportContent" id="reportContent" style="height: 100px;"
+                            placeholder="請輸入檢舉的原因"></textarea>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                          <button th:id="'reportInsert-' + ${Article.topicId}" type="button"
+                            class="btn btn-primary">送出</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <th:block th:switch="${thisUserIsThisArticleAuthor == 1}">
+                <li style="list-style-type: none;" th:case=${true}>
+                  <form th:action="@{/Article/GetToUpdate}" method="GET" style="display: inline;">
+                    <input type="hidden" name="topicId" th:value="${Article.topicId}" />
+                    <input type="hidden" name="title" th:value="${Article.title}" />
+                    <input type="hidden" name="content" th:value="${Article.content}" />
+                    <button type="submit" class="btn btn-primary">修改</button>
+                  </form>
+                </li>
+              </th:block>
+            </div>
+          </div>
+
+        </div>
+        <hr>
+        <div id="articleContent" th:text="${Article.content}" style="text-align: left;"></div>
+        <br>
+
+        <!-- 圖片輪播 -->
+        <div id="slideshow" class="carousel slide" data-bs-ride="carousel" th:data-id="${Article.topicId}">
+          <div id="photo_output">
+
+          </div>
+        </div>
+        <br>
+
+      </section>
+    </div>
+
+    <div style="position: relative; display: flex; justify-content: center ;">
+      <section
+        style="background-color: white; color:black; width:70%; border-radius:1px;margin-bottom: 6px;margin-top: 6px;">
+        <div class="flex-container" style="height:20px">
+
+          <!-- 文章按讚 -->
+          <div class="card mb-6 container" style="height: 30px;border-radius:0px">
+
+            <div class="articlelike-section like-section">
+              <i th:id="'article-thumbs-up-' + ${Article.topicId}"
+                th:class="${userLikedArticle ? 'fa-solid fa-thumbs-up fa-thumbs-up-article' : 'fa-regular fa-thumbs-up fa-thumbs-up-article'}"
+                th:style="${userLikedArticle ? 'color:blue':'color:black'}" th:data-article-id="${Article.topicId}"
+                th:data-article-liked="${userLikedArticle ? 'true' : 'false'}">
+              </i><span class="like-Count" th:text=" ' ' +${ArticleLikesCount} "></span>
+            </div>
+          </div>
+
+          <!-- 文章收藏 -->
+          <div class="card mb-6 container" style="height: 30px;border-radius:0px">
+
+            <div class="articlebookmark-section bookmark-section">
+              <i th:id="'article-bookmark-' + ${Article.topicId}"
+                th:class="${userCollectedArticle ? 'fa-sharp fa-solid fa-bookmark fa-bookmark-article' : 'fa-sharp fa-regular fa-bookmark fa-bookmark-article'}"
+                th:style="${userCollectedArticle ? 'color:blue':'color:black'}"
+                th:data-articleBookmark-id="${Article.topicId}"
+                th:data-articleBookmark-liked="${userCollectedArticle ? 'true' : 'false'}"> 收藏
+              </i>
+            </div>
+
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div style="position: relative; display: flex; justify-content: center ;">
+      <section
+        style="background-color: white; color:black; width:70%; border-radius:0 0 10px 10px ; padding:10px;margin-bottom: 1px;">
+        <div class="form">
+          <form id="insertForm" action="#" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="topicId" th:value="${Article.topicId}" />
+            <div class="row">
+              <div class="col-12">
+                <div class="form-floating mb-3">
+                  <h5>留言</h5>
+                  <textarea class="form-control" name="content" id="content" placeholder="content"
+                    style="height: 100Px;"></textarea>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <div class="form-floating mb-3" style="float: left; margin-bottom:1em; margin-left:12px">
+                  <div>
+                    新增圖片: <input name="photoFile" id="photoFile" type="file" multiple onchange="previewImages(event)" />
+                    <div id="previewContainer"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 btn-end">
+              <div class="d-flex justify-content-end">
+                <button id="clickInput" type="button" class="btn btn-warning">一鍵輸入</button>
+                <button th:id="'insert-' + ${Article.topicId}" type="submit" class="btn btn-primary">送出</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </section>
+    </div>
+
+    <br>
+
+    <div style="position: relative; display: flex; justify-content: center ;">
+      <section
+        style="background-color: white; color:black; width:70%; border-radius:10px ; padding:10px;margin-bottom: 1px;">
+        <div id="showMessage" th:data-id="${Article.topicId}">
+          <div id="message_count">
+
+          </div>
+          <div id="message_output">
+
+          </div>
+        </div>
+      </section>
+    </div>
+    <!-- <div class="container">
+      <div class="row justify-content-center">
+        <div class="input-group mb-3 center-div " style="width:70%;">
+          <input type="text" class="form-control" placeholder="我想說點什麼..." aria-label="say-something"
+            aria-describedby="button-addon2">
+          <button class="btn btn-outline-light" type="button" id="button-addon2"><i
+              class="fa-sharp fa-solid fa-paper-plane"></i>送出</button>
+        </div>
+      </div>
+    </div> -->
+
+
+  </div>
+
+  <div th:replace="~{layout/main_footer}"></div>
+  <!-- <div th:replace="~{layout/Article/Article_main_footer}"></div> -->
+
+
+  <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+  <script th:src="@{/js/axios.min.js}"></script>
+  <script>
+    const onClickInput = {
+      content: "超好玩的拉!"
+    }
+
+    $('#clickInput').on('click', function (event) {
+      event.preventDefault();
+      $('#content').val(onClickInput.content);
+    })
+  </script>
+
+  <script>//留言
+    document.addEventListener('DOMContentLoaded', function () {
+      let showMessage = document.getElementById('showMessage');
+      let topicId = showMessage.getAttribute('data-id');
+      // console.log(topicId);
+      findMessages(topicId);
+    })
+
+    function findMessages(topicId) {
+      axios({
+        method: 'GET',
+        url: '/rr/Article/selectArticleAllMessage',
+        params: {
+          topicId: topicId
+        }
+      })
+        .then((res) => {
+          // console.log('res: ' + res.data);
+          htmlMakerMessage(res.data, topicId);
+        })
+        .catch(err => {
+          // console.log('err: ' + err);
+        })
+    }
+
+    function htmlMakerMessage(array, topicId) {
+      let messageOutput = document.getElementById('message_output');
+      let messageCount = document.getElementById('message_count');
+      let htmlString = '';
+      let htmlCountString = '';
+      for (i = 0; i < array.length; i++) {
+        htmlString += '<div class="card">';
+
+        htmlString += '<div class="card-header">';
+        htmlString += '<div class="left">會員編號: ' + array[i].memno + '</div>';
+        htmlString += '<div class="right">' + array[i].publishTime + '</div>';
+        htmlString += '</div>';
+
+        htmlString += '<div class="card-body">';
+        htmlString += '<p class="card-text" style="text-align:left">' + array[i].content + '</p>';
+        htmlString += '<div id="slideshow-' + array[i].messageId + '" class="carousel slide" data-bs-ride="carousel" th:data-id="' + array[i].messageId + '">';
+        htmlString += '<div id="message_photo_output-' + array[i].messageId + '">';
+        htmlString += findMessagePhoto(array[i].messageId);
+        htmlString += '</div>';
+        htmlString += '</div>';
+        htmlString += '</div>';
+
+        htmlString += '</div>';
+      }
+
+      htmlCountString = '<h2>留言: ' + array.length + ' 筆</h2>'
+
+      messageCount.innerHTML = htmlCountString;
+      messageOutput.innerHTML = htmlString;
+
+    }
+
+    function findMessagePhoto(messageId) {
+      axios({
+        method: 'GET',
+        url: '/rr/Article/message/photoIds',
+        params: {
+          messageId: messageId
+        }
+      })
+        .then((res) => {
+          // console.log('res: ' + res.data);
+          htmlMaker2(res.data, messageId);
+        })
+        .catch(err => {
+          // console.log('err: ' + err);
+        })
+    }
+
+    function htmlMaker2(arrayId, messageId) {
+      let messagePhotoOutput = document.getElementById('message_photo_output-' + messageId);
+
+      let htmlString = '';
+      if (arrayId.length != 0) {
+        htmlString += '<div class="carousel-inner">';
+        for (i = 0; i < arrayId.length; i++) {
+          // console.log(arrayId.length);
+          if (i == 0) {
+            htmlString += '<div class="carousel-item active">';//沒進來
+            htmlString += '<img class="slide-message-pic" src="/rr/Article/message/photo?id=' + arrayId[i] + '" alt="slide' + i + '">';
+            htmlString += '</div>';
+          } else {
+            htmlString += '<div class="carousel-item">';
+            htmlString += '<img class="slide-message-pic" src="/rr/Article/message/photo?id=' + arrayId[i] + '" alt="slide' + i + '">';
+            htmlString += '</div>';
+          }
+        }
+        htmlString += '</div>';
+
+
+        htmlString += '<button class="carousel-control-prev" type="button" data-bs-target="#slideshow-' + messageId + '" data-bs-slide="prev">';
+        htmlString += '<span class="fa-solid fa-circle-chevron-left fa-2xl" style="color: #000000;"></span>';
+        htmlString += '</button>';
+
+        htmlString += '<button class="carousel-control-next" type="button" data-bs-target="#slideshow-' + messageId + '" data-bs-slide="next">';
+        htmlString += '<span class="fa-solid fa-circle-chevron-right fa-2xl" style="color: #000000;"></span>';
+        htmlString += '</button>';
+
+
+        htmlString += '<div class="carousel-indicators">';
+        for (i = 0; i < arrayId.length; i++) {
+          if (i == 0) {
+            htmlString += '<button type="button" data-bs-target="#slideshow-' + messageId + '" data-bs-slide-to="' + i + '" class="active">';
+            htmlString += '</button>';
+          } else {
+            htmlString += '<button type="button" data-bs-target="#slideshow-' + messageId + '" data-bs-slide-to="' + i + '">';
+            htmlString += '</button>';
+          }
+        }
+        htmlString += '</div>';
+      }
+
+      messagePhotoOutput.innerHTML = htmlString;
+    }
+  </script>
+
+  <script>//文章圖片
+    document.addEventListener('DOMContentLoaded', function () {
+      let slideshow = document.getElementById('slideshow');
+      let topicId = slideshow.getAttribute('data-id');
+
+      // console.log(topicId);
+      findArticlePhoto(topicId);
+    });
+
+    function findArticlePhoto(topicId) {
+      axios({
+        method: 'GET',
+        url: '/rr/Article/photoIds',
+        params: {
+          topicId: topicId
+        }
+      })
+        .then((res) => {
+          // console.log('res: ' + res.data);
+          htmlMaker1(res.data)
+        })
+        .catch(err => {
+          // console.log('err: ' + err);
+        })
+    }
+
+    function htmlMaker1(arrayId) {
+      let photoOutput = document.getElementById('photo_output');
+
+      let htmlString = '';
+      if (arrayId.length != 0) {
+        htmlString += '<div class="carousel-inner">';
+        for (i = 0; i < arrayId.length; i++) {
+          // console.log(arrayId.length);
+          if (i == 0) {
+            htmlString += '<div class="carousel-item active">';//沒進來
+            htmlString += '<img class="slide-pic" src="/rr/Article/photo?id=' + arrayId[i] + '" alt="slide' + i + '">';
+            htmlString += '</div>';
+          } else {
+            htmlString += '<div class="carousel-item">';
+            htmlString += '<img class="slide-pic" src="/rr/Article/photo?id=' + arrayId[i] + '" alt="slide' + i + '">';
+            htmlString += '</div>';
+          }
+        }
+        htmlString += '</div>';
+
+
+        htmlString += '<button class="carousel-control-prev" type="button" data-bs-target="#slideshow" data-bs-slide="prev">';
+        htmlString += '<span class="fa-solid fa-circle-chevron-left fa-2xl" style="color: #000000;"></span>';
+        htmlString += '</button>';
+
+        htmlString += '<button class="carousel-control-next" type="button" data-bs-target="#slideshow" data-bs-slide="next">';
+        htmlString += '<span class="fa-solid fa-circle-chevron-right fa-2xl" style="color: #000000;"></span>';
+        htmlString += '</button>';
+
+
+        htmlString += '<div class="carousel-indicators">';
+        for (i = 0; i < arrayId.length; i++) {
+          if (i == 0) {
+            htmlString += '<button type="button" data-bs-target="#slideshow" data-bs-slide-to="' + i + '" class="active">';
+            htmlString += '</button>';
+          } else {
+            htmlString += '<button type="button" data-bs-target="#slideshow" data-bs-slide-to="' + i + '">';
+            htmlString += '</button>';
+          }
+        }
+        htmlString += '</div>';
+      }
+
+      photoOutput.innerHTML = htmlString;
+    }
+  </script>
+
+
+
+  <script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const reportBtn = document.querySelectorAll('[id^="reportInsert-"]');
+      reportBtn.forEach((button) => {
+        button.addEventListener('click', function (event) {
+          event.preventDefault();
+
+          const buttonId = button.id;
+          const topicId = buttonId.split('-')[1];
+          // console.log(topicId);
+
+          let insertReportReason = $('#reportReason').val();
+          let insertReportContent = $('#reportContent').val();
+
+          Swal.fire({
+            title: '確認',
+            text: '是否要送出此檢舉？',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: '確定',
+            cancelButtonText: '取消'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              // console.log(topicId);
+              insertReport(topicId, insertReportReason, insertReportContent);
+            }
+          });
+        })
+      })
+
+      function insertReport(topicId, insertReportReason, insertReportContent) {
+        console.log(topicId);
+        console.log(insertReportReason);
+        console.log(insertReportContent);
+
+        $.ajax({
+          url: '/rr/Article/reportTopic',
+          type: 'POST',
+          data: {
+            topicId: topicId,
+            reportReason: insertReportReason,
+            reportContent: insertReportContent,
+          },
+          success: function (response) {
+            Swal.fire({
+              title: '成功',
+              text: '檢舉成功',
+              icon: 'success'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                //window.location.href = '/rr/Article/mainPage';
+                window.location.reload();
+              }
+            });
+          },
+          error: function (xhr, status, error) {
+            Swal.fire({
+              title: '錯誤',
+              text: '檢舉失敗',
+              icon: 'error'
+            });
+          }
+
+        });
+      }
+
+    })
+
+
+  </script>
+  <script>//文章按讚
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('.articlelike-section').forEach(function (likeSection) {
+        likeSection.addEventListener('click', function (e) {
+
+          let topicId = e.target.getAttribute('data-article-id');
+
+          axios({
+            method: 'post',
+            url: '/rr/article/likes/' + topicId,
+          })
+            .then(function (response) {
+              let thumbsUp = document.getElementById('article-thumbs-up-' + topicId);
+
+              // console.log(response.data)
+              if (response.data === '文章再次按讚成功' || response.data === '第一次文章點讚成功') {
+                thumbsUp.classList.add('fa-solid');
+                thumbsUp.classList.remove('fa-regular');
+                thumbsUp.style.color = 'blue';
+                let likeCountElement = document.querySelector('.like-Count');
+                likeCountElement.textContent = ' ' + (parseInt(likeCountElement.textContent) + 1) + '';
+              } else if (response.data === '文章退讚成功') {
+                thumbsUp.classList.add('fa-regular');
+                thumbsUp.classList.remove('fa-solid');
+                thumbsUp.style.color = 'black';
+                let likeCountElement = document.querySelector('.like-Count');
+                likeCountElement.textContent = ' ' + (parseInt(likeCountElement.textContent) - 1) + '';
+              }
+            })
+            .catch(function (error) {
+              console.log('文章按讚發生錯誤');
+            });
+        });
+      });
+    })
+  </script>
+
+  <script>//文章收藏
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('.articlebookmark-section').forEach(function (likeSection) {
+        likeSection.addEventListener('click', function (e) {
+
+          let topicId = e.target.getAttribute('data-articleBookmark-id');
+
+          axios({
+            method: 'post',
+            url: '/rr/article/collection/' + topicId,
+          })
+            .then(function (response) {
+              let thumbsUp = document.getElementById('article-bookmark-' + topicId);
+
+              // console.log(response.data)
+              if (response.data === '再次收藏文章成功' || response.data === '第一次文章收藏成功') {
+                thumbsUp.classList.add('fa-solid');
+                thumbsUp.classList.remove('fa-regular');
+                thumbsUp.style.color = 'blue';
+              } else if (response.data === '取消收藏文章成功') {
+                thumbsUp.classList.add('fa-regular');
+                thumbsUp.classList.remove('fa-solid');
+                thumbsUp.style.color = 'black';
+              }
+            })
+            .catch(function (error) {
+              console.log('文章收藏發生錯誤');
+            });
+        });
+      });
+    })
+  </script>
+
+  <script>
+    // $(document).on('click', '#insert', function (event) {
+    //   event.preventDefault();
+    const insertBtn = document.querySelector('[id^="insert-"]');
+    insertBtn.addEventListener('click', function (event) {
+      event.preventDefault();
+
+      const buttonId = insertBtn.id;
+      // console.log(buttonId);
+      const topicId = buttonId.split('-')[1];
+      // console.log(topicId);
+
+      let insertContent = $('#content').val();
+
+      let fileInput = document.getElementById('photoFile');
+      let files = fileInput.files;
+      //console.log(files);
+
+      let form = document.getElementById('insertForm');
+      let formDataObject = new FormData(form);
+
+      // console.log(formDataObject);
+
+      // const formDataEntries = formDataObject.entries();
+
+      // // 遍歷迭代器並印出資料
+      // for (let entry of formDataEntries) {
+      //   const [name, value] = entry;
+      //   console.log(`欄位名稱：${name}`);
+      //   console.log(`值：${value}`);
+      // }
+
+      Swal.fire({
+        title: '確認',
+        text: '是否要發布此留言？',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: '確定',
+        cancelButtonText: '取消'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // insertMessage1(topicId, insertContent);
+          if (files.length === 0) {
+            insertMessage1(topicId, insertContent);
+          } else {
+            // console.log(topicId);
+            insertMessage2(formDataObject);
+          }
+        }
+      });
+    });
+
+    function insertMessage1(topicId, insertContent) {
+      $.ajax({
+        url: '/rr/Article/message/insertMessage1',
+        type: 'POST',
+        data: {
+          topicId: topicId,
+          content: insertContent,
+        },
+        success: function (response) {
+          Swal.fire({
+            title: '成功',
+            text: '留言成功',
+            icon: 'success'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              //window.location.href = '/rr/Article/mainPage';
+              window.location.reload();
+            }
+          });
+        },
+        error: function (xhr, status, error) {
+          Swal.fire({
+            title: '錯誤',
+            text: '留言失敗',
+            icon: 'error'
+          });
+        }
+      });
+    }
+
+    function insertMessage2(formDataObject) {
+      axios({
+        method: 'post',
+        url: '/rr/Article/message/insertMessage2',
+        data: formDataObject
+
+      })
+        .then((res) => {
+          Swal.fire({
+            title: '成功',
+            text: '發布成功',
+            icon: 'success'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.location.reload();
+            }
+          });
+        })
+        .catch((err) => {
+          Swal.fire({
+            title: '錯誤',
+            text: '發布失敗',
+            icon: 'error'
+          });
+        })
+        .finally(() => {
+          document.getElementById('insertForm').reset();
+        })
+
+    }
+
+    function previewImages(event) {
+      let input = event.target;
+      let previewContainer = document.getElementById('previewContainer');
+      previewContainer.innerHTML = ''; // 清空預覽容器
+
+      if (input.files && input.files.length > 0 && input.files.length < 4) {
+        for (let i = 0; i < input.files.length; i++) {
+          let reader = new FileReader();
+          reader.onload = function (e) {
+            let previewImage = document.createElement('img');
+            previewImage.src = e.target.result;
+            previewImage.alt = '圖片預覽';
+            previewImage.style.maxHeight = '100px';
+            previewContainer.appendChild(previewImage);
+          };
+          reader.readAsDataURL(input.files[i]);
+        }
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: '錯誤',
+          text: '最多只能選擇3張圖片',
+        });
+
+        $('#photoFile').val('');
+      }
+    }
+
+  </script>
+
+
+
+</body>
+
+</html>

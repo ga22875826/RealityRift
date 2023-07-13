@@ -1,0 +1,318 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" class="h-100" data-bs-theme="auto">
+
+<head>
+    <!-- <script src="/js/Article/color-modes.js"></script> -->
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.112.5">
+    <title>討論區-發文</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/cover/">
+
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+	<link th:href="@{/css/maincss.css}" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <script th:src="@{/js/jquery-3.7.0.min.js}"></script>
+
+    <!-- sweetalert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+
+        .b-example-divider {
+            width: 100%;
+            height: 3rem;
+            background-color: rgba(0, 0, 0, .1);
+            border: solid rgba(0, 0, 0, .15);
+            border-width: 1px 0;
+            box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
+        }
+
+        .b-example-vr {
+            flex-shrink: 0;
+            width: 1.5rem;
+            height: 100vh;
+        }
+
+        .bi {
+            vertical-align: -.125em;
+            fill: currentColor;
+        }
+
+        .nav-scroller {
+            position: relative;
+            z-index: 2;
+            height: 2.75rem;
+            overflow-y: hidden;
+        }
+
+        .nav-scroller .nav {
+            display: flex;
+            flex-wrap: nowrap;
+            padding-bottom: 1rem;
+            margin-top: -1px;
+            overflow-x: auto;
+            text-align: center;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .btn-bd-primary {
+            --bd-violet-bg: #712cf9;
+            --bd-violet-rgb: 112.520718, 44.062154, 249.437846;
+
+            --bs-btn-font-weight: 600;
+            --bs-btn-color: var(--bs-white);
+            --bs-btn-bg: var(--bd-violet-bg);
+            --bs-btn-border-color: var(--bd-violet-bg);
+            --bs-btn-hover-color: var(--bs-white);
+            --bs-btn-hover-bg: #6528e0;
+            --bs-btn-hover-border-color: #6528e0;
+            --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
+            --bs-btn-active-color: var(--bs-btn-hover-color);
+            --bs-btn-active-bg: #5a23c8;
+            --bs-btn-active-border-color: #5a23c8;
+        }
+
+        .bd-mode-toggle {
+            z-index: 1500;
+        }
+
+        #previewContainer img {
+            margin-right: 1px;
+        }
+        
+        .container-div{
+			margin-top:10em;
+		}
+        
+        
+    </style>
+
+</head>
+
+<body class="text-center text-bg-dark">
+	
+	<div th:replace="~{layout/main_navbar}"></div>
+	
+    <div class="cover-container container-div" style="margin-bottom:3em">
+
+        <div style="position: relative; display: flex; justify-content: center;">
+            <section
+                style="background-color: white; color:black; width:70%; border-radius:15px ; padding:10px;margin-bottom: 50px;margin-top:20px">
+                <h1>發文</h1>
+                <div class="form">
+                    <form id="insertForm" action="#" method="post">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-floating mb-3">
+                                    <input type="text" name="title" class="form-control" id="title" placeholder="title"
+                                        value="">
+                                    <label for="title" class="form-label">文章標題</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-floating mb-3">
+                                    <textarea class="form-control" name="content" id="content" placeholder="content"
+                                        style="height: 300px;"></textarea>
+                                    <label for="content" class="form-label">文章內容</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-floating mb-3"
+                                    style="float: left; margin-bottom:1em; margin-left:12px">
+                                    <div>
+                                        新增圖片: <input name="photoFile" id="photoFile" type="file" multiple onchange="previewImages(event)" />
+                                        <div id="previewContainer"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 btn-end">
+                            <div class="d-flex justify-content-end">
+                                <button id="clickInput" type="button" class="btn btn-warning">一鍵輸入</button>
+                                <button id="insert" type="submit" class="btn btn-primary">發文</button>
+                                <button id="cancel" type="button" class="btn btn-secondary">取消</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </div>
+
+
+       <!-- <div th:replace="~{layout/Article/Article_main_footer}"></div>  -->
+        <div th:replace="~{layout/main_footer}"></div>
+    </div>
+
+    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+	<script th:src="@{/js/axios.min.js}"></script>
+	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script> -->
+    <script>
+        const onClickInput = {
+            title: "《殭屍獵人》",
+            content: "《殭屍獵人》是一款驚險刺激的實境遊戲，讓我們置身於殭屍世界中。遊戲中，我們需要在逼真的場景中與殭屍對抗，利用武器和策略來生存下來。這種遊戲方式帶來了一種真實的冒險感，讓我感受到了被追逐和生存壓力的刺激。"
+        }
+
+        $('#clickInput').on('click', function (event) {
+            event.preventDefault();
+            $('#title').val(onClickInput.title);
+            $('#content').val(onClickInput.content);
+        })
+    </script>
+
+    <script>
+        $(document).on('click', '#cancel', function (event) {
+            event.preventDefault();
+            window.location.href = '/rr/Article/mainPage';
+        });
+
+        $(document).on('click', '#insert', function (event) {
+            event.preventDefault();
+
+            let insertTitle = $('#title').val();
+            let insertContent = $('#content').val();
+
+            let fileInput = document.getElementById('photoFile');
+            let files = fileInput.files;
+
+            let form = document.getElementById('insertForm');
+            let formDataObject = new FormData(form);
+            
+            //console.log(formDataObject);
+
+            Swal.fire({
+                title: '確認',
+                text: '是否要發布此文章？',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: '確定',
+                cancelButtonText: '取消'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    if (files.length === 0) {
+                        insertTopic2(insertTitle, insertContent);
+                    } else {
+                        insertTopic1(formDataObject);
+                    }
+                }
+            });
+        });
+
+        function insertTopic1(formDataObject) {
+            //console.log(insertTitle)
+            //console.log(insertContent)
+            //console.log(files)
+            axios({
+                method: 'post',
+                url: '/rr/Article/insertToArticle1',
+                data: formDataObject
+            })
+                .then((response) => {
+                    Swal.fire({
+                        title: '成功',
+                        text: '發布成功',
+                        icon: 'success'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = '/rr/Article/mainPage';
+                        }
+                    });
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        title: '錯誤',
+                        text: '發布失敗',
+                        icon: 'error'
+                    });
+                })
+                .finally(() => {
+                    document.getElementById('insertForm').reset();
+                })
+                
+        }
+
+        function insertTopic2(insertTitle, insertContent) {
+            //	console.log(insertTitle)
+            //	console.log(insertContent)
+            $.ajax({
+                url: '/rr/Article/insertToArticle2',
+                type: 'POST',
+                data: {
+                    title: insertTitle,
+                    content: insertContent,
+                },
+                success: function (response) {
+                    Swal.fire({
+                        title: '成功',
+                        text: '發布成功',
+                        icon: 'success'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = '/rr/Article/mainPage';
+                        }
+                    });
+                },
+                error: function (xhr, status, error) {
+                    Swal.fire({
+                        title: '錯誤',
+                        text: '發布失敗',
+                        icon: 'error'
+                    });
+                }
+            });
+        }
+        
+        function previewImages(event) {
+            let input = event.target;
+            let previewContainer = document.getElementById('previewContainer');
+            previewContainer.innerHTML = ''; // 清空預覽容器
+
+            if (input.files && input.files.length > 0 && input.files.length < 6) {
+                for (let i = 0; i < input.files.length; i++) {
+                    let reader = new FileReader();
+                    reader.onload = function (e) {
+                        let previewImage = document.createElement('img');
+                        previewImage.src = e.target.result;
+                        previewImage.alt = '圖片預覽';
+                        previewImage.style.maxHeight = '100px';
+                        previewContainer.appendChild(previewImage);
+                    };
+                    reader.readAsDataURL(input.files[i]);
+                }
+            }else{
+            	Swal.fire({
+		            icon: 'error',
+		            title: '錯誤',
+		            text: '最多只能選擇5張圖片',
+		        });
+		        
+		        $('#photoFile').val('');
+            }
+        }
+    </script>
+</body>
+
+</html>

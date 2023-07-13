@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<link rel="short icon" href="img/images/jigsaw-icon.png">
+	<title>Insert title here</title>
+
+	<style>
+		.hid {
+			display: none;
+		}
+
+		.flex {
+			display: flex
+		}
+	</style>
+</head>
+
+<body>
+	<nav class="navbar navbar-expand-lg navbar-light bg-light fixed_top zindextop shadow-lg p-3 mb-5" id="nav">
+		<a class="navbar-brand logoimg" id="logoimg" th:href="@{/}"><img src="/rr/img/images/newlogo.png" alt=""
+				height="65"></a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+			aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<ul class="navbar-nav mr-auto ">
+				<li class="nav-item active navli "><a class="nav-link" th:href="@{/}">首頁 </a></li>
+				<li class="nav-item active navli"><a class="nav-link" href="#">店家
+					</a></li>
+				<li class="nav-item active navli"><a class="nav-link" href="#">遊戲
+					</a></li>
+				<li class="nav-item active navli"><a class="nav-link btn-booking" href="#">預約 </a>
+					<!-- http://localhost:8080/Project2/booking.jsp -->
+				</li>
+				<li class="nav-item active navli"><a class="nav-link" th:href="@{/managePage/ecomPage.do}">周邊商城
+					</a></li>
+				<li class="nav-item dropdown navli"><a class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
+						role="button" data-bs-toggle="dropdown" aria-expanded="false">
+						討論區 </a>
+					<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+						<li><a class="dropdown-item" th:href="@{/Article/writeArticle}">發文</a></li>
+					</ul>
+				</li>
+				<li class="nav-item active navli"><a class="nav-link" href="#">客服中心
+					</a></li>
+
+
+				<li th:if="null != ${session.member}" class="nav-item active navli hid" id="loginButton"><a
+						class="nav-link btn_login" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">會員登入
+					</a></li>
+				<li th:if="null != ${session.member}" class="nav-item dropdown navli" id="loginInfo">
+					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+						data-bs-toggle="dropdown" aria-expanded="false"><img id="loginMemimg"
+							class="login_img rounded-circle" th:src="@{'/img/member/'+${session.member.memimg}}"
+							style="max-height: 30px; max-width: 30px;" /><span
+							id="loginMemname">[[${session.member.memname}]]</span></a>
+					<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+						<li><a class="dropdown-item" th:href="@{/profile}">個人資料</a></li>
+						<li><a class="dropdown-item" id="btnLogout">登出</a></li>
+					</ul>
+				</li>
+				<li th:if="null != ${session.member}" id="itemManager" class="nav-item active navli">
+   					 <a class="nav-link" th:href="@{/db/manager.showItemList.do}">商品管理</a>
+				</li>
+				<li th:if="null == ${session.member}" class="nav-item active navli" id="loginButton"><a
+						class="nav-link btn_login" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">會員登入
+					</a></li>
+				<li th:if="null == ${session.member}" class="nav-item dropdown navli hid" id="loginInfo">
+					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+						data-bs-toggle="dropdown" aria-expanded="false"><img class="login_img rounded-circle"
+							src="rr/img/member/noimg.jpg" style="max-height: 30px; max-width: 30px;" /></a>
+					<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+						<li><a class="dropdown-item" th:href="@{/profile}">個人資料</a></li>
+						<li><a class="dropdown-item" id="btnLogout">登出</a></li>
+					</ul>
+				</li>
+
+
+			</ul>
+			<!--購物車標誌 -->
+			<form class="d-flex">
+				<button class="btn btn-outline-dark" type="button"
+					onclick="window.location.href='/rr/managePage/shoppingCart.do'">
+					<i class="bi-cart-fill me-1"></i>
+					<i class="fa-solid fa-cart-shopping"></i>
+					<span id="cart-count" class="badge bg-dark text-white ms-1 rounded-pill">0</span>
+				</button>
+			</form>
+			<!--購物車標誌 -->
+		</div>
+
+	</nav>
+	<!-- 會員登入視窗 -->
+	<div class="modal fade " id="loginModal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="ModalLabel">會員登入</h5>
+					<button id="loginModalClose" type="button" class="btn-close" data-bs-dismiss="modal"
+						aria-label="Close"></button>
+				</div>
+				<main class="form-signin w-75 m-auto loginModal">
+					<form id="MemberLogin">
+						<img class="mb-4 " src="/rr/img/images/newlogo.png" alt="" width="250">
+						<h1 class="h3 mb-3 fw-normal">請輸入帳號密碼</h1>
+						<div class="form-floating">
+							<input type="email" class="form-control" id="floatingInput" placeholder="name@example.com"
+								name="email" value="">
+							<label for="floatingInput">E-mail</label>
+						</div>
+						<div class="form-floating">
+							<input type="password" class="form-control" id="floatingPassword" placeholder="Password"
+								name="password"> <label for="floatingPassword">密碼</label>
+						</div>
+						<div class="checkbox mb-3">
+							<label> <input type="checkbox" id="rememberMe" name="rememberMe" /> 記住我
+							</label>
+						</div>
+						<div>
+							尚未加入會員? <a th:href="@{/registerpage}">註冊!</a>
+						</div>
+						<br>
+						<button id="btnLogin" class="w-100 btn btn-lg btn-primary" type="button">登入</button>
+					</form>
+				</main>
+
+			</div>
+		</div>
+	</div>
+	<div id="hiddenDiv"></div>
+	<script th:src="@{/js/jquery-3.7.0.min.js}"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script th:src="@{/js/axios.min.js}"></script>
+
+	<script th:inline="javascript" defer="defer">
+
+
+		$(function () {
+			var memclass = /*[[${session.member}?${session.member.memclass}]]*/ null;
+
+			//確認是否登入管理者帳號切換logo連結
+			if ("Administrator" == memclass) {
+				$('#logoimg').attr('href', '/rr/db/member');
+
+
+			}
+
+			const loginInfoHtml = `<img class="login_img" src="/rr/img/member/noimg.jpg"
+				style="max-height: 30px; max-width: 30px;" />`;
+			$('#btnLogin').click(function () {
+				$.ajax({
+					url: '/rr/login',
+					type: 'POST',
+					data: {
+						email: $('#floatingInput').val(),
+						password: $('#floatingPassword').val(),
+						rememberMe: $('#rememberMe').is(':checked')
+					},
+					success: function (member) {
+						if (member != null && member.length != 0) {
+							if (member.memstatus == "disabled") {
+								Swal.fire({
+									icon: 'warning',
+									title: 'Oops...',
+									text: '您的帳號被凍結了，請聯繫管理人員',
+								})
+
+							} else if (member.memstatus == "active") {
+								$('#loginModalClose').click();
+								Swal.fire({
+									title: '登入成功',
+									icon: 'success',
+									confirmButtonColor: '#3085d6',
+									confirmButtonText: 'OK'
+								})
+								$('#itemManager').show();
+								$('#loginButton').addClass('hid');
+								$('#loginInfo').removeClass('hid');
+								$('#loginInfo>a').html(loginInfoHtml + member.memname);
+								$('#loginInfo img').attr('src', '/rr/img/member/' + member.memimg);
+								//確認是否登入管理者帳號切換logo連結
+
+								if ("Administrator" == member.memclass) {
+									$('#logoimg').attr('href', '/rr/db/member');
+								}
+							} else if (member.memstatus == "inactive") {
+								Swal.fire({
+									icon: 'warning',
+									title: 'Oops...',
+									html: '<div>您的帳號尚未啟用，請至您的信箱收信並點擊啟用連結</div>'
+								})
+							}
+						} else {
+
+							Swal.fire({
+								title: '帳號或密碼錯誤',
+								icon: 'error',
+								confirmButtonColor: '#3085d6',
+								confirmButtonText: 'OK'
+							})
+						}
+					}, error: function (xhr, status, error) {
+						$('#loginModalClose').click();
+						Swal.fire({
+							title: '登入失敗',
+							icon: 'error',
+							confirmButtonColor: '#3085d6',
+							confirmButtonText: 'OK'
+						})
+					}
+				})
+			})
+
+
+			$(document).on('click', '#btnLogout', function () {
+				$.ajax({
+					url: '/rr/logout',
+					type: 'GET',
+					success: function () {
+						Swal.fire({
+							title: '登出成功',
+							icon: 'success',
+							confirmButtonColor: '#3085d6',
+							confirmButtonText: 'OK'
+						})
+						$('#itemManager').hide();
+						document.querySelector("#loginButton").classList.remove("hid");
+						document.querySelector("#loginInfo").classList.add("hid");
+						document.querySelector("#logoimg").setAttribute("href", "/rr/");
+					}
+				});
+			})
+
+			$('#loginButton').click(function () {
+				$.ajax({
+					url: '/rr/getrememberemail',
+					type: 'POST',
+					success: function (email) {
+						$('#floatingInput').val(email);
+					}
+				});
+
+			})
+
+			//email驗證成功提示
+			var verified = /*[[${verified}]]*/ null;
+			if (verified) {
+				Swal.fire({
+					title: '信箱驗證成功',
+					icon: 'success',
+					text: '您現在可以登入帳號囉',
+					confirmButtonColor: '#3085d6',
+					confirmButtonText: 'OK'
+				})
+			}
+
+			var tokenTimeOut = /*[[${tokenTimeOut}]]*/ null;
+			const token = /*[[${token}]]*/ null;
+			$('#hiddenDiv').html(`<input id="tokenid" type="hidden" value="${token}"/>`);
+			if (tokenTimeOut) {
+				Swal.fire({
+					title: '您的驗證連結已過期',
+					icon: 'error',
+					html: `請點擊下方連結寄送新的驗證信<br/>
+	    		  <a id="resendVerificationEmailLink" href="#">重新寄送驗證信</a>`,
+					confirmButtonColor: '#3085d6',
+					confirmButtonText: 'OK'
+				})
+			}
+
+		})
+
+
+		$(document).on('click', '#resendVerificationEmailLink', function () {
+			$.ajax({
+				url: '/rr/resendverificationemail',
+				type: 'GET',
+				data: {
+					token: $('#tokenid').val()
+				},
+				success: function (result) {
+					console.log('OK');
+					Swal.fire({
+						title: '驗證郵件已重新送出',
+						icon: 'success',
+						confirmButtonColor: '#3085d6',
+						confirmButtonText: 'OK'
+					})
+				},
+				error: function () {
+					console.log('NOT GOOD');
+				}
+			})
+		})
+
+	</script>
+
+</body>
+
+</html>

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ"
+	crossorigin="anonymous">
+<link rel="short icon" href="images/jigsaw-icon.png">
+<link rel="stylesheet" href="css/maincss.css">
+<link rel="stylesheet" href="./css/booking.css">
+<!-- 預約css -->
+<script src="https://www.w3schools.com/lib/w3.js"></script>
+<script src="https://kit.fontawesome.com/68f8681dba.js"
+	crossorigin="anonymous"></script>
+<title>預約</title>
+<style>
+.gameimg {
+	width: 900px;
+	height: 400px;
+	background-color: #000;
+	margin: auto;
+	position: relative;
+	overflow: hidden;
+}
+
+.slide-img {
+	position: absolute;
+	margin: 0;
+	padding: 0;
+	left: 0;
+	list-style: none;
+	display: flex;
+	width: 2400px;
+	left: 0px;
+	transition: 0.3s;
+}
+
+.slide-img li {
+	width: 300px;
+	height: 400px;
+	
+}
+
+.slide-img li img {
+	width: 300px;
+	height: 400px;
+	object-fit: cover;
+}
+
+.pages {
+	position: absolute;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	list-style: none;
+	bottom: 10px;
+	width: 100%;
+	justify-content: center;
+}
+
+.pages li {
+	border: 1px solid rgb(255, 255, 255);
+	background-color: #fff;
+	opacity: 0.5;
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	margin: 0 5px;
+	z-index: 2;
+}
+
+.slide-arrow {
+	position: absolute;
+	z-index: 1;
+	font-size: 32px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	color: rgb(255, 255, 255);
+	opacity: 0.9;
+	text-decoration: none;
+}
+
+.focus{
+	width: 300px;
+	height: 400px;
+	background-color:	#000000;
+}
+
+#slideNext {
+	right:0;
+}
+
+
+
+
+
+</style>
+</head>
+
+<body>
+
+	<!-- 導覽列 -->
+<!--	<jsp:include page="/main_navbar.jsp" />-->
+	<!-- ====================================HTML寫在這==================================== -->
+	<div class="container-grid">
+		<div class="left">
+			<div class="container-game">
+				<div class="gameimg">
+					
+					<a class="slide-arrow focus" id="slidePrev">
+						<i class="fa-solid fa-chevron-left fa-beat-fade"></i>
+					</a> 
+					<a class="slide-arrow focus" id="slideNext">
+						<i class="fa-solid fa-chevron-right fa-beat-fade"></i>
+					</a>
+					<ul class="slide-img" id="slideImg">
+						<li><img></li>
+
+						<li th:each="game : ${games}"><img th:src="${game.getGameimg()}" th:alt="${game.getGname()}"></li>
+
+						<li><img></li>
+					</ul>
+
+					<ul class="pages" th:data-size="${games.size()}">
+						<li th:each="game : ${games}"></li>
+					</ul>
+				</div>
+
+			</div>
+			<h3 id="gnameh3"></h3>
+		</div>
+
+		<!-- left遊戲圖片... -->
+		<div class="right">
+
+			<div class="calendar">
+				<div class="calendar-header">
+					<!-- 年 -->
+					<div class="year-picker">
+						<span class="year-change" id="prev-year"> <pre><</pre>
+						</span> <span id="year"></span> <span class="year-change" id="next-year">
+							<pre>></pre>
+						</span>
+					</div>
+					<!-- 月 -->
+					<span class="month-picker" id="month-picker"></span>
+				</div>
+
+				<div class="calendar-body">
+					<!-- 星期 -->
+					<div class="calendar-week-day">
+						<div>日</div>
+						<div>一</div>
+						<div>二</div>
+						<div>三</div>
+						<div>四</div>
+						<div>五</div>
+						<div>六</div>
+					</div>
+					<!-- 日 -->
+					<div class="calendar-days"></div>
+
+				</div>
+				<div class="month-list"></div>
+				<form method="post" action="/project/mybooking" id="myForm"
+					style="visibility: hidden">
+					<div class="yourchoice" name="date"></div>
+					<input type="text" name="date" id="date">
+					<input type="text" name="date" id="date2">
+					<input type="text" name="date" id="date3">
+					<input type="text" name="date" id="date4">
+					<input type="text" name="time" id="time">
+				</form>
+				<!-- 傳資料 -->
+			</div>
+			<div class="time-container">
+				<div class="game-times">
+					<div class="game-time" name="moring">09:00</div>
+				</div>
+				<div class="game-times">
+					<div class="game-time">13:00</div>
+				</div>
+				<div class="game-times">
+					<div class="game-time">19:00</div>
+				</div>
+
+
+
+			</div>
+			<!-- time-container -->
+			<div></div>
+		</div>
+		<!-- right預約... -->
+	</div>
+
+
+	<!-- ====================================HTML寫在這==================================== -->
+	<!-- btn-to-top(不需要可移除) -->
+	<a href="#" class="btn btn-to-top"> <svg
+			xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+			fill="currentColor" class="bi bi-arrow-bar-up" viewBox="0 0 16 16">
+            <path fill-rule="evenodd"
+				d="M8 10a.5.5 0 0 0 .5-.5V3.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 3.707V9.5a.5.5 0 0 0 .5.5zm-7 2.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5z" />
+        </svg>
+	</a>
+
+	<!-- footer -->
+	<div w3-include-html="main_footer.html"></div>
+	<script src="https://code.jquery.com/jquery-3.6.4.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script>
+		w3.includeHTML();
+	</script>
+	<script src="https://kit.fontawesome.com/a260a05f7c.js" crossorigin="anonymous"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"
+		integrity="sha384-zYPOMqeu1DAVkHiLqWBUTcbYfZ8osu1Nd6Z89ify25QV9guujx43ITvfi12/QExE"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.min.js"
+		integrity="sha384-Y4oOpwW3duJdCWv5ly8SCFYWqFDsfob/3GkgExXKV4idmbt98QcxXYs9UoXAB7BZ"
+		crossorigin="anonymous"></script>
+
+	<script src="./js/booking.js"></script>
+	<!-- 預約js -->
+	    <script th:inline="javascript">
+        $(function () {
+            // $("#slideImg").on('click', function () {
+            //     $(this).css('left', '-=800')
+            // })
+            let slideMove = 0;
+            let index = 0;
+            let size = $(".pages").attr("data-size");
+
+            $(".pages li").eq(0).css('background', 'black');
+            $(".pages li").eq(index).addClass('fa-beat').siblings().removeClass('fa-beat');
+
+            $(".pages li").on('mouseenter', function () {
+                index = $(this).index();
+                moveImg();
+            })
+            let slideLength = $(".pages li").length;
+            $("#slideNext").on("click", function () {
+                index++;
+                if (index >= slideLength) {
+                    index = 0;
+                }
+                moveImg();
+            })
+            $("#slidePrev").on("click", function () {
+                index--;
+                if (index < 0) {
+                    index = size-1;
+                }
+                moveImg();
+            })
+
+			var games = /*[[${games}]]*/ null;
+			let game = games[index];
+			$("#gnameh3").text(game.gname);
+            function moveImg() {
+                slideMove = index * -300;
+                game = games[index];
+                $('#slideImg').css('left', slideMove);
+                $(".pages li").eq(index).css('background', 'black').siblings().css('background', 'white');
+                $(".pages li").eq(index).addClass('fa-beat').siblings().removeClass('fa-beat');
+           		$("#gnameh3").text(game.gname);
+            }
+            
+          
+
+            // setInterval(autoImg, 3000);
+            // function autoImg() {
+            //     index++;
+            //     if (index > 4)
+            //         index = 0;
+            //     moveImg();
+            // }
+
+			
+        })
+    </script>
+</body>
+
+</html>

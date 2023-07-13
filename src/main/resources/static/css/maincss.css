@@ -1,0 +1,417 @@
+@font-face {
+	font-family: noto-medium;
+	src: url(../fonts/NotoSansTC-Medium.otf);
+}
+
+@font-face {
+	font-family: noto-light;
+	src: url(../fonts/NotoSansTC-Light.otf);
+}
+
+* {
+	font-family: noto-light;
+}
+
+.colorwhite {
+	color: rgb(224, 224, 228);
+}
+
+body {
+	background-color: #141414;
+}
+
+.inline_flex {
+	display: inline-flex;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: noto-medium;
+}
+
+.btn-arrow {
+	height: 30px;
+	width: 30px;
+	padding: 0;
+	text-align: center;
+	border-radius: 100%;
+	position: relative;
+	top: 10em;
+	margin: 10px;
+}
+
+.btn-to-top {
+	height: 40px;
+	width: 40px;
+	padding: 0;
+	font-size: 20px;
+	text-align: center;
+	border: 2px gray solid;
+	color: gray;
+	border-radius: 100%;
+	position: fixed;
+	right: 2%;
+	top: 90%;
+	animation-name: btn-top-movement;
+	animation-duration: 1s;
+	animation-iteration-count: infinite;
+}
+
+@keyframes btn-top-movement { 0% {
+	right: 2%;
+	top: 90%
+}
+
+50%
+{
+right
+:
+2%;
+top
+:
+88%
+}
+100%
+{
+right
+:
+2%;
+top
+:
+90%
+}
+}
+.fontsize {
+	font-size: 1.3em;
+}
+
+@media ( min-width :992px) {
+	.navbar-collapse .navbar-nav {
+		position: absolute;
+		right: 0;
+	}
+}
+
+.navbar-nav li a {
+	border-radius: 10px;
+	font-weight: bold;
+}
+
+.navbar-nav li a:hover {
+	background-color: rgb(112, 106, 106);
+	transition: 0.3s linear;
+}
+
+.navli {
+	margin-right: 2em;
+}
+
+.nav-link {
+	font-size: 1.4em;
+}
+
+.loginModal {
+	margin-top: 1em;
+	margin-bottom: 5em;
+}
+
+.intro {
+	margin-bottom: 3em;
+	margin-top: 5em;
+}
+
+.fixed_top {
+	width: 100%;
+	position: fixed;
+	top: 0;
+}
+
+.carousel-item img:hover {
+	scale: 1.01;
+	transition: 0.5s linear;
+}
+
+.card-img-overlay {
+	border-radius: 10%;
+	border: 1px solid rgb(255, 255, 255);
+}
+
+.card-bgimg1 {
+	background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.6)),
+		url("https://picsum.photos/400/300?random=1");
+}
+
+.card-bgimg2 {
+	background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.6)),
+		url("https://picsum.photos/400/300?random=2");
+}
+
+.card-bgimg3 {
+	background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.6)),
+		url("https://picsum.photos/400/300?random=3");
+}
+
+.card-bgimg4 {
+	background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.6)),
+		url("https://picsum.photos/400/300?random=4");
+}
+
+.card-bgimg5 {
+	background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.6)),
+		url("https://picsum.photos/400/300?random=5");
+}
+
+.card-bgimg6 {
+	background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.6)),
+		url("https://picsum.photos/400/300?random=6");
+}
+
+.card-bgimg7 {
+	background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.6)),
+		url("https://picsum.photos/400/300?random=7");
+}
+
+.card-bgimg8 {
+	background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.6)),
+		url("https://picsum.photos/400/300?random=8");
+}
+
+.card-bgimg9 {
+	background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.6)),
+		url("https://picsum.photos/400/300?random=9");
+}
+
+.card-img-overlay:hover {
+	scale: 1.02;
+	transition: 0.2s linear;
+}
+
+.card-height {
+	height: 100%;
+}
+
+.hito_row {
+	height: 300px;
+	margin-bottom: 150px;
+}
+
+.hitoimg img {
+	width: 100%;
+	height: 100%;
+}
+
+
+
+.contain {
+	object-fit: contain;
+}
+
+.zindextop {
+	z-index: 9998;
+}
+
+footer {
+	background-color: rgb(255, 255, 255);
+	color: rgb(26, 26, 26);
+	font-size: 8px;
+	padding-top: 5px;
+	text-align: center;
+	clear: both;
+	bottom: 0;
+}
+
+.form-signin {
+	text-align: center;
+	padding: 5%;
+}
+
+.form-signin .checkbox {
+	text-align: left;
+}
+
+/* ---------------新增娛樂高手(id=second) 最新揪團(id=latest)----------------- */
+#second {
+	padding: 40px 0px;
+}
+
+#second h3, #latest h3 {
+	margin-bottom: 40px;
+	font-size: 2rem;
+}
+
+#second img {
+	border-radius: 100%;
+	width: 108px;
+}
+
+#second h5 {
+	margin-top: 22px;
+	font-size: 16px;
+}
+
+p {
+	font-size: 16px;
+	line-height: 26px;
+	color: #707070;
+}
+
+p.lead {
+	color: black;
+	line-height: 31px;
+}
+
+#latest {
+	background: rgb(209, 203, 203);
+	padding: 80px 0px;
+}
+
+#latest .upper {
+	position: relative;
+}
+
+#latest .innertext {
+	position: absolute;
+	bottom: 20px;
+	left: 30px;
+}
+
+#latest .innertext span {
+	/* background: rgba(133, 16, 16, 0.3); */
+	padding: 5px 16px;
+	border-radius: 30px;
+}
+
+#latest h4 {
+	font-size: 19px;
+	margin-top: 18px;
+}
+
+#latest .lower {
+	padding: 22px;
+}
+
+#latest img {
+	height: 550px;
+	/* padding: auto; */
+}
+
+#latest .col-md-4 .outer {
+	box-shadow: 0 0 8px 0 rgba(52, 39, 39, 0.08);
+	padding: 0px;
+	margin: 0 5px;
+}
+
+#latest .lower h3 {
+	font-size: 21px;
+	margin-bottom: 20px;
+}
+
+#latest a {
+	color: black;
+}
+
+#latest a {
+	color: black;
+	text-decoration: none;
+}
+
+#latest i {
+	margin-right: 5px;
+}
+
+#latest .innertext {
+	color: aliceblue;
+}
+
+#latest img {
+	padding-top: 20px;
+	padding-left: 15px;
+	max-width: 100%;
+
+	/* max-height: 80%; */
+}
+
+/* ------------------------新增footer----------------------------- */
+footer {
+	padding-top: 30px
+}
+
+/* #email p {
+    margin-top: 40px;
+}
+
+#email .btn {
+    margin-top: 10px;
+    font-size: 16px;
+} */
+footer {
+	border-top: 1px solid rgba(0, 0, 0, 0.09);
+}
+
+footer img {
+	margin-bottom: 30px;
+}
+
+footer h4 {
+	font-size: 20px;
+	margin-bottom: 20px;
+}
+
+/* footer ul {
+    list-style: none;
+    padding: 0;
+}
+
+footer ul a {
+    color: #707070;
+} */
+
+/* footer ul a:hover {
+    color: #707070;
+    text-decoration: none;
+    opacity: 0.8;
+}
+
+footer ul li {
+    margin-bottom: 5px;
+} */
+
+/* footer ul {
+     float: left;
+    margin-right: 26px;
+
+}  */
+footer a {
+	color: #131316;
+}
+
+footer a:hover {
+	color: #f05f5c;
+}
+
+#latest .thehead h3 {
+	margin-bottom: 5px;
+	font-size: 32px;
+}
+
+#latest .thehead p {
+	margin-bottom: 80px;
+}
+
+#latest .thehead .col-md-4 p {
+	margin-bottom: 0px;
+	margin-top: 25px;
+}
+
+#latest .thehead h3.notag {
+	margin-bottom: 50px;
+}
+
+/* 
+#latest .outer {
+    background-color: beige;
+    border-radius: 20px;} */
+#second h3, #latest h3 {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}

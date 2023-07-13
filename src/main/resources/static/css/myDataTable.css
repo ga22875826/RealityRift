@@ -1,0 +1,32 @@
+#myTable_length {
+    display: inline-block;
+}
+
+#myTable_filter {
+    display: inline-block;
+
+}
+
+tr th:hover{
+	cursor:pointer;
+}
+
+
+tbody{
+	display:block;
+	overflow:auto;
+	height:70vh;
+}
+
+.app-content-header {
+    margin-bottom: 20px;
+}
+
+.dataTables_filter{
+	position:relative;
+	left:8em;
+}
+
+#myTable_paginate a{
+	margin-right:2px;
+}

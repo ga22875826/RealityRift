@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Insert title here</title>
+	<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+	<link th:href="@{/images/jigsaw-icon.png}" rel="stylesheet">
+	<link th:href="@{/css/registcss1.css}" rel="stylesheet">
+	<title>addItemPage</title>
+	<style>
+		.fill-button {
+			background-color: purple;
+			color: #fff;
+			padding: 3px 7px;
+			border: none;
+			border-radius: 12px;
+			font-size: 16px;
+			cursor: pointer;
+			margin-bottom: 10px;
+			align-content: center;
+			justify-content: center;
+
+		}
+
+		.fill-button:hover {
+			background-color: #0056b3;
+		}
+	</style>
+</head>
+
+<body>
+
+	<main class="colorwhite">
+		<section>
+			<br>
+			<h1>新增商品</h1>
+			<div class="form">
+				<form action="#" id="addItemForm" method="POST" accept-charset="UTF-8" enctype="multipart/form-data">
+					<div class="row">
+						<div class="col-12">
+							<button type="button" class="fill-button" onclick="fillForm()">懶人按鈕</button>
+						</div>
+						<div>
+							<div class="form-floating mb-3">
+								<input type="text" class="form-control" id="itemname" name="itemname" maxlength="9"
+									placeholder="itemname" required>
+								<label for="itemname" class="form-label">商品名稱</label>
+							</div>
+						</div>
+					</div>
+					<!--商品分類選擇 -->
+					<div class="row">
+						<div class="col-6">
+							<div class="form-floating mb-3">
+								<select class="form-select" id="category-level-1" name="category-level-1" required>
+									<option value="">-- 請選擇商品種類 --</option>
+									<!-- Option values are populated dynamically -->
+								</select>
+								<label for="category-level-1" class="form-label">商品種類</label>
+							</div>
+
+							<div class="form-floating mb-3">
+								<select class="form-select" id="category-level-2" name="category-level-2" required>
+									<option value="">-- 請選擇商品子種類 --</option>
+									<!-- Option values are populated dynamically -->
+								</select>
+								<label for="category-level-2" class="form-label">商品子種類</label>
+							</div>
+
+							<div class="form-floating mb-3">
+								<select class="form-select" id="category-level-3" name="category-level-3" required>
+									<option value="">-- 請選擇商品子種類 --</option>
+									<!-- Option values are populated dynamically -->
+								</select>
+								<label for="category-level-3" class="form-label">商品子種類</label>
+							</div>
+						</div>
+					</div>
+					<!--商品分類選擇 -->
+					<!--商品狀態選擇 -->
+					<div class="row">
+						<div class="col-6">
+							<div class="form-floating mb-3">
+								<select class="form-select" id="itemstatus" name="itemstatus" required>
+									<option value="">-- 請選擇商品狀態 --</option>
+									<option value="販售中">販售中</option>
+									<option value="售完">售完</option>
+									<option value="停售">停售</option>
+								</select> <label for="itemstatus" class="form-label">商品狀態</label>
+
+							</div>
+						</div>
+					</div>
+					<!--商品狀態選擇 -->
+					<div class="row">
+						<div class="col-6">
+							<div class="form-floating mb-3">
+								<input type="number" class="form-control" id="price" name="price" placeholder="產品價格"
+									max="999999" maxlength="6" required> <label for="price"
+									class="form-label">價格</label>
+								<span id="price-error" style="color: red;"></span>
+							</div>
+						</div>
+
+					</div>
+					<div class="row">
+						<div class="col-6">
+							<div class="form-floating mb-3">
+								<input type="number" class="form-control" id="salescount" name="salescount" max="999999"
+									maxlength="6" placeholder="產品銷量" required> <label for="salescount"
+									class="form-label">商品銷量</label>
+								<span id="salescount-error" style="color: red;"></span>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-6">
+							<div class="form-floating mb-3">
+								<input type="number" class="form-control" id="stock" name="stock" placeholder="stock"
+									max=999999 maxlength="6" required> <label for="stock" class="form-label">庫存</label>
+								<span id="stock-error" style="color: red;"></span>
+							</div>
+
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col">
+							<label for="imgUpload" class="form-label">上傳商品圖片</label><br>
+							<input accept="image/*" type="file" id="imgUpload" name="images" multiple
+								onchange="handleFileSelect(event)" />
+						</div>
+						<div class="col">
+							<div id="previewContainer"></div>
+						</div>
+						<div id="warningMessage" style="display: none;">
+							超過圖片數量限制！
+						</div>
+
+					</div>
+
+					<br>
+
+					<!-- item detail -->
+
+					<div class="row">
+						<div class="col-12">
+							<label for="itemdetail">商品描述</label> <br />
+							<textarea class="form-control" name="itemdetail" id="itemdetail" cols="30" rows="10"
+								maxlength="200" placeholder="商品描述" onfocus="if(this.value=='請輸入商品描述')this.value='';"
+								onblur="if(this.value=='')this.value='請輸入商品描述'">請輸入商品描述</textarea>
+						</div>
+					</div>
+
+					<!-- item detail -->
+					<br> <br>
+					<div class="col-12">
+						<button type="submit" id="addConfirmBtn" class="btn btn-primary">新增</button>
+						<button type="button" class="btn btn-primary" onclick="window.history.back()">取消</button>
+					</div>
+
+
+				</form>
+			</div>
+		</section>
+	</main>
+
+	<a href="#" class="btn btn-to-top"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+			fill="currentColor" class="bi bi-arrow-bar-up" viewBox="0 0 16 16">
+			<path fill-rule="evenodd"
+				d="M8 10a.5.5 0 0 0 .5-.5V3.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 3.707V9.5a.5.5 0 0 0 .5.5zm-7 2.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5z" />
+		</svg>
+	</a>
+
+
+	<script th:src="@{/js/jquery-3.7.0.min.js}"></script>
+	<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+	<script th:src="@{/js/cdn.jsdelivr.net_npm_sweetalert2@11.7.12_dist_sweetalert2.all.min.js}"></script>
+	<script src="https://www.w3schools.com/lib/w3.js"></script>
+	<script src="https://kit.fontawesome.com/7e347cd6cd.js" crossorigin="anonymous"></script>
+	<script th:src="@{/js/jquery.itemdataTables.js}"></script>
+	<script>
+
+		$(document).ready(function () {
+			$.ajax({
+				url: '/rr/categories/1',  //  API 端點
+				type: 'GET',
+				dataType: 'json',
+				success: function (data) {
+					populateDropdown('#category-level-1', data.subCategories);
+
+					$('#category-level-1').change(function () {
+						var selectedId = $(this).val();
+						var subCategories = getSubCategoriesById(data.subCategories, selectedId);
+						populateDropdown('#category-level-2', subCategories);
+					});
+
+					$('#category-level-2').change(function () {
+						var selectedId = $(this).val();
+						var subCategories = getSubCategoriesById(data.subCategories, selectedId);
+						populateDropdown('#category-level-3', subCategories);
+					});
+
+				},
+				error: function (jqXHR, textStatus, errorThrown) {
+					console.log(textStatus, errorThrown);
+				}
+			});
+
+			$('#addConfirmBtn').click(addItem)
+
+		});
+
+		function populateDropdown(selector, optionsData) {
+			$(selector).empty().append($('<option>', {
+				value: "",
+				text: "-- 請選擇商品種類 --"
+			}));
+			$.each(optionsData, function (i, category) {
+				$(selector).append($('<option>', {
+					value: category.id,
+					text: category.name,
+					'data-subCategories': JSON.stringify(category.subCategories)
+				}));
+			});
+		}
+
+		function getSubCategoriesById(categories, id) {
+			for (var i = 0; i < categories.length; i++) {
+				if (categories[i].id == id) {
+					return categories[i].subCategories;
+				} else {
+					var found = getSubCategoriesById(categories[i].subCategories, id);
+					if (found.length > 0) {
+						return found;
+					}
+				}
+			}
+			return [];
+		}
+
+
+		///////////////////////////////////////////////////////////
+
+
+
+
+
+
+		function addItem(event) {
+			console.log('test function being called');
+
+
+			var isValid = true;
+			$('#addItemForm').find('select[required]').each(function (index, ele) {
+				console.log(123);
+				if (ele.value === '') {
+					alert('尚有資料未填入');
+					isValid = false;
+					return false; // Exit the each loop
+				}
+			});
+
+			if (!isValid) {
+				return; // Stop execution if the form is not valid
+			} else {
+
+				event.preventDefault();
+
+
+				var formData = new FormData();
+				formData.append('itemname', $('#itemname').val());
+				formData.append('price', $('#price').val());
+				formData.append('salescount', $('#salescount').val());
+				formData.append('stock', $('#stock').val());
+				formData.append('itemdetail', $('#itemdetail').val());
+				formData.append('itemstatus', $('#itemstatus').val());
+				
+				 var files = $('#imgUpload')[0].files;
+    for (var i = 0; i < files.length; i++) {
+        formData.append('images', files[i]);
+    }
+				
+
+				var categoryId;
+				if ($('#category-level-3').val()) {
+					categoryId = $('#category-level-3').val();
+				} else if ($('#category-level-2').val()) {
+					categoryId = $('#category-level-2').val();
+				} else {
+					categoryId = $('#category-level-1').val();
+				}
+				formData.append('categoryid', categoryId);
+
+				var url = "/rr/addItem.do";
+				$.ajax({
+					type: "POST",
+					url: url,
+					data: formData,
+					contentType: false,
+					processData: false,
+					success: function (data) {
+						Swal.fire({
+
+							icon: 'success',
+							title: '新增成功',
+							showConfirmButton: false,
+							timer: 500
+						}).then((result) => {
+							// Redirect the user
+							window.location.href = "/rr/db/manager.showItemList.do";
+						})
+					},
+					error: function (error) {
+						alert("Error adding item: " + error);
+					}
+				});
+			}
+		}
+
+
+
+
+		function fillForm() {
+			document.getElementById('itemname').value = '預設商品名稱';
+			document.getElementById('price').value = '100';
+			document.getElementById('salescount').value = '10';
+			document.getElementById('stock').value = '50';
+			document.getElementById('itemdetail').value = '這是預設的商品描述';
+			document.getElementById('itemstatus').value = '販售中';
+
+		
+			$('#category-level-1').val('2').change();
+
+			
+			setTimeout(function () {
+				$('#category-level-2').val('3').change();
+			}, 200);
+
+			setTimeout(function () {
+				$('#category-level-3').val('4').change();
+			}, 200);
+		}
+
+		function handleFileSelect(event) {
+
+			var files = event.target.files;
+			var previewContainer = document.getElementById('previewContainer');
+			previewContainer.innerHTML = '';
+
+			var files = event.target.files;
+			var warningMessage = document.getElementById('warningMessage');
+
+
+			if (files.length > 2) {
+				warningMessage.style.display = 'block';
+			} else {
+
+				warningMessage.style.display = 'none'
+				for (var i = 0; i < files.length; i++) {
+					var file = files[i];
+					var reader = new FileReader();
+
+					reader.onload = function (event) {
+						var img = document.createElement('img');
+						img.src = event.target.result;
+						console.log(img.src);
+						img.classList.add('imgUpload');
+						img.onload = function () {
+
+							previewContainer.appendChild(img);
+						}
+					};
+
+					reader.readAsDataURL(file);
+				}
+
+			}
+		}
+		const inputs = document.querySelectorAll('input[type="number"]');
+		inputs.forEach(input => {
+			input.addEventListener('input', event => {
+				const input = event.target
+				const value = event.target.value;
+				if (value < 0) {
+					event.target.setCustomValidity('Please retry valid input!');
+					document.getElementById(`${event.target.id}-error`).textContent = 'It\'s invalid input. Should\'ve not been negative';
+				} else {
+					event.target.setCustomValidity('');
+					document.getElementById(`${event.target.id}-error`).textContent = '';
+				}
+			});
+		});
+		const itemStatusSelect = document.querySelector('#itemstatus');
+		const stockInput = document.querySelector('#stock');
+
+		itemStatusSelect.addEventListener('change', (event) => {
+			const selectedStatus = event.target.value;
+			if (selectedStatus === '售完') {
+				stockInput.value = '0';
+				stockInput.setAttribute('readonly', 'readonly');
+			} else {
+				stockInput.removeAttribute('readonly');
+			}
+		});
+
+
+
+
+	</script>
+
+</body>
+
+</html>

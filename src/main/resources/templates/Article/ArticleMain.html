@@ -1,0 +1,152 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" class="h-100" data-bs-theme="auto">
+
+<head>
+	<!-- <script src="/js/Article/color-modes.js"></script> -->
+
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="">
+	<meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+	<meta name="generator" content="Hugo 0.112.5">
+	<title>討論區</title>
+
+	<link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/cover/">
+
+	<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+	<link th:href="@{/css/maincss.css}" rel="stylesheet">
+	<!-- Custom styles for this template -->
+	<!-- <link th:href="@{/css/Article/cover.css}" rel="stylesheet"> -->
+	<!-- <script th:src="@{/js/jquery-3.7.0.min.js}"></script> -->
+	<script src="https://kit.fontawesome.com/a260a05f7c.js" crossorigin="anonymous"></script>
+
+	<style>
+
+		.pagination {
+			display: flex;
+			justify-content: center;
+		}
+
+		.font-weight-bold {
+			font-weight: bold;
+		}
+
+		.flex-under {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+
+		}
+
+		.img-center {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		.container {
+	  		display: flex;
+  			justify-content: center;
+		}
+		
+		.container-div{
+			margin-top:10em;
+		}
+		
+		.google-btn .google-icon {
+		  position:absolute;
+		  right:10px;
+		}
+		
+	</style>
+
+</head>
+
+<body class=" text-center bg-dark">
+
+
+	<div th:replace="~{layout/main_navbar}"></div>
+
+	<main class="px-3 text-bg-dark">
+		<div class="container container-div" style="margin-bottom:3em">
+			<div>
+				<div>
+					<th:block th:each="Article : ${page.content} ">
+						<a th:href="@{/Article/Select/{id}(id=${Article.topicId})}" style="text-decoration: none;">
+							<div class="card mb-3" style="max-width: auto;" >
+								<div class="row g-0">
+									<div class="col-md-3">
+										<th:block th:switch="${Article.topicPhotos == null}">
+											<li style="list-style-type: none;" th:case=${true}>
+												<div>
+													<img style="height: 200px" th:src="@{/img/article/NoImage2.png}"
+														class="img-fluid rounded-start" alt="看不到啦">
+												</div>
+											</li>
+											<li style="list-style-type: none;" th:case=${false}>
+												<div>
+													<img style="height: 200px; width: calc(100%);" 
+														th:src="@{/Article/firstImage/{topicId}(topicId=${Article.topicId})}"
+														class="img-fluid rounded-start" alt="找不到啦">
+												</div>
+											</li>
+										</th:block>
+									</div>
+									<div class="col-md-9">
+										<div class="card-body" style="color:black">
+											<h4 class="card-title font-weight-bold" th:text="${Article.title} "></h4>
+											<p class="card-text text-start"
+												th:utext="${#strings.length(Article.content) > 90} ? ${#strings.substring(Article.content, 0, 89)} + '...' : ${Article.content}">
+											</p>
+											<br>
+											<div class="flex-under">
+												<div>
+													<i class="fa-regular fa-heart"><span style="font-size: calc(70%);"
+															th:text="'  ' + ${Article.good} + '   '"></span></i>
+												</div>
+												<span
+													th:text="'會員編號: ' + ${Article.memno} + ' 於 ' + (${Article} ? (${Article.editTime} ? ${#dates.format(Article.editTime, 'yyyy-MM-dd HH:mm:ss EEEE')} : ${#dates.format(Article.publishTime, 'yyyy-MM-dd HH:mm:ss EEEE')})) + '   創建/修改'"></span>
+											</div>
+
+										</div>
+									</div>
+								</div>
+							</div>
+						</a>
+					</th:block>
+				</div>
+
+				<ul class="pagination">
+					<th:block th:switch="${page.number != 0}">
+						<li th:case=${true} class="page-item"><a class="page-link"
+								th:href="@{/Article/mainPage?(p=${page.number})}">上一頁</a></li>
+						<li th:case=${false} class="page-item disable"><span class="page-link">第一頁</span></li>
+					</th:block>
+
+					<th:block th:each=" pageNumber : ${#numbers.sequence(1, page.totalPages)}">
+						<th:block th:switch="${page.number != pageNumber - 1 }">
+							<li th:case=${true} class="page-item"><a class="page-link"
+									th:href="@{/Article/mainPage?(p=${pageNumber})}">[[${pageNumber}]]</a></li>
+							<li th:case=${false} class="page-item active"><span class="page-link"
+									th:text="${pageNumber}"></span></li>
+						</th:block>
+					</th:block>
+
+					<th:block th:switch="${page.number == page.totalPages -1}">
+						<li th:case="${true}" class="page-item"><span class="page-link">最後一頁</span></li>
+						<li th:case="${false}" class="page-item"><a class="page-link" th:href="@{/Article/mainPage?(p=${page.number + 2})}">下一頁</a></li>
+					</th:block>
+				</ul>
+			</div>
+		</div>
+	</main>
+
+	<div th:replace="~{layout/main_footer}"></div>
+
+
+	<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
+    <style>
+		.qrCodeImg{
+			width: 200px;
+			height: 200px;
+			border: 1px gray solid;
+		}
+		.tokenInputDiv{
+			display: flex;
+			align-items: center;
+		}
+		
+		.left-div{
+		    display: flex;
+		    flex-wrap: wrap;
+		    align-items: center;
+		    justify-content: center;
+		}
+		.tokenForm>*{
+			margin-bottom: 10px;
+		}
+
+    </style>
+
+    <title>啟用2階段驗證</title>
+</head>
+
+<body>
+    <!-- 導覽列 -->
+    <div th:replace="~{layout/main_navbar}"></div>
+
+    <!-- 側邊欄 -->
+
+    <!-- 會員個人資料 -->
+    <section class="profile">
+        <div class="container">
+            <div class="row main-content">
+                <div class="col-2 left">
+					<div th:replace="~{member/MemberProfileSidebar}"></div>
+                </div>
+                <div class="row col-10 right">
+                    <div class="col-md-10 offset-md-4">
+                        <div class="main">
+                        <h2 id="titleH2" th:if="${qrCodeUrl!=null && isenabled==1}" class="h2Font text-center title">Google Authentication 兩階段驗證(已啟用)</h2>
+                        <h2 id="titleH2" th:if="${qrCodeUrl==null || isenabled==0}" class="h2Font text-center title">Google Authentication 兩階段驗證(未啟用)</h2>
+                        <input id="email" type="hidden" th:value="${session.member.email}">
+                              <div class="row">
+                                  <div id="qrCode-div" class="member-info">
+									  <!--<input id="testinput" type="hidden" th:value="${session.member.memno}">
+									    <button class="" th:if="${qrCodeUrl==null}" id="enable-btn">enable</button>
+									  <button class="" th:if="${qrCodeUrl!=null}" id="disable-btn">disable</button>
+									  <img th:if="${qrCodeUrl!=null}" th:src="${qrCodeUrl}">-->
+									  <p>1.安裝：在行動裝置安裝 Google Authenticator APP。</p>
+									  <p>2.開啟：安裝完成後開啟 APP，進行設定。</p>
+									  <p>3.新增：點擊 APP 右上角或右下角的 + ，透過以下方式新增帳戶。</p>
+									  <p>4.輸入：完成設定後，下方輸入 APP 產生的六位數驗證碼。</p>
+									  
+									  <p>
+									  <button id="display-qrcode-btn" class="btn btn-outline-primary enable-btn1" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+									    顯示QRCode
+									  </button>
+									</p>
+									<div class="collapse" id="collapseExample">
+									  <div class="card card-body">
+										  <div class="row">
+											  <div class="col-6 left-div">
+												  <p class="text-center w-100">掃描條碼</p>
+											    <img class="qrCodeImg" th:src="${qrCodeUrl}">
+											    <p class="text-center">請用行動裝置掃描條碼(QRCode)</p>
+											  </div>
+											  <div class="col-6 tokenInputDiv">
+												  <div >
+													  <form id="tokenForm" class="tokenForm" th:if="${qrCodeUrl==null || isenabled==0}">
+														  <span>請輸入六位數驗證碼以啟用</span>
+														  <input id="tokenInput" class="form-control" type="text" maxlength="6" pattern="[0-9]">
+														  <button id="enableBtn" type="button" class="btn btn-outline-primary btn-sm">啟用驗證</button>
+													  </form>
+													  <form id="tokenForm" class="tokenForm" th:if="${qrCodeUrl!=null && isenabled==1}">
+														  <span>請輸入六位數驗證碼以停用</span>
+														  <input id="tokenInput" class="form-control" type="text" maxlength="6" pattern="[0-9]">
+														  <button id="disableBtn" type="button" class="btn btn-outline-danger btn-sm">停用驗證</button>
+													  </form>
+												  </div>
+											  </div>
+										  </div>
+									  </div>
+									</div>
+                                  </div>
+                              </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    	<!-- footer -->
+	<div th:replace="~{layout/main_footer}"></div>
+
+ 	
+        
+    <script th:inline="javascript">
+		
+		
+		$(function () {
+			let email = $('#email').val();
+
+			$('#second-authenticator').addClass('active');
+
+			$('#display-qrcode-btn').click(function(){
+				if($('#display-qrcode-btn').attr('aria-expanded')=='true'){
+					$('#display-qrcode-btn').text('隱藏QRCode')
+				}else{
+					$('#display-qrcode-btn').text('顯示QRCode')
+				}
+				$('#tokenInput').focus();
+			})
+			
+			//啟用驗證
+			$('#enableBtn').click(function(){
+				Swal.fire({
+				  title: '是否要開啟兩階段驗證?',
+				  icon: 'warning',
+				  showCancelButton: true,
+				  confirmButtonColor: '#3085d6',
+				  cancelButtonColor: '#d33',
+				  cancelButtonText:'取消',
+				  confirmButtonText: '是的'
+				}).then((result) => {
+				  if (result.isConfirmed) {
+					  $.ajax({
+						  url:'/rr/api/enableauth/'+$('#tokenInput').val(),
+						  method:'PUT',
+						  data:{email:email},
+						  success:function(result){
+							  if(result){
+							    Swal.fire(
+							      '啟用成功!',
+							      '您的帳號已受到更多保護',
+							      'success'
+							    )
+								$('#titleH2').text('Google Authentication 兩階段驗證(已啟用)');
+							    $('#tokenForm').html(`
+							    						<span>請輸入六位數驗證碼以停用</span>
+														  <input id="tokenInput" class="form-control" type="text" maxlength="6" pattern="[0-9]">
+														  <button id="disableBtn" type="button" class="btn btn-outline-danger btn-sm">停用驗證</button>`);
+							  }else{
+								  Swal.fire(
+							      '啟用失敗!',
+							      '驗證碼輸入錯誤，請再確認',
+							      'error'
+							    )
+							  }
+						  },
+						  error:function(){
+							  console.log('error');
+							  Swal.fire(
+							      '錯誤',
+							      '發生了一點問題',
+							      'error'
+							    )
+						  }
+					  })
+				  }
+				})
+			})
+			//停用驗證
+			$('#disableBtn').click(function(){
+				console.log(email);
+				Swal.fire({
+				  title: '是否要停用兩階段驗證?',
+				  icon: 'warning',
+				  showCancelButton: true,
+				  confirmButtonColor: '#3085d6',
+				  cancelButtonColor: '#d33',
+				  cancelButtonText:'取消',
+				  confirmButtonText: '是的'
+				}).then((result) => {
+				  if (result.isConfirmed) {
+					  $.ajax({
+						  url:'/rr/api/disableauth/'+$('#tokenInput').val(),
+						  method:'PUT',
+						  data:{email:email},
+						  success:function(){
+							  console.log('success');
+							    Swal.fire(
+							      '兩階段驗證已停用!',
+							      '您的帳號已解除兩階段驗證',
+							      'success'
+							    )
+							    $('#titleH2').text('Google Authentication 兩階段驗證(未啟用)');
+							    $('#tokenForm').html(`
+							    						<span>請輸入六位數驗證碼以啟用</span>
+														  <input id="tokenInput" class="form-control" type="text" maxlength="6" pattern="[0-9]">
+														  <button id="enableBtn" type="button" class="btn btn-outline-primary btn-sm">啟用驗證</button>`);
+						  },
+						  error:function(){
+							  console.log('error');
+							  Swal.fire(
+							      '錯誤',
+							      '發生了一點問題',
+							      'error'
+							    )
+						  }
+					  })
+				  }
+				})
+			})
+			
+			
+			$('#enable-btn').click(function(){
+				$.ajax({
+					url:'/rr/api/enablesecondauthenticator',
+					type:'GET',
+					success:function(result){
+						window.location.href='/rr/secondauthenticatorpage';
+					},
+					error:function(){
+					}
+				})
+			})
+			
+			$('#disable-btn').click(function(){
+				$.ajax({
+					url:'/rr/api/disablesecondauthenticator',
+					type:'GET',
+					success:function(result){
+						window.location.href='/rr/secondauthenticatorpage';
+					},
+					error:function(){
+					}
+				})
+			})
+			
+        })
+			
+			
+			
+			
+			
+		
+	</script>
+</body>
+
+</html>

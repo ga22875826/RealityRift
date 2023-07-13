@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <title>購物車頁面</title>
+  <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+  <link th:href="@{/css/ecom/shoppingCart.css}" rel="stylesheet" />
+  <style>
+    .qty i {
+      cursor: pointer;
+      /* 更改游標樣式 */
+      transition: transform 0.5s ease;
+      /* 讓大小變化有動畫效果 */
+    }
+
+    .qty i:hover {
+      transform: scale(1.5);
+      /* 滑鼠懸停時，將圖示放大 20% */
+    }
+
+    .delete-action {
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .delete-action:hover {
+      transform: scale(1.5);
+      /* 將刪除按鈕放大 50% */
+    }
+
+    .total-price {
+      margin-right: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container mt-5 mb-5">
+    <div class="d-flex justify-content-center row">
+      <div class="col-md-8">
+        <div class="p-2">
+          <h4>Shopping cart</h4>
+          <div class="d-flex flex-row align-items-center pull-right"><span class="mr-1">Sort by:</span><span
+              class="mr-1 font-weight-bold">Price</span><i class="fa fa-angle-down"></i></div>
+        </div>
+        <div class="cart-container">
+          <!--  div class="d-flex flex-row justify-content-between align-items-center p-2 bg-white mt-4 px-3 rounded">
+                        <div class="mr-1"><img class="rounded" src="https://i.imgur.com/XiFJkhI.jpg" width="70"></div>
+                        <div class="d-flex flex-column align-items-center product-details"><span class="font-weight-bold">Basic T-shirt</span>
+                            <div class="d-flex flex-row product-desc">
+                                <div class="size mr-1"><span class="text-grey">Size:</span><span class="font-weight-bold">&nbsp;M</span></div>
+                                <div class="color"><span class="text-grey">Color:</span><span class="font-weight-bold">&nbsp;Grey</span></div>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-row align-items-center qty"><i class="fa fa-minus text-danger"></i>
+                            <h5 class="text-grey mt-1 mr-1 ml-1">2</h5><i class="fa fa-plus text-success"></i></div>
+                        <div>
+                            <h5 class="text-grey">$20.00</h5>
+                        </div>
+                        <div class="d-flex align-items-center"><i class="fa fa-trash mb-1 text-danger"></i></div>
+                    </div !-->
+
+        </div>
+        <div class="d-flex flex-row align-items-center justify-content-end mt-3 p-4 bg-white rounded">
+          <h5 class="total-price">Total：</h5>
+          <button class="btn btn-warning btn-block btn-lg ml-2 pay-button" type="button">結帳</button>
+        </div>
+
+
+        <div class="d-flex flex-row align-items-center mt-3 p-2 bg-white rounded"><input type="text"
+            class="form-control border-0 gift-card" placeholder="discount code/gift card"><button
+            class="btn btn-outline-warning btn-sm ml-2" type="button">Apply</button></div>
+        <button class="btn btn-outline-dark mt-3" onclick="goToStore()">取消購買</button>
+
+      </div>
+    </div>
+  </div>
+  <script>
+    window.onload = function () {
+      let cart = localStorage.getItem('cart');
+      cart = cart ? JSON.parse(cart) : [];
+      const cartContainer = document.querySelector('.cart-container');
+      cartContainer.innerHTML = '';
+
+      for (let i = 0; i < cart.length; i++) {
+        const product = cart[i];
+        const { item, images } = product;
+        const { itemname, price, itemstatus, itemid } = item;
+
+        let img = images.length > 0 ? images[0].imagename : "defaultPic.jpg";
+
+        const productHTML = `
+                    <div class="d-flex flex-row justify-content-between align-items-center p-2 bg-white mt-4 px-3 rounded product" data-index="${i}">
+                      <div class="mr-1"><img class="rounded" src="/rr/img/itemimgs/${img}" width="70"></div>
+                      <div class="d-flex flex-column align-items-center product-details"><span class="font-weight-bold">${itemname}</span>
+                        <div class="d-flex flex-row product-desc">
+                          <div class="size mr-1"><span class="text-grey">Size:</span><span class="font-weight-bold">&nbsp;M</span></div>
+                          <div class="color"><span class="text-grey">Color:</span><span class="font-weight-bold">&nbsp;Grey</span></div>
+                        </div>
+                      </div>
+                      <div class="d-flex flex-row align-items-center qty" data-index="${i}">
+                        <i class="fa fa-minus text-danger" data-action="decrease" data-index="${i}"></i>
+                        <h5 class="text-grey mt-1 mr-1 ml-1">${product.quantity}</h5>
+                        <i class="fa fa-plus text-success" data-action="increase" data-index="${i}"></i>
+                      </div>
+                      <div class="d-flex flex-column">
+                        <div>
+                          <h6 class="text-grey">單價: $${price.toFixed(2)}</h6>
+                        </div>
+                        <div>
+						  <h6 class="text-grey total-product-price">共計: $${(price * product.quantity).toFixed(2)}</h6>
+						</div>
+					</div>
+                      <div class="d-flex align-items-center">
+                        <i class="fa fa-trash mb-1 text-danger delete-action" data-action="remove" data-index="${i}"></i>
+                      </div>
+                    </div>
+                  `;
+
+
+
+        cartContainer.innerHTML += productHTML;
+      }
+
+      bindEvents();
+
+      updateTotalPrice();
+
+      function changeQuantity(index, diff) {
+        const quantityElement = document.querySelector(`.qty[data-index="${index}"] h5`);
+        const newQuantity = parseInt(quantityElement.innerText) + diff;
+        if (newQuantity > 0) {
+          quantityElement.innerText = newQuantity;
+          cart[index].quantity = newQuantity;
+
+          const totalProductPriceElement = document.querySelector(`.product[data-index="${index}"] .total-product-price`);
+          totalProductPriceElement.innerText = `共計: ${(cart[index].item.price * cart[index].quantity).toFixed(2)}`;
+          ;
+
+
+          localStorage.setItem('cart', JSON.stringify(cart));
+          updateTotalPrice();  // 更新總價格
+        }
+      }
+
+      // 刪除商品
+      function removeProduct(index) {
+        document.querySelector(`.product[data-index="${index}"]`).remove();
+        cart.splice(index, 1);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        updateTotalPrice();  // 更新總價格
+      }
+
+      // 綁定事件的函數
+      function bindEvents() {
+        document.querySelectorAll('[data-action]').forEach(function (element) {
+          element.addEventListener('click', function (e) {
+            const action = this.getAttribute('data-action');
+            const index = this.getAttribute('data-index');
+            switch (action) {
+              case 'increase':
+                changeQuantity(index, 1);
+                break;
+              case 'decrease':
+                changeQuantity(index, -1);
+                break;
+              case 'remove':
+                removeProduct(index);
+                break;
+            }
+          });
+        });
+      }
+
+      function updateTotalPrice() {
+        let total = 0;
+        for (let product of cart) {
+          total += product.item.price * product.quantity;
+        }
+        document.querySelector('.total-price').innerText = '總金額 : $' + total.toFixed(2);
+      }
+
+
+
+    };
+    function goToStore() {
+      window.location.href = "/rr/managePage/ecomPage.do";
+    }
+    // 更新總價格
+
+
+  </script>
+
+
+  <script src="https://kit.fontawesome.com/7e347cd6cd.js" crossorigin="anonymous"></script>
+  <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+  <script th:src="@{/js/jquery-3.7.0.min.js}"></script>
+</body>
+
+</html>
