@@ -363,7 +363,6 @@
 			
 			//email驗證成功提示
    		var verified = /*[[${verified}]]*/ null; 
-   		console.log(verified);
 		if(verified){
 				Swal.fire({
 	    		  title: '信箱驗證成功',
@@ -375,7 +374,6 @@
 		}
 		
 		var tokenTimeOut = /*[[${tokenTimeOut}]]*/ null; 
-		console.log(tokenTimeOut);
 		const token = /*[[${token}]]*/ null;
 		$('#hiddenDiv').html(`<input id="tokenid" type="hidden" value="${token}"/>`);
 		if(tokenTimeOut){

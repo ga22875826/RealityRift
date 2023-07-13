@@ -174,6 +174,12 @@ public class MemberController {
 		return "main";
 	}
 	
+	@GetMapping("/api/getmemberbymemno/{memno}")
+	@ResponseBody
+	public Member getMemberByMemno(@PathVariable(name="memno") int memno) {
+		return ms.findById(memno);
+	}
+	
 	@GetMapping("/api/emailrepeatedcheck")
 	@ResponseBody
 	public Boolean EmailRepeatedCheck(@RequestParam("email") String email) {
