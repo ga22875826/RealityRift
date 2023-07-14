@@ -193,7 +193,7 @@ public class MemberController {
 	@GetMapping("/api/memidrepeatedcheck")
 	@ResponseBody
 	public Boolean MemidRepeatedCheck(@RequestParam("memid") String memid) {
-		Member member = ms.findByEmail(memid);
+		Member member = ms.findByMemid(memid);
 		if(member!=null) {
 			return true;
 		}

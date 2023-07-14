@@ -74,13 +74,13 @@
 
         <div class="row my-5 px-2 py-5" style="box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.5); border-radius: 10px;">
 
-          <div class="col-5 d-flex justify-content-center align-items-center">
-            <img class="" th:src="${booking.gameBean.gameimg}" alt="" style="width: 80%;">
+          <div class="col-5 d-flex justify-content-center align-items-center"><a th:href="@{/game/view(gameid=${booking.gameBean.gameid})}">
+            <img class="" th:src="${booking.gameBean.gameimg}" alt="" style="width: 80%;"></a>
           </div>
 
 
           <div class="col-7">
-            <h2 class="card-title text-orange">
+            <h2 class="card-title text-orange" >
               <span th:text="${booking.gameBean.gname}"></span>
             </h2><br>
 

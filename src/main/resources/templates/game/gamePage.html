@@ -52,7 +52,7 @@
   </div><br>
   <hr class="wh">
 
-  <input type="hidden" id="memno" th:value="${session.member} ? ${session.member.memno}">
+  <input type="hidden" id="memno-input" th:value="${session.member} ? ${session.member.memno}">
 
   <!-- ===============	預 約 =============== -->
 
@@ -234,7 +234,7 @@
     $(function () {
 
       let gameName = /*[[${gameEach.gname}]]*/ null;
-      let memno = $('#memno').val();
+      
 
       var selectedDate = "";
       var selectedTime = "";
@@ -264,7 +264,7 @@
           if ($(this).hasClass('btn-danger')) {
             // 反選按鈕，將選項還原成初始狀態
             $(this).removeClass('btn-danger').addClass('btn-outline-dark');
-            $buttons.prop('disabled', false);
+            $buttons.addClass('btn-outline-dark').prop('disabled', false);
             selectedTime = "";
             updateBookingMsg();
           } else {
@@ -308,7 +308,8 @@
 
           }).then((result) => {
             if (result.isConfirmed) {
-
+              let memno = $('#memno-input').val();
+				
               $.ajax({
                 url: "/rr/booking",
                 type: "POST",

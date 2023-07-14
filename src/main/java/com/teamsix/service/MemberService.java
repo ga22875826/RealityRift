@@ -141,7 +141,7 @@ public class MemberService {
     }
 	
 	public Member findByMemid(String memid) {
-		return mRepo.findByEmail(memid);
+		return mRepo.findByMemid(memid);
 	}
 	
 	public List<Object[]> getRegistrationCountPerDay() {

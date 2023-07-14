@@ -224,6 +224,66 @@
                 password2OK=false,password2Warning='';
 
                 $('#email').blur(function () {
+                	//email重複驗證
+                	$.ajax({
+                        type: 'GET',
+                        url: '/rr/api/emailrepeatedcheck',
+                        data:{
+							email:$('#email').val()
+						},
+                        success: function (repeated) {
+                            if(repeated){
+                                    $('#email').addClass('is-invalid');
+                                    emailCheck();
+                            }else{
+                                $('#email').removeClass('is-invalid');
+                                emailCheck();
+                            }
+                        }
+                    })
+                	
+                    emailCheck();
+                	
+                })
+                 $('#password').blur(function () {
+                	 passwordCheck()
+                 })
+                 $('#password2').blur(function () {
+                	 password2Check()
+                 })
+                 $('#name').blur(function () {
+                	 nameCheck()
+                 })
+                 
+                 $('#id').blur(function () {
+                	//身分證重複驗證
+                	 $.ajax({
+                         type: 'GET',
+                         url: '/rr/api/memidrepeatedcheck',
+                         data:{
+ 							memid:$('#id').val()
+ 						},
+                         success: function (repeated) {
+                             if(repeated){
+                                     $('#id').addClass('is-invalid');
+                                     idCheck();
+                             }else{
+                                 $('#id').removeClass('is-invalid');
+                                 idCheck();
+                             }
+                         }
+                     })
+                	 idCheck();
+                 })
+                 function checkInfo(){
+                	if(emailOK&&passwordOK&&password2OK&&nameOK&&idOK){
+                 		$('#confirm').removeClass('confirmWarning').addClass('confirmSubmit');
+                 	}else{
+                 		$('#confirm').addClass('confirmWarning').removeClass('confirmSubmit');
+                 	}
+                }
+                
+                function emailCheck(){
                 	if($('#email').val()==''){
                 		emailOK=false;
                 		emailWarning='E-mail不能為空';
@@ -238,29 +298,29 @@
                 		emailWarning='E-mail字元或格式有誤';
                 	}
                 	checkInfo();
-                })
-                 $('#password').blur(function () {
+                }
+                function passwordCheck(){
                 	 if($('#password').val()==''){
-                 		passwordOK=false;
-                 		passwordWarning='密碼不能為空';
-                 	}else if($('#password').val().match(/^[A-Za-z0-9._-]{6,15}$/)){
-                 		passwordOK=true;
-                 		passwordWarning='';
-                 	}else{
-                 		passwordOK=false;
-                 		passwordWarning='密碼字元或格式有誤';
-                 	}
-                	 if($('#password2').val()==$('#password').val()){
-                  		password2OK=true;
-                  		password2Warning='';
+                  		passwordOK=false;
+                  		passwordWarning='密碼不能為空';
+                  	}else if($('#password').val().match(/^[A-Za-z0-9._-]{6,15}$/)){
+                  		passwordOK=true;
+                  		passwordWarning='';
                   	}else{
-                  		password2OK=false;
-                  		password2Warning='兩次輸入的密碼不一致';
+                  		passwordOK=false;
+                  		passwordWarning='密碼字元或格式有誤';
                   	}
-                	 checkInfo();
-                 })
-                 $('#password2').blur(function () {
-                	 if($('#password2').val()==$('#password').val()){
+                 	 if($('#password2').val()==$('#password').val()){
+                   		password2OK=true;
+                   		password2Warning='';
+                   	}else{
+                   		password2OK=false;
+                   		password2Warning='兩次輸入的密碼不一致';
+                   	}
+                 	 checkInfo();
+                }
+                function password2Check(){
+                	if($('#password2').val()==$('#password').val()){
                  		password2OK=true;
                  		password2Warning='';
                  	}else{
@@ -268,20 +328,19 @@
                  		password2Warning='兩次輸入的密碼不一致';
                  	}
                 	 checkInfo();
-                 })
-                 $('#name').blur(function () {
-                	 if($('#name').val()==""){
-                		 nameOK=false;
-                		 nameWarning='姓名不能為空';
-                 	}else{
-                 		nameOK=true;
-                 		nameWarning='';
-                 	}
-                	 checkInfo();
-                 })
-                 
-                 $('#id').blur(function () {
-                	 if($('#id').val()==''){
+                }
+                function nameCheck(){
+                	if($('#name').val()==""){
+               		 nameOK=false;
+               		 nameWarning='姓名不能為空';
+                	}else{
+                		nameOK=true;
+                		nameWarning='';
+                	}
+               	 checkInfo();
+                }
+                function idCheck(){
+                	if($('#id').val()==''){
                  		idOK=false;
                  		idWarning='身分證字號不能為空';
                  	}else if($('#id').hasClass('is-invalid')){
@@ -295,14 +354,8 @@
                  		idWarning='身分證字號字元或格式有誤';
                  	}
                 	 checkInfo();
-                 })
-                 function checkInfo(){
-                	if(emailOK&&passwordOK&&password2OK&&nameOK&&idOK){
-                 		$('#confirm').removeClass('confirmWarning').addClass('confirmSubmit');
-                 	}else{
-                 		$('#confirm').addClass('confirmWarning').removeClass('confirmSubmit');
-                 	}
                 }
+                
                 
                 
                 //註冊按鈕
@@ -334,40 +387,6 @@
                 })
                 
                 
-				//email重複驗證
-                $('#email').blur(function () {
-                    $.ajax({
-                        type: 'GET',
-                        url: '/rr/api/emailrepeatedcheck',
-                        data:{
-							email:$('#email').val()
-						},
-                        success: function (repeated) {
-                            if(repeated){
-                                    $('#email').addClass('is-invalid');
-                            }else{
-                                $('#email').removeClass('is-invalid');
-                            }
-                        }
-                    })
-                })
-                //身分證重複驗證
-                $('#id').blur(function () {
-                    $.ajax({
-                        type: 'GET',
-                        url: '/rr/api/memidrepeatedcheck',
-                        data:{
-							memid:$('#id').val()
-						},
-                        success: function (repeated) {
-                            if(repeated){
-                                    $('#id').addClass('is-invalid');
-                            }else{
-                                $('#id').removeClass('is-invalid');
-                            }
-                        }
-                    })
-                })
                 $('#password').blur(function () {
                 	if($('#password').val()!=$('#password2').val()){
                 		$('#password2').addClass('is-invalid');

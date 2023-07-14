@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>表單管理</title>
+  <title>表單管理-已回覆表單</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
   <link rel="stylesheet" th:href="@{/css/dashboard.css}">
   <link rel="stylesheet" th:href="@{/css/maincss.css}">
@@ -77,7 +77,7 @@
 	<div th:replace="~{layout/dashboard_sidebar}"></div>
     <div class="app-content" style="min-height:100vh">
       <div class="app-content-header">
-        <h1 class="app-content-headerText">表單管理</h1>
+        <h1 class="app-content-headerText">表單管理(已回覆)</h1>
         <!--  <button class="mode-switch" title="Switch Theme">
           <svg class="moon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
             stroke-width="2" width="24" height="24" viewBox="0 0 24 24">
@@ -200,9 +200,6 @@
 				  <div class="row">
 					  <div class="col-12">回覆內容:<textarea class="form-control" id="responseContent" disabled></textarea></div>
 				  </div><br>
-              </div>
-              <div class="modal-footer">
-                <button  type="button" class="btn btn-outline-primary" data-bs-toggle="collapse" href="#collapseExample">回覆</button>
               </div>
             </div>
           </div>

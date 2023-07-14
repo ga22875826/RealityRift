@@ -332,7 +332,7 @@ document.addEventListener('DOMContentLoaded', function () {
       typewriterElement.textContent += text.charAt(i);
       setTimeout(function () {
         typeWriter(text, i + 1);
-      }, 300);
+      }, 180);
     }
   }
   // 呼叫typeWriter

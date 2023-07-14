@@ -210,11 +210,11 @@
 					
 					
 		</ul>
-		<form class="form-inline my-2 my-lg-0 inline_flex">
+		<!--  <form class="form-inline my-2 my-lg-0 inline_flex">
 			<input class="form-control mr-sm-2" type="search"
 				placeholder="Search" aria-label="Search">
 			<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-		</form>
+		</form> -->
 			</div>
 		</div>
 	</div>
@@ -262,7 +262,9 @@
 						>登入</button>
 						<br><br>
 					<button id="member-btn" class=" btn btn-md btn-outline-primary" type="button"
-						>會員</button>
+						>新會員</button>
+					<button id="member-btn1" class=" btn btn-md btn-outline-primary" type="button"
+						>舊會員</button>
 					<button id="admin-btn" class=" btn btn-md btn-outline-success" type="button"
 						>管理</button>
 				</form>
@@ -287,6 +289,7 @@
 
 <script th:inline="javascript" defer="defer">
 	
+	//緩衝畫面
 	window.addEventListener('load', function() {
 	  var loadingSpinner = document.getElementById('loading-spinner');
 	  loadingSpinner.style.opacity = 0;
@@ -304,6 +307,11 @@
 			$('#floatingPassword').val('123456');
 		})
 		
+		$('#member-btn1').click(function(){
+			$('#floatingInput').val('a123456@gmail.com');
+			$('#floatingPassword').val('password');
+		})
+		
 		$('#admin-btn').click(function(){
 			$('#floatingInput').val('administrator@gmail.com');
 			$('#floatingPassword').val('administrator');
@@ -312,12 +320,27 @@
 		
     	
     	var memclass = /*[[${session.member}?${session.member.memclass}]]*/ null;
-    	
+    	//刷新頁面update session 中 member
+    	var member_email = /*[[${session.member}?${session.member.email}]]*/ null;
+    	if(member_email!=null){
+    		$.ajax({
+    			url:'/rr/api/memberloginsuccess',
+    			type:'GET',
+    			data:{email:member_email},
+    			success:function(){
+    				console.log('ok');
+    			},error:function(){
+    				console.log('error');
+    			}
+    		})
+    	}
+		
+		
     	//刷新頁面確認帳號是否被凍結
-    	var memno = /*[[${session.member}?${session.member.memno}]]*/ null;
-    	if(memno!=null){
+    	var memno1 = /*[[${session.member}?${session.member.memno}]]*/ null;
+    	if(memno1!=null){
 	    	$.ajax({
-				url:'/rr/api/getmemberbymemno/'+memno,
+				url:'/rr/api/getmemberbymemno/'+memno1,
 				type:'GET',
 				success:function(result){
 						let memstatus = result.memstatus;
@@ -333,7 +356,10 @@
 					                    icon: 'warning',
 					                    title: 'Oops...',
 					                    html: '您的帳號被凍結了，請<a href="/rr/contectus">聯繫</a>管理人員',
-					                })
+					                }).then((result) => {
+										
+						      			window.location.href='http://localhost:8080/rr';
+										})
 								},
 								error:function(){
 									console.log('error');
@@ -561,6 +587,8 @@
 			$('#booking-btn1').removeClass('hid');
 			$('#booking-login2').addClass('hid');
 			$('#booking-btn2').removeClass('hid');
+			$('#memno-input').val(memberLogin.memno);
+			console.log($('#memno-input').val());
 			
 			
 		   	//確認是否登入管理者帳號切換logo連結
