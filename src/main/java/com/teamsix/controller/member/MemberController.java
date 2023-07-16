@@ -162,7 +162,7 @@ public class MemberController {
 		member.setMemimg("/rr/img/member/"+newFileName);
 
 		VerificationToken vt = new VerificationToken();
-		vt.setExpiryDate(calculateExpiryDate(1));
+		vt.setExpiryDate(calculateExpiryDate(3));
 		member.setVerificationToken(vt);
 		ms.regist(member);
 		// email驗證
@@ -355,7 +355,7 @@ public class MemberController {
 		String newToken = UUID.randomUUID().toString();
 		vt.setMemno(member.getMemno());
 		vt.setToken(newToken);
-		vt.setExpiryDate(calculateExpiryDate(1));
+		vt.setExpiryDate(calculateExpiryDate(3));
 		boolean TokenExist = vts.updateToken(vt);
 		if (TokenExist) {
 			sendVerificationEmail(newToken, member.getEmail(), member.getMemname());

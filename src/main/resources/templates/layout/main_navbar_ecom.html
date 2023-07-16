@@ -17,10 +17,46 @@
 		.flex {
 			display: flex
 		}
+		
+		#loading-spinner {
+		  position: fixed;
+		  top: 0;
+		  left: 0;
+		  width: 100%;
+		  height: 100%;
+		  background-color: rgba(255, 255, 255, 1);
+		  z-index: 9999;
+		  display: flex;
+		  justify-content: center;
+		  align-items: center;
+		  opacity: 1;
+		  transition: opacity 0.8s;
+		}
+		
+		#loading-spinner::after {
+		  content: "";
+		  display: block;
+		  width: 40px;
+		  height: 40px;
+		  border-radius: 50%;
+		  border: 3px solid #000;
+		  border-top-color: transparent;
+		  animation: spin 1s infinite linear;
+		}
+		
+		@keyframes spin {
+		  0% {
+		    transform: rotate(0deg);
+		  }
+		  100% {
+		    transform: rotate(360deg);
+		  }
+		}
 	</style>
 </head>
 
 <body>
+	<div id="loading-spinner"></div>
 	<nav class="navbar navbar-expand-lg navbar-light bg-light fixed_top zindextop shadow-lg p-3 mb-5" id="nav">
 		<a class="navbar-brand logoimg" id="logoimg" th:href="@{/}"><img src="/rr/img/images/newlogo.png" alt=""
 				height="65"></a>
@@ -90,6 +126,17 @@
 						<li><a class="dropdown-item" id="btnLogout">登出</a></li>
 					</ul>
 				</li>
+
+				<li class="nav-item active navli">
+					<div class="icon" id="bell" style="margin-top:5px">
+						<i class="fa-solid fa-bell"></i>
+					</div>
+				<div class="notifications" id="box">
+				    <div id="notifications-list"> <!-- 為通知列表添加一個ID -->
+				        <!-- ... -->
+				    </div>
+				</div>
+				</li>
 			</ul>
 				<!--購物車標誌 -->
 			<form class="d-flex">
@@ -100,6 +147,8 @@
 				</button>
 			</form>
 			<!--購物車標誌 -->
+			
+			
 		</div>
 
 	</nav>
@@ -146,6 +195,16 @@
 	<script th:src="@{/js/axios.min.js}"></script>
 
 	<script th:inline="javascript" defer="defer">
+			//緩衝畫面
+	window.addEventListener('load', function() {
+	  var loadingSpinner = document.getElementById('loading-spinner');
+	  loadingSpinner.style.opacity = 0;
+	  loadingSpinner.style.display = 'flex';
+	  loadingSpinner.addEventListener('transitionend',function(){
+	  	$('#loading-spinner').remove();
+	  })
+	});
+	
 
 
 		$(function () {

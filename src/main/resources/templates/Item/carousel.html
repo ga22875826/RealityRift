@@ -286,6 +286,11 @@ function createSaleItemElements(saleItems) {
 			    const isSaleItem = JSON.parse($(this).attr('data-sale'));
 			    console.log('About to call addToCart from createSaleItemElements');
 			    addToCart(product, isSaleItem); // Add the item to the cart
+			        Swal.fire({
+			        icon: 'success',
+			        title: '成功加入購物車',
+			        showConfirmButton: true
+			      });
 			});
 
 

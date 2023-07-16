@@ -3,12 +3,15 @@ package com.teamsix.controller.item;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,17 +20,15 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.data.domain.PageImpl;
-
-import java.util.ArrayList;
-import java.util.Date;
 
 import com.teamsix.model.bean.item.Category;
 import com.teamsix.model.bean.item.ItemDTO;
 import com.teamsix.model.bean.item.ItemWithImages;
 import com.teamsix.model.bean.item.Itemimg;
+import com.teamsix.model.bean.item.Notification;
 import com.teamsix.service.CategoryService;
 import com.teamsix.service.ItemService;
+import com.teamsix.service.NotificationService;
 
 @Controller
 public class ItemController {
@@ -38,6 +39,11 @@ public class ItemController {
 	@Autowired
 	private CategoryService categoryService;
 
+	
+	@Autowired
+	private NotificationService notify;
+	
+	
 	@GetMapping("/db/manager.showItemList.do")
 	public String getAllItems(Model model) {
 		List<ItemDTO> itemList = iService.listItem();
@@ -102,7 +108,17 @@ public class ItemController {
 		}
 
 		iService.insertItem(item);
-
+		
+		Notification notification = new Notification();
+		notification.setTitle("新商品上架");
+		notification.setContent(item.getItemname()+"上架囉!");
+		List<Itemimg> images1 = item.getImages();
+		if (images1 != null && !images1.isEmpty()) {
+		    notification.setImgSrc(images1.get(0).getImagename());
+		} else {
+		    notification.setImgSrc("defaultPic.jpg");
+		}
+		notify.sendNotification(notification);
 		return "新增成功";
 	}
 

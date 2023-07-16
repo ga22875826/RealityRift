@@ -254,11 +254,12 @@ init();
             orderStatusCell.textContent = order.orderStatus;
             row.appendChild(orderStatusCell);
             
-if (order.orderStatus === '尚未付款') {
-    const checkoutButton = document.createElement('button');
-    checkoutButton.textContent = '前往結帳';
-    checkoutButton.className = 'btn btn-outline-success';
-    checkoutButton.onclick = function() {
+	if (order.orderStatus === '尚未付款') {
+	    const checkoutButton = document.createElement('button');
+	    checkoutButton.textContent = '前往結帳';
+	    checkoutButton.className = 'btn btn-outline-success btn-sm';
+	     checkoutButton.style.marginLeft = '25px'; 
+	    checkoutButton.onclick = function() {
         // Show a SweetAlert2 dialog for payment method selection
        Swal.fire({
             title: '選擇付款方式',

@@ -13,6 +13,10 @@
       padding: 20px 0;
       text-align: center;
     }
+
+    .google-visualization-table-table {
+      font-size: 20px !important;
+    }
   </style>
 </head>
 
@@ -25,7 +29,7 @@
   <div class="app-container">
     <div th:replace="~{layout/item_sidebar}"></div>
     <div class="app-content" style="min-height: 100vh">
-      <div class="app-content-header" style="margin-bottom: 20px">
+      <div class="app-content-header" style="margin-bottom: 20px; display: flex; justify-content: center;">
         <h1 class="app-content-headerText">數據分析</h1>
         <button class="mode-switch" title="Switch Theme">
           <svg class="moon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
@@ -37,23 +41,49 @@
 
       </div>
       <div class="container">
-        <div class="btn-group col-3">
-          <button id="pieBtn" class="btn btn-outline-primary" onclick="showPieChart()">按商品分析</button>
-          <button class="btn btn-outline-primary" onclick="showLineChart()">按時間分析</button>
-        </div>
         <div class="chart-container" id="itemChart">
-          <div class="col-md-3 mt-3">
-            <button id="toggleBtn" class="btn btn-outline-danger" onclick="toggleCharts()">切換柱狀圖</button>
-            <div id="chart_div">
+          <div class="btn-group col-3" style="margin-left:3px;">
+            <button id="pieBtn" class="btn btn-outline-primary" onclick="showPieChart()">按商品分析</button>
+            <button class="btn btn-outline-primary" onclick="showLineChart()">按時間分析</button>
+          </div>
+          <button id="toggleBtn" class="btn btn-outline-danger" onclick="toggleCharts()">切換柱狀圖</button>
+          <div style="margin-left:25px; margin-top:10px">
+            <button class="btn btn-outline-warning" id="exportCsvBtn">導出 CSV</button>
+            <button class="btn btn-outline-warning" id="exportJsonBtn">導出 JSON</button>
+            <button class="btn btn-outline-warning" id="saveImageBtn">儲存圖片</button>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mt-3 px-md-5 mr-md-3">
+                <div id="chart_div"></div>
+                <div id="bar_chart_div" style="display: none;"></div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div style="overflow:auto; height:500px; margin-top:20px">
+
+                <div id="table_div"></div>
+                <div id="bar_table_div" style="display: none;"></div>
+              </div>
             </div>
           </div>
-          <div class="col-md-6">
-            <div id="bar_chart_div" style="display: none;"></div>
-          </div>
         </div>
+
+
+
+
+
+
         <div class="chart-container" id="lineChart">
-          <div class="row">
-            <div class="col-md-2 mt-5 offset-md-2">
+          <div class="btn-group col-3" style="margin-left:3px;">
+            <button id="pieBtn" class="btn btn-outline-primary" onclick="showPieChart()">按商品分析</button>
+            <button class="btn btn-outline-primary" onclick="showLineChart()">按時間分析</button>
+          </div>
+          <div style="margin-left:25px; margin-top:10px">
+            <button class="btn btn-outline-warning" id="exportCsvBtn_line">導出 CSV</button>
+            <button class="btn btn-outline-warning" id="exportJsonBtn_line">導出 JSON</button>
+            <button class="btn btn-outline-warning" id="saveImageBtn_line">儲存圖片</button>
+            <div class="col-md-3 offset-md-3">
               <label for="year">選擇年份:</label>
               <select id="year" class="form-select">
                 <option value="">請選擇年分</option>
@@ -66,175 +96,341 @@
           <div class="row">
             <div class="col-md-11" style="margin-top:50px">
               <div id="time_chart_div"></div>
+              <div id="line_table_div" style="max-height:200px; overflow:auto;">
+              </div>
             </div>
+
+
           </div>
+          <footer class="footer">
+            <div class="container">
+              <div style="display: flex; align-items: center;">
+                <h6 style="margin-left:20px; margin-right: 10px;">&copy; 第六組 張浩輔</h6>
+                <h4 style="margin-left:200px; margin-right: 10px;"></h4>
+                <img style="max-width: 150px; max-height: 100px;" src="/rr/img/assets/GoogleChart.png" alt="圖片描述">
+              </div>
+            </div>
+          </footer>
         </div>
-        <footer class="footer">
-          <div class="container">
-            <div style="display: flex; align-items: center;">
-              <h6 style="margin-left:20px; margin-right: 10px;">&copy; 第六組 張浩輔</h6>
-              <h4 style="margin-left:200px; margin-right: 10px;"></h4>
-              <img style="max-width: 150px; max-height: 100px;" src="/rr/img/assets/GoogleChart.png" alt="圖片描述">
-            </div>
-          </div>
-        </footer>
       </div>
     </div>
-  </div>
 
-  <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
-  <script th:src="@{/js/jquery-3.7.0.min.js}"></script>
-  <!--Load the AJAX API-->
-  <!--Load the AJAX API-->
-  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-  <script type="text/javascript" th:inline="javascript">
+    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/js/jquery-3.7.0.min.js}"></script>
+    <!--Load the AJAX API-->
+    <!--Load the AJAX API-->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" th:inline="javascript">
 
-    //<![CDATA[
-    $(window).on('load', function () {
-      $('#loadingScreen').fadeOut(1000);
-    });
+      //<![CDATA[
 
 
-    $(document).ready(function () {
-      // 監聽年分選擇框的變更事件
-      $('#year').on('change', function () {
-        var selectedYear = $(this).val();
-        fetchData(selectedYear); // 根據所選年分重新繪製折線圖
+      function saveImage() {
+        var chart;
+        if ($('#table_div').is(':visible')) {
+          chart = pieChart;
+        } else if ($('#bar_table_div').is(':visible')) {
+          chart = barChart;
+        } else if ($('#time_chart_div').is(':visible')) { // Check if the line chart is visible
+          chart = lineChart;
+        } else {
+          console.error('No table is visible');
+          return;
+        }
 
-      });
+        if (!chart) {
+          console.error('Error: chart is not ready yet');
+          return;
+        }
 
-      $('#pieBtn').click();
-    });
+        let imgUri = chart.getImageURI();
+        console.log('Image URI:', imgUri);
 
+        if (imgUri) {
+          let link = document.createElement('a');
+          link.setAttribute('href', imgUri);
+          link.setAttribute('download', 'chart.png');
+          document.body.appendChild(link);
 
-    function showPieChart() {
-      $('#itemChart').show();
-      $('#lineChart').hide();
-    }
-
-    function showLineChart() {
-      $('#itemChart').hide();
-      $('#lineChart').show();
-    }
-
-    function toggleCharts() {
-      var chartDiv = document.getElementById("chart_div");
-      var barChartDiv = document.getElementById("bar_chart_div");
-      var toggleBtn = document.getElementById("toggleBtn");
-
-      if (chartDiv.style.display === "none") {
-        chartDiv.style.display = "block";
-        barChartDiv.style.display = "none";
-        toggleBtn.innerHTML = "切換柱狀圖";
-      } else {
-        chartDiv.style.display = "none";
-        barChartDiv.style.display = "block";
-        toggleBtn.innerHTML = "切換圓餅圖";
+          link.click();
+        }
       }
-    }
 
-
-    google.charts.load('current', { 'packages': ['corechart'] });
-
-    google.charts.setOnLoadCallback(function () {
-      drawPieChart();
-      drawBarChart();
-    });
-
-
-    function drawPieChart() {
-      $.ajax({
-        url: '/rr/chart/itemSales',
-        type: 'GET',
-        success: function (salesData) {
-          var data = new google.visualization.DataTable();
-          data.addColumn('string', '商品名稱');
-          data.addColumn('number', '商品銷量');
-          data.addColumn({ type: 'string', role: 'tooltip' });
-
-          for (var item in salesData) {
-            data.addRow([item, salesData[item], item + ' 銷量: ' + salesData[item]]);
-          }
-
-          var options = {
-            'title': '商品總銷量圓餅圖',
-            'width': 800,
-            'height': 600
-          };
-
-          var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
-          chart.draw(data, options);
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-          console.error('Error:', errorThrown);
-        }
+      $(window).on('load', function () {
+        $('#loadingScreen').fadeOut(1000);
       });
-    }
 
 
-    function fetchData(year) {
-      $.ajax({
-        url: '/rr/chart/amount/' + year, // 請根據您的後端 API 端點設定正確的 URL
-        type: 'GET',
-        success: function (response) {
-          var data = [
-            ['月份', '銷售額']
-          ];
+      $(document).ready(function () {
+        // 監聽年分選擇框的變更事件
+        $('#year').on('change', function () {
+          var selectedYear = $(this).val();
+          fetchData(selectedYear); // 根據所選年分重新繪製折線圖
 
-          // 從 API 回傳的資料中提取月份和銷售額
-          for (var i = 0; i < response.length; i++) {
-            var month = response[i].month;
-            var totalSales = response[i].totalSales;
-            data.push([month, totalSales]);
-          }
 
-          var options = {
-            title: '年度銷售額趨勢',
-            curveType: 'function',
-            legend: { position: 'bottom' }
-          };
 
-          var chart = new google.visualization.LineChart(document.getElementById('time_chart_div'));
-          var chartData = google.visualization.arrayToDataTable(data);
-          chart.draw(chartData, options);
-        },
-        error: function (xhr, status, error) {
-          console.log('API 呼叫失敗:', error);
-        }
+          $('#exportCsvBtn_line').on('click', function () {
+            console.log(123);
+            $.ajax({
+              url: '/rr/chart/amount/' + selectedYear,
+              type: 'GET',
+              success: function (salesData) {
+                exportToCsv(salesData);
+              },
+              error: function (jqXHR, textStatus, errorThrown) {
+                console.error('Error:', errorThrown);
+              }
+            });
+          });
+
+          $('#exportJsonBtn_line').on('click', function () {
+            $.ajax({
+              url: '/rr/chart/amount/' + selectedYear,
+              type: 'GET',
+              success: function (salesData) {
+                exportToJson(salesData);
+              },
+              error: function (jqXHR, textStatus, errorThrown) {
+                console.error('Error:', errorThrown);
+              }
+            });
+          });
+
+        });
+
+          $('#saveImageBtn_line').on('click', function () {
+            saveImage();
+          });
+
+
+        $('#exportCsvBtn').on('click', function () {
+          $.ajax({
+            url: '/rr/chart/itemSales',
+            type: 'GET',
+            success: function (salesData) {
+              exportToCsv(salesData);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+              console.error('Error:', errorThrown);
+            }
+          });
+        });
+
+        $('#exportJsonBtn').on('click', function () {
+          $.ajax({
+            url: '/rr/chart/itemSales',
+            type: 'GET',
+            success: function (salesData) {
+              exportToJson(salesData);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+              console.error('Error:', errorThrown);
+            }
+          });
+        });
+
+        $('#saveImageBtn').on('click', function () {
+          saveImage();
+        });
+
+        $('#pieBtn').click();
       });
-    }
 
 
-    function drawBarChart() {
-      $.ajax({
-        url: '/rr/chart/itemSales',
-        type: 'GET',
-        success: function (salesData) {
-          var data = new google.visualization.DataTable();
-          data.addColumn('string', '商品名稱');
-          data.addColumn('number', '商品銷量');
-          data.addColumn({ type: 'string', role: 'tooltip' });
+      function showPieChart() {
+        $('#itemChart').show();
+        $('#lineChart').hide();
+      }
 
-          for (var item in salesData) {
-            data.addRow([item, salesData[item], item + ' 銷量: ' + salesData[item]]);
-          }
+      function showLineChart() {
+        $('#itemChart').hide();
+        $('#lineChart').show();
+      }
 
-          var options = {
-            'title': '商品總銷量柱狀圖',
-            'width': 800,
-            'height': 600
-          };
+      function toggleCharts() {
+        var chartDiv = document.getElementById("chart_div");
+        var barChartDiv = document.getElementById("bar_chart_div");
+        var toggleBtn = document.getElementById("toggleBtn");
 
-          var chart = new google.visualization.BarChart(document.getElementById('bar_chart_div'));
-          chart.draw(data, options);
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-          console.error('Error:', errorThrown);
+        if (chartDiv.style.display === "none") {
+          chartDiv.style.display = "block";
+          barChartDiv.style.display = "none";
+          toggleBtn.innerHTML = "切換柱狀圖";
+        } else {
+          chartDiv.style.display = "none";
+          barChartDiv.style.display = "block";
+          toggleBtn.innerHTML = "切換圓餅圖";
         }
+      }
+
+
+      google.charts.load('current', { 'packages': ['corechart', 'table'] });
+
+
+      google.charts.setOnLoadCallback(function () {
+        drawPieChart();
+        drawBarChart();
       });
-    }
+
+      var pieChart;
+      var barChart;
+
+      function drawPieChart() {
+        $.ajax({
+          url: '/rr/chart/itemSales',
+          type: 'GET',
+          success: function (salesData) {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', '商品名稱');
+            data.addColumn('number', '商品銷量');
+            data.addColumn({ type: 'string', role: 'tooltip' });
+
+            for (var item in salesData) {
+              data.addRow([item, salesData[item], item + ' 銷量: ' + salesData[item]]);
+            }
+
+            var options = {
+              'title': '商品總銷量圓餅圖',
+              'width': 800,
+              'height': 600
+            };
+
+            var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+            chart.draw(data, options);
+            pieChart = chart;
+
+            // Draw table
+            var table = new google.visualization.Table(document.getElementById('table_div'));
+            table.draw(data, { showRowNumber: true, width: '100%', height: '100%' });
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+            console.error('Error:', errorThrown);
+          }
+        });
+      }
+      var lineChart;
+      function fetchData(year) {
+      
+      
+        $('#time_chart_div').empty();
+        $.ajax({
+          url: '/rr/chart/amount/' + year,
+          type: 'GET',
+          success: function (response) {
+            var data = [
+              ['月份', '銷售額']
+            ];
+
+            // Extract month and total sales from the API response
+            for (var i = 0; i < response.length; i++) {
+              var month = response[i].month;
+              var totalSales = response[i].totalSales;
+              data.push([month, totalSales]);
+            }
+
+            var options = {
+              title: '年度銷售額趨勢',
+              curveType: 'function',
+              legend: { position: 'bottom' }
+            };
+
+            // Use the global lineChart variable here
+            lineChart = new google.visualization.LineChart(document.getElementById('time_chart_div'));
+            var chartData = google.visualization.arrayToDataTable(data);
+            lineChart.draw(chartData, options);
+
+            // Draw table
+            var table = new google.visualization.Table(document.getElementById('line_table_div'));
+            table.draw(chartData, { showRowNumber: true, width: '100%', height: '100%' });
+          },
+          error: function (xhr, status, error) {
+            console.log('API 呼叫失敗:', error);
+          }
+        });
+      }
+
+
+      var barChart;
+
+      function drawBarChart() {
+        $.ajax({
+          url: '/rr/chart/itemSales',
+          type: 'GET',
+          success: function (salesData) {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', '商品名稱');
+            data.addColumn('number', '商品銷量');
+            data.addColumn({ type: 'string', role: 'tooltip' });
+
+            for (var item in salesData) {
+              data.addRow([item, salesData[item], item + ' 銷量: ' + salesData[item]]);
+            }
+
+            var options = {
+              'title': '商品總銷量柱狀圖',
+              'width': 600,
+              'height': 600
+            };
+
+            barChart = new google.visualization.BarChart(document.getElementById('bar_chart_div'));
+            barChart.draw(data, options);
+
+            // Draw table
+            var table = new google.visualization.Table(document.getElementById('bar_table_div'));
+            table.draw(data, { showRowNumber: true, width: '100%', height: '100%' });
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+            console.error('Error:', errorThrown);
+          }
+        });
+      }
+
+
+
+      function mapToArray(obj) {
+  return Object.keys(obj).map(key => obj[key]);
+}
+function exportToCsv(data) {
+  let csvContent = 'data:text/csv;charset=utf-8,';
+
+  // Check if data is an object
+  if (typeof data === 'object' && !Array.isArray(data)) {
+    // Convert the object to an array of its values
+    data = [mapToArray(data)];
+  }
+  // If data is an array of objects, convert each object to an array
+  else if (Array.isArray(data) && data.length > 0 && typeof data[0] === 'object') {
+    data = data.map(mapToArray);
+  }
+
+  data.forEach((rowArray) => {
+    let row = rowArray.join(',');
+    csvContent += row + '\r\n';
+  });
+
+  let encodedUri = encodeURI(csvContent);
+  let link = document.createElement('a');
+  link.setAttribute('href', encodedUri);
+  link.setAttribute('download', 'data.csv');
+  document.body.appendChild(link);
+
+  link.click();
+}
+
+      function exportToJson(data) {
+        let jsonContent = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data));
+        let link = document.createElement('a');
+        link.setAttribute('href', jsonContent);
+        link.setAttribute('download', 'data.json');
+        document.body.appendChild(link);
+
+        link.click();
+      }
+
+
+
 //]]>
-  </script>
+    </script>
 </body>
 
 

@@ -14,7 +14,7 @@
     <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/cover/">
 
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
-	<link th:href="@{/css/maincss.css}" rel="stylesheet">
+    <link th:href="@{/css/maincss.css}" rel="stylesheet">
     <!-- Custom styles for this template -->
     <script th:src="@{/js/jquery-3.7.0.min.js}"></script>
 
@@ -99,20 +99,18 @@
         #previewContainer img {
             margin-right: 1px;
         }
-        
-        .container-div{
-			margin-top:10em;
-		}
-        
-        
+
+        .container-div {
+            margin-top: 10em;
+        }
     </style>
 
 </head>
 
 <body class="text-center text-bg-dark">
-	
-	<div th:replace="~{layout/main_navbar}"></div>
-	
+
+    <div th:replace="~{layout/main_navbar}"></div>
+
     <div class="cover-container container-div" style="margin-bottom:3em">
 
         <div style="position: relative; display: flex; justify-content: center;">
@@ -144,7 +142,8 @@
                                 <div class="form-floating mb-3"
                                     style="float: left; margin-bottom:1em; margin-left:12px">
                                     <div>
-                                        新增圖片: <input name="photoFile" id="photoFile" type="file" multiple onchange="previewImages(event)" />
+                                        新增圖片: <input name="photoFile" id="photoFile" type="file" multiple
+                                            onchange="previewImages(event)" />
                                         <div id="previewContainer"></div>
                                     </div>
                                 </div>
@@ -163,17 +162,17 @@
         </div>
 
 
-       <!-- <div th:replace="~{layout/Article/Article_main_footer}"></div>  -->
+        <!-- <div th:replace="~{layout/Article/Article_main_footer}"></div>  -->
         <div th:replace="~{layout/main_footer}"></div>
     </div>
 
     <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
-	<script th:src="@{/js/axios.min.js}"></script>
-	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script> -->
+    <script th:src="@{/js/axios.min.js}"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script> -->
     <script>
         const onClickInput = {
-            title: "《殭屍獵人》",
-            content: "《殭屍獵人》是一款驚險刺激的實境遊戲，讓我們置身於殭屍世界中。遊戲中，我們需要在逼真的場景中與殭屍對抗，利用武器和策略來生存下來。這種遊戲方式帶來了一種真實的冒險感，讓我感受到了被追逐和生存壓力的刺激。"
+            title: "【美人秘湯】玩密室也能泡湯！？",
+            content: "謎題不難，但題目算多，可以短時間陸續解開多道題目，不會因為卡太久挫折或煩躁，又能獲得滿滿的成就感。現在比起很難的謎題，個人比較喜歡這種靈光一閃、或運用小小觀察就能完成的題目，節奏跟情緒的維持都會比較舒適。再加上有求救機制，即使是整團新手前來，也不用擔心。至於老手的話，建議6人體驗會是最合適的。比較有趣的是，其中兩個謎題，我們還沒看到線索就解開了，不算是跳關，只是有經驗的話，有些題目邏輯比較好抓。但其中一個線索，我們以為沒用到，一直抱著線索到最後一刻，終於解開才發現……這線索對應的箱子我們老早就開了回想起來覺得好糗又好笑。劇情中規中矩，有一個完整的故事，但遊戲主軸個人覺得以場景、謎題跟流程為重。體感是循序漸進往上升高，越到後期越驚喜也越喜歡。有個環節我們歡樂到不行，無論是參與其中還是袖手旁觀，都樂趣十足，當下真的是笑聲不斷，覺得荒謬(稱讚意味)又可愛。另外可能是海報的關係，有些人會問是不是有恐怖環節。個人覺得不太算，但團內比較膽小的朋友有被聲光嚇到，但嚇個一秒就又冷靜下來，所以害怕的朋友還是可以放心玩！"
         }
 
         $('#clickInput').on('click', function (event) {
@@ -200,7 +199,7 @@
 
             let form = document.getElementById('insertForm');
             let formDataObject = new FormData(form);
-            
+
             //console.log(formDataObject);
 
             Swal.fire({
@@ -251,7 +250,7 @@
                 .finally(() => {
                     document.getElementById('insertForm').reset();
                 })
-                
+
         }
 
         function insertTopic2(insertTitle, insertContent) {
@@ -284,7 +283,7 @@
                 }
             });
         }
-        
+
         function previewImages(event) {
             let input = event.target;
             let previewContainer = document.getElementById('previewContainer');
@@ -302,14 +301,14 @@
                     };
                     reader.readAsDataURL(input.files[i]);
                 }
-            }else{
-            	Swal.fire({
-		            icon: 'error',
-		            title: '錯誤',
-		            text: '最多只能選擇5張圖片',
-		        });
-		        
-		        $('#photoFile').val('');
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: '錯誤',
+                    text: '最多只能選擇5張圖片',
+                });
+
+                $('#photoFile').val('');
             }
         }
     </script>

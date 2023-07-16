@@ -12,6 +12,7 @@
   <!-- Bootstrap icons-->
   <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
   <!-- Core theme CSS (includes Bootstrap)-->
+  <link th:href="@{/css/ecom/socket.css}" rel="stylesheet" />
   <link th:href="@{/css/ecom/navItem.css}" rel="stylesheet" />
   <link th:href="@{/css/ecom/ecom_item.css}" rel="stylesheet" />
   <link th:href="@{/css/ecom/ecom_page.css}" rel="stylesheet" />
@@ -53,85 +54,84 @@
     margin-bottom: 20px;
 }
 
-.section-title {
-    text-align: center;
-    color: #333;
-    font-size: 24px;
-    margin-bottom: 20px;
-}
-
-.item-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-}
-.arrange-container {
-  position: relative;
-  height:150px; 
-  max-width: 90%; /* 這讓你的排序元素可以相對於這個容器進行定位 */
-}
-
-.sortContainer {
-  position: absolute;  /* 這讓你的排序元素可以相對於它的最近的定位父元素（在這個例子中是 .arrange-container）進行定位 */
-  left:75%; /* 這讓你的排序元素位於它的父元素的底部 */
-  bottom: 0;
-}
-.menuContainer {
-  margin-left: 7%;  /* 或者你需要的像素值 */
-}
-.marquee {
-    position: absolute;
-    width: 60%;
-    height: 35%;
-    top: 10px; 
-    left: 55%;
-    overflow: hidden;
-    background: #f0f0f0;
-    box-shadow: 0 0 20px rgba(0,0,0,0.1);
-    border-radius: 20px;
-    border: 3px solid #000; /*初始化邊框*/
-    transform: translateX(-50%);
-    animation: borderChange 5s infinite; /*新增的動畫*/
-}
-
-.marquee:before,
-.marquee:after {
-    content: '';
-    position: absolute;
-    top: 0;
-    width: 10%;
-    height: 100%;
-    background: linear-gradient(90deg, rgba(240,240,240,1), rgba(240,240,240,0));
-}
-
-.marquee:before {
-    left: 0;
-}
-
-.marquee:after {
-    right: 0;
-}
-
-.marquee p {
-    position: relative;
-    display: inline-block;
-    padding-left: 100%;
-    white-space: nowrap;  /* 確保文字在同一行內 */
-    animation: marquee 10s linear infinite;
-    font-size: 30px;
-}
-
-@keyframes marquee {
-    0%   { transform: translateX(100%); }
-    100% { transform: translateX(-100%); }
-}
-
-
-@keyframes borderChange {
-    0%   { border-color: #000; border-width: 3px; }
-    50%  { border-color: #f00; border-width: 5px; } /*在動畫的50%時間點，邊框顏色變為紅色，寬度變為10px*/
-    100% { border-color: #000; border-width: 3px; }
-}
+	.section-title {
+	    text-align: center;
+	    color: #333;
+	    font-size: 24px;
+	    margin-bottom: 20px;
+	}
+	
+	.item-container {
+	    display: flex;
+	    flex-wrap: wrap;
+	    justify-content: space-around;
+	}
+	.arrange-container {
+	  position: relative;
+	  height:150px; 
+	  max-width: 90%;
+	}
+	
+	.sortContainer {
+	  position: absolute; 
+	  left:75%;
+	  bottom: 0;
+	}
+	.menuContainer {
+	  margin-left: 7%;
+	}
+	.marquee {
+	    position: absolute;
+	    width: 60%;
+	    height: 35%;
+	    top: 10px; 
+	    left: 55%;
+	    overflow: hidden;
+	    background: #f0f0f0;
+	    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+	    border: 3px solid #000; /*初始化邊框*/
+	   transform: translateX(-50%);
+	}
+	
+	.marquee:before,
+	.marquee:after {
+	    content: '';
+	    position: absolute;
+	    top: 0;
+	    width: 10%;
+	    height: 100%;
+	    background: linear-gradient(90deg, rgba(240,240,240,1), rgba(240,240,240,0));
+	}
+	
+	.marquee:before {
+	    left: 0;
+	}
+	
+	.marquee:after {
+	    right: 0;
+	}
+	
+	.marquee p {
+	    position: relative;
+	    display: inline-block;
+	    padding-left: 100%;
+	    white-space: nowrap;  /* 確保文字在同一行內 */
+	    animation: marquee 8s linear infinite;
+	    font-size: 30px;
+	
+	}
+	
+	@keyframes marquee {
+	    0%   { transform: translateX(100%); }
+	    100% { transform: translateX(-100%); }
+	}
+	
+	
+	@keyframes borderChange {
+	    0%   { border-color: #000; border-width: 3px; }
+	    50%  { border-color: #f00; border-width: 5px; } /*在動畫的50%時間點，邊框顏色變為紅色，寬度變為10px*/
+	    100% { border-color: #000; border-width: 3px; }
+	}
   </style>
 </head>
 
@@ -139,6 +139,7 @@
 
   <div th:replace="~{layout/main_navbar_ecom}"></div>
 <div class="container-fluid">
+
 
 
   <!-- Header banner▼-->
@@ -222,7 +223,7 @@
     <!-- 排序 -->
     
       <div class="marquee">
-        <p>夏季特賣全面啟動!</p>
+        <p>夏季特賣全面啟動!  夏季特賣全面啟動!  </p>
     </div>
 </div>
 
@@ -275,8 +276,88 @@
   <script th:src="@{/js/jquery-3.7.0.min.js}"></script>
   <script th:src="@{/js/superfish/hoverIntent.js}"></script>
   <script th:src="@{/js/superfish/superfish.js}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+  
 
   <script>
+  
+var socket = new SockJS('/rr/websocket-endpoint');
+var stompClient = Stomp.over(socket);
+
+// 在 bell 元素旁邊創建一個顯示未讀通知數量的元素
+var unreadCount = document.createElement('span');
+unreadCount.id = 'unread-count';
+unreadCount.style.display = 'none';  // 默認隱藏
+document.getElementById('bell').appendChild(unreadCount);
+
+stompClient.connect({}, function(frame) {
+    console.log('Connected: ' + frame);
+    stompClient.subscribe('/topic/notifications', function(notification) {
+        var parsedNotification = JSON.parse(notification.body);
+        addNotification(parsedNotification);
+        
+        var notifications = JSON.parse(localStorage.getItem('notifications')) || [];
+        notifications.push(parsedNotification);
+        localStorage.setItem('notifications', JSON.stringify(notifications));
+        
+        document.getElementById('bell').classList.add('unread');
+        
+        // 更新未讀通知數量
+        document.getElementById('unread-count').textContent = notifications.length;
+        document.getElementById('unread-count').style.display = 'inline';  // 顯示數量
+        
+        // 設置 30 分鐘後清除 localStorage
+        setTimeout(function() {
+            localStorage.removeItem('notifications');
+            document.getElementById('unread-count').style.display = 'none';  // 隱藏數量
+        }, 10 * 60 * 1000);
+    });
+}, function(error) {
+    console.log('STOMP error: ' + error);
+});
+function addNotification(notification) {
+    var notificationList = document.getElementById('notifications-list'); // 選擇通知列表
+
+    // 創建新的通知元素
+    var newNotification = document.createElement('div');
+    newNotification.className = 'notifications-item';
+
+    // 創建通知的圖片
+    var img = document.createElement('img');
+    img.src = '/rr/img/itemimgs/'+notification.imgSrc; // 使用通知中的圖片URL
+    img.alt = 'img';
+    newNotification.appendChild(img);
+
+    // 創建通知的文字部分
+    var text = document.createElement('div');
+    text.className = 'text';
+
+    // 創建通知的標題
+    var h4 = document.createElement('h4');
+    h4.textContent = notification.title; // 使用通知中的標題
+    text.appendChild(h4);
+
+    // 創建通知的內容
+    var p = document.createElement('p');
+    p.textContent = notification.content; // 使用通知中的內容
+    text.appendChild(p);
+
+    newNotification.appendChild(text);
+
+    // 將新的通知添加到通知列表的開始
+    notificationList.insertBefore(newNotification, notificationList.firstChild);
+}
+
+document.getElementById('bell').addEventListener('click', function() {
+    this.classList.remove('unread');
+    
+    // 將未讀通知數量清零，並隱藏數量
+    document.getElementById('unread-count').textContent = '';
+    document.getElementById('unread-count').style.display = 'none';
+});
+  
+  
     //superFish
     jQuery(document).ready(function () {
       jQuery('ul.sf-menu').superfish({
@@ -285,11 +366,33 @@
       });
     });
 
-
+window.onload = function() {
+    var notifications = JSON.parse(localStorage.getItem('notifications')) || [];
+    notifications.forEach(addNotification);
+};
 
     $(document).ready(function () {
-   //localStorage.clear()
     
+           
+        var down = false;
+        
+        $('#bell').click(function(e){
+          
+            var color = $(this).text();
+            if(down){
+                
+                $('#box').css('height','0px');
+                $('#box').css('opacity','0');
+                down = false;
+            }else{
+                
+                $('#box').css('height','auto');
+                $('#box').css('opacity','1');
+                down = true;
+                
+            }
+            
+        });
     
       changeCart();
 
@@ -595,15 +698,22 @@
     //將綁定寫成方法指定於數據載入完成後綁定
 function bindAddToCartEvents() {
   changeCart();
-  document.querySelectorAll('a[data-bind-event="true"]').forEach(function (link) {
+ document.querySelectorAll('a[data-bind-event="true"]').forEach(function (link) {
     link.addEventListener('click', function (e) {
       e.preventDefault();
       const product = JSON.parse(this.getAttribute('data-product')); // Get data from data-product
       const isSaleItem = JSON.parse(this.getAttribute('data-sale')); // Get data from data-sale
       console.log('About to call addToCart from bindAddToCartEvents');
       addToCart(product, isSaleItem); // Add the item to the cart
+
+      // 弹出一个提示已添加到购物车的sweetalert2弹框
+      Swal.fire({
+        icon: 'success',
+        title: '成功加入購物車',
+        showConfirmButton: true
+      });
     });
-  });
+});
 }
 
 function addToCart(product, isSaleItem) {

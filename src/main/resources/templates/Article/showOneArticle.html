@@ -91,16 +91,15 @@
     .right {
       order: 2;
     }
-    
- 	.container-div{
-		margin-top:10em;
-	}
-	
-	.google-btn .google-icon {
-	  position:absolute;
-	  right:10px;
-	}
-	
+
+    .container-div {
+      margin-top: 10em;
+    }
+
+    .google-btn .google-icon {
+      position: absolute;
+      right: 10px;
+    }
   </style>
 
 </head>
@@ -119,7 +118,8 @@
           <div>
             <h2 id="articleTitle" th:text="${Article.title}" style="text-align: left;"></h2><br>
             <div style="text-align: left;">
-	            <span th:text="'會員' + ${Article.memno} + ' 於 ' + ${#dates.format(Article.publishTime,'yyyy/MM/dd HH:mm:ss')} + ' 創建'"></span>
+              <span
+                th:text="'會員' + ${Article.memno} + ' 於 ' + ${#dates.format(Article.publishTime,'yyyy/MM/dd HH:mm:ss')} + ' 創建'"></span>
             </div>
           </div>
           <!--   <th:block th:switch="${memno == Article.memno}"> -->
@@ -144,6 +144,7 @@
                             <option value="" selected disabled hidden>請選擇檢舉原因</option>
                             <option value="垃圾訊息">垃圾訊息</option>
                             <option value="不實資訊">不實資訊</option>
+                            <option value="仇視言論">仇視言論</option>
                             <option value="其他">其他</option>
                           </select>
                         </div>
@@ -298,7 +299,7 @@
   <script th:src="@{/js/axios.min.js}"></script>
   <script>
     const onClickInput = {
-      content: "超好玩的拉!"
+      content: "結合司法議題，建議同行友人可以盡量討論發表意見，收穫會更多。在判決前的討論更是重要，隨著推敲每一項證據，都可能有不同的結果。每個點的距離不長，跟現場景物的搭配也不錯。"
     }
 
     $('#clickInput').on('click', function (event) {
@@ -690,7 +691,7 @@
             insertMessage1(topicId, insertContent);
           } else {
             // console.log(topicId);
-            insertMessage2(formDataObject);
+            insertMessage2(topicId, formDataObject);
           }
         }
       });
@@ -712,7 +713,11 @@
           }).then((result) => {
             if (result.isConfirmed) {
               //window.location.href = '/rr/Article/mainPage';
-              window.location.reload();
+              // window.location.reload();
+              document.getElementById('insertForm').reset();
+              const messageOutput = document.getElementById('message_output');
+              messageOutput.innerHTML = '';
+              findMessages1(topicId);
             }
           });
         },
@@ -726,7 +731,7 @@
       });
     }
 
-    function insertMessage2(formDataObject) {
+    function insertMessage2(topicId, formDataObject) {
       axios({
         method: 'post',
         url: '/rr/Article/message/insertMessage2',
@@ -740,7 +745,10 @@
             icon: 'success'
           }).then((result) => {
             if (result.isConfirmed) {
-              window.location.reload();
+              // window.location.reload();
+              const messageOutput = document.getElementById('message_output');
+              messageOutput.innerHTML = '';
+              findMessages1(topicId);
             }
           });
         })
@@ -755,6 +763,120 @@
           document.getElementById('insertForm').reset();
         })
 
+    }
+
+    function findMessages1(topicId) {
+      axios({
+        method: 'GET',
+        url: '/rr/Article/selectArticleAllMessage',
+        params: {
+          topicId: topicId
+        }
+      })
+        .then((res) => {
+          // console.log('res: ' + res.data);
+          htmlMakerMessage1(res.data, topicId);
+        })
+        .catch(err => {
+          // console.log('err: ' + err);
+        })
+    }
+
+    function htmlMakerMessage1(array, topicId) {
+      let messageOutput = document.getElementById('message_output');
+      let messageCount = document.getElementById('message_count');
+      let htmlString = '';
+      let htmlCountString = '';
+      for (i = 0; i < array.length; i++) {
+        htmlString += '<div class="card">';
+
+        htmlString += '<div class="card-header">';
+        htmlString += '<div class="left">會員編號: ' + array[i].memno + '</div>';
+        htmlString += '<div class="right">' + array[i].publishTime + '</div>';
+        htmlString += '</div>';
+
+        htmlString += '<div class="card-body">';
+        htmlString += '<p class="card-text" style="text-align:left">' + array[i].content + '</p>';
+        htmlString += '<div id="slideshow-' + array[i].messageId + '" class="carousel slide" data-bs-ride="carousel" th:data-id="' + array[i].messageId + '">';
+        htmlString += '<div id="message_photo_output-' + array[i].messageId + '">';
+        htmlString += findMessagePhoto1(array[i].messageId);
+        htmlString += '</div>';
+        htmlString += '</div>';
+        htmlString += '</div>';
+
+        htmlString += '</div>';
+      }
+
+      htmlCountString = '<h2>留言: ' + array.length + ' 筆</h2>'
+
+      messageCount.innerHTML = htmlCountString;
+      messageOutput.innerHTML = htmlString;
+
+    }
+
+    function findMessagePhoto1(messageId) {
+      axios({
+        method: 'GET',
+        url: '/rr/Article/message/photoIds',
+        params: {
+          messageId: messageId
+        }
+      })
+        .then((res) => {
+          // console.log('res: ' + res.data);
+          htmlMaker3(res.data, messageId);
+        })
+        .catch(err => {
+          // console.log('err: ' + err);
+        })
+    }
+
+    function htmlMaker3(arrayId, messageId) {
+      let messagePhotoOutput = document.getElementById('message_photo_output-' + messageId);
+
+      let htmlString = '';
+      if (arrayId.length != 0) {
+        htmlString += '<div class="carousel-inner">';
+        for (i = 0; i < arrayId.length; i++) {
+          // console.log(arrayId.length);
+          if (i == 0) {
+            htmlString += '<div class="carousel-item active">';//沒進來
+            htmlString += '<img class="slide-message-pic" src="/rr/Article/message/photo?id=' + arrayId[i] + '" alt="slide' + i + '">';
+            htmlString += '</div>';
+          } else {
+            htmlString += '<div class="carousel-item">';
+            htmlString += '<img class="slide-message-pic" src="/rr/Article/message/photo?id=' + arrayId[i] + '" alt="slide' + i + '">';
+            htmlString += '</div>';
+          }
+        }
+        htmlString += '</div>';
+
+
+        htmlString += '<button class="carousel-control-prev" type="button" data-bs-target="#slideshow-' + messageId + '" data-bs-slide="prev">';
+        htmlString += '<span class="fa-solid fa-circle-chevron-left fa-2xl" style="color: #000000;"></span>';
+        htmlString += '</button>';
+
+        htmlString += '<button class="carousel-control-next" type="button" data-bs-target="#slideshow-' + messageId + '" data-bs-slide="next">';
+        htmlString += '<span class="fa-solid fa-circle-chevron-right fa-2xl" style="color: #000000;"></span>';
+        htmlString += '</button>';
+
+
+        htmlString += '<div class="carousel-indicators">';
+        for (i = 0; i < arrayId.length; i++) {
+          if (i == 0) {
+            htmlString += '<button type="button" data-bs-target="#slideshow-' + messageId + '" data-bs-slide-to="' + i + '" class="active">';
+            htmlString += '</button>';
+          } else {
+            htmlString += '<button type="button" data-bs-target="#slideshow-' + messageId + '" data-bs-slide-to="' + i + '">';
+            htmlString += '</button>';
+          }
+        }
+        htmlString += '</div>';
+      }
+
+      messagePhotoOutput.innerHTML = htmlString;
+      let previewContainer = document.getElementById('previewContainer');
+      previewContainer.innerHTML = ''; // 清空預覽容器
     }
 
     function previewImages(event) {

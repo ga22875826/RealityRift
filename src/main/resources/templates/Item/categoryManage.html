@@ -8,73 +8,117 @@
 
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
     <link th:href="@{/css/itemDataTable.css}" rel="stylesheet">
+    <link th:href="@{/css/ecom/jquery-ui.min.css}" rel="stylesheet">
+    <link th:href="@{/css/ecom/jquery-ui.theme.min.css}" rel="stylesheet">
     <link th:href="@{/css/cdn.jsdelivr.net_npm_sweetalert2@11.7.12_dist_sweetalert2.min.css}" rel="stylesheet">
     <style>
-        .block {
-            width: 380px;
-            padding: 10px;
-            margin-bottom: 5px;
-            border: 1px solid #ccc;
-        }
+          .block {
+        width: 360px;
+        padding: 20px;
+        margin-bottom: 15px;
+        border-radius: 10px;
+        /* Rounded corners */
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        /* Shadow for 3D effect */
+        transition: transform .2s;
+        /* Animation */
+        font-weight: 500px;
+        font-size: 21px;
+        /* Make text bolder */
+    }
 
-        .level-0-block {
-            background-color: lightblue;
-            border-left: 5px solid blue;
-        }
+    .block:hover {
+        transform: scale(1.03);
+        /* Slightly enlarge the block when hovered */
+    }
 
-        .level-1-block {
-            background-color: lightgreen;
-            border-left: 5px solid green;
-        }
+    .level-0-block {
+        background-color: #f7b731;
+        border-left: 5px solid #f7b731;
+        background: linear-gradient(135deg, #f7b731, #f7b731);
+        /* Gradient background */
+    }
 
-        .level-2-block {
-            background-color: lightyellow;
-            border-left: 5px solid orange;
-        }
+    .level-1-block {
+        background-color: #82ccdd;
+        border-left: 5px solid #82ccdd;
+        background: linear-gradient(135deg, #82ccdd, #82ccdd);
+        /* Gradient background */
+    }
+
+    .level-2-block {
+        background-color: #60a3bc;
+        border-left: 5px solid #60a3bc;
+        background: linear-gradient(135deg, #60a3bc, #60a3bc);
+        /* Gradient background */
+    }
+
+    .ui-widget-overlay {
+        background: transparent;
+    }
+
+    .fixed-button {
+        position: fixed;
+        right: 20px; /* 20px from the right side of the screen */
+        top: 100px; /* 100px from the top of the screen */
+        z-index: 1000; 
+        margin-right:30px;/* ensures the button stays on top of other elements */
+        padding: 15px 25px; /* make the button larger */
+        font-size: 20px; /* make the text larger */
+        background-color: #4b6584; /* Button color */
+        color: #FFFFFF; /* white text */
+        border-radius: 50px; /* rounded corners */
+    }
+
+    .app-container {
+        background: #4b6584; /* Background color */
+    }
     </style>
 </head>
+
 <body>
     <div id="loadingScreen"
         style="position: fixed; left: 0; top: 0; width: 100%; height: 100%; background: #fff; z-index: 9999;">
         <h1 style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">前往類別管理...</h1>
     </div>
-<div class="app-container">
-    <div th:replace="~{layout/item_sidebar}"></div>
-    <div class="app-content" style="min-height: 100vh">
-    <div class="app-content-header">
-				<h1 class="app-content-headerText">類別管理</h1>
-				<button class="mode-switch" title="Switch Theme">
-					<svg class="moon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-						stroke-width="2" width="24" height="24" viewBox="0 0 24 24">
-						<defs></defs>
-						<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
-					</svg>
-				</button>
+    <div class="app-container">
+        <div th:replace="~{layout/item_sidebar}"></div>
+        <div class="app-content" style="min-height: 100vh">
+            <div class="app-content-header">
+                <h1 class="app-content-headerText">類別管理</h1>
+                <button class="mode-switch" title="Switch Theme">
+                    <svg class="moon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2" width="24" height="24" viewBox="0 0 24 24">
+                        <defs></defs>
+                        <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+                </button>
 
-			</div>
-    
-        <div class="row">
-            <div class="container mt-4 col-12" style="background-color: lightgrey">
-                <div class="row">
-                    <div class="col-6 mt-4">
-                        <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#addCategoryModal">
-                            新增
-                        </button>
-                       
+            </div>
+
+            <div class="row" style="overflow-y: auto;">
+                <div class="container mt-4 col-12">
+
+                    <div class="row">
+                        <div class="col-6 mt-4">
+                       <button type="button" class="btn btn-outline-light fixed-button" data-toggle="modal" data-target="#addCategoryModal">
+						    新增
+						</button>
+                        </div>
                     </div>
-                </div>
-                
-                <div class="row mt-4">
-                    <div class="col-12">
-                        <div id="categories">
-                            <!-- dynamically inserted here -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div id="categories">
+                                <!-- dynamically inserted here -->
+                            </div>
                         </div>
                     </div>
                 </div>
+
             </div>
+
         </div>
     </div>
-</div>
 
     <!-- Modal -->
     <div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryModalLabel"
@@ -83,7 +127,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="addCategoryModalLabel">新增類別</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" id="modal-close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -108,7 +152,11 @@
             </div>
         </div>
     </div>
+    <div id="dialog" title="通知" style="display: none;">
+        <p id="dialog-message"></p>
+    </div>
     <script th:src="@{/js/jquery-3.7.0.min.js}"></script>
+    <script th:src="@{/js/ecom/jquery-ui.min.js}"></script>
     <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script th:src="@{/js/cdn.jsdelivr.net_npm_sweetalert2@11.7.12_dist_sweetalert2.all.min.js}"></script>
@@ -206,17 +254,47 @@
                     parentid: parentCategoryId
                 }),
                 success: function () {
-                    alert("Category added successfully!");
+                    showAlert('成功! 類別已成功添加！', true);
                     fetchCategories();
+                    $('#modal-close').click();
                 },
                 error: function () {
-                    alert("Failed to add category");
+                    showAlert('失敗! 添加類別失敗。', false);
                 }
             });
         }
 
+        function showAlert(message, isSuccess) {
+            $("#dialog-message").text(message);
+            $("#dialog").dialog({
+                modal: true,
+                closeOnEscape: true, // Allow the dialog to be closed with the Escape key
+                showCloseButton: true, // Show the 'X' button in the title bar
+                position: { my: "right bottom", at: "right-20 bottom-20", of: window },
+                buttons: {
+                    Ok: function () {
+                        $(this).dialog("close");
+                    }
+                }
+            });
+
+            // Set dialog color based on success or failure
+            if (isSuccess) {
+                $(".ui-dialog-titlebar").css({ background: '#5cb85c', color: '#fff' }); // Green color for success
+            } else {
+                $(".ui-dialog-titlebar").css({ background: '#d9534f', color: '#fff' }); // Red color for error
+            }
+
+            setTimeout(function () {
+                $("#dialog").dialog("close");
+            }, 1500);
+        }
+
+
+
+
+
         function deleteCategory(id) {
-            // Your AJAX call to delete the category goes here
             console.log(`Delete category: ${id}`);
         }
 
@@ -227,7 +305,6 @@
             const parentCategoryIdElement = categoryElement.querySelector('.parent-category-id');
             const parentCategoryIdSelect = document.getElementById(`select-parent-${id}`);
 
-            // Disable editing for the category name
             categoryNameElement.contentEditable = "false";
 
             // Get the new category name and parent id
@@ -239,14 +316,12 @@
                 editCategory(id);
             };
 
-            // Hide and update the parent id
             parentCategoryIdElement.textContent = newParentId;
             parentCategoryIdElement.style.display = "none";
 
-            // Your AJAX call to update the category in the backend goes here
             $.ajax({
                 url: '/rr/categories',
-                type: 'Put',
+                type: 'PUT',
                 contentType: 'application/json',
                 data: JSON.stringify({
                     id: id,
@@ -254,15 +329,16 @@
                     parentid: newParentId
                 }),
                 success: function () {
-                    alert("Category update successfully!");
+                    showAlert('成功! 類別已成功更新！', true);
                     fetchCategories();
                 },
                 error: function () {
-                    alert("Failed to update category");
+                    showAlert('失敗! 更新類別失敗。', false);
                 }
             });
             console.log(`Save category: ${id}, New name: ${newCategoryName}, New parent id: ${newParentId}`);
         }
+
 
 
         function editCategory(id) {

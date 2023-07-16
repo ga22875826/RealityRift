@@ -300,7 +300,12 @@
                             icon: 'success'
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                window.location.reload();
+                                // window.location.reload();
+                                let photoOutput = document.getElementById('photo_output');
+                                photoOutput.innerHTML = '';
+                                let slideshow = document.getElementById('slideshow');
+                                let topicId = slideshow.getAttribute('data-id');
+                                findArticlePhoto(topicId);
                             }
                         });
                     })

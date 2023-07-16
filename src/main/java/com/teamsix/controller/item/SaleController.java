@@ -7,6 +7,7 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.teamsix.config.SaleStatusUpdater;
 import com.teamsix.model.bean.item.ItemDTO;
+import com.teamsix.model.bean.item.Notification;
 import com.teamsix.model.bean.item.SaleDTO;
 import com.teamsix.model.bean.item.SaleItemDTO;
 import com.teamsix.model.dao.SaleItemRepository;
@@ -39,6 +41,9 @@ public class SaleController {
 
 	@Autowired
 	private SaleStatusUpdater saleStatusUpdater;
+	
+	@Autowired
+	private SimpMessagingTemplate simpMessagingTemplate;
 
 	@PostMapping
 	public ResponseEntity<SaleDTO> createSale(@RequestBody SaleDTO saleDTO) {
@@ -52,6 +57,12 @@ public class SaleController {
 		}
 
 		SaleDTO createdSale = saleService.createSale(saleDTO);
+		
+		Notification notification = new Notification();
+		notification.setTitle("限時特賣新增");
+		notification.setContent(saleDTO.getSaleName()+"開始囉");
+		notification.setImgSrc("sale.jpg");
+		  simpMessagingTemplate.convertAndSend("/topic/notifications",notification );
 		return new ResponseEntity<>(createdSale, HttpStatus.CREATED);
 	}
 
@@ -60,8 +71,10 @@ public class SaleController {
 		List<SaleDTO> sales = saleService.getAllSales();
 		return new ResponseEntity<>(sales, HttpStatus.OK);
 	}
+
 	/**
 	 * 獲取進行中特賣
+	 * 
 	 * @return
 	 */
 	@GetMapping("/ongoingSales")
@@ -69,17 +82,18 @@ public class SaleController {
 		List<SaleDTO> ongoingSales = saleService.getSalesByStatus("進行中");
 		return new ResponseEntity<>(ongoingSales, HttpStatus.OK);
 	}
-	
+
 	/**
 	 * 用saleId找到saleItem
+	 * 
 	 * @param saleId
 	 * @return
 	 */
-		@PostMapping("/getSaleItems.do")
-		public ResponseEntity<List<SaleItemDTO>> getSaleItems(@RequestParam Integer saleId) {
-			List<SaleItemDTO> items = saleService.findItemsBySaleId(saleId);
-			return ResponseEntity.ok(items);
-		}
+	@PostMapping("/getSaleItems.do")
+	public ResponseEntity<List<SaleItemDTO>> getSaleItems(@RequestParam Integer saleId) {
+		List<SaleItemDTO> items = saleService.findItemsBySaleId(saleId);
+		return ResponseEntity.ok(items);
+	}
 
 	@PostMapping("/addItemsToSale")
 	public ResponseEntity<Void> addItemsToSale(@RequestParam("saleId") int saleId,
@@ -110,7 +124,6 @@ public class SaleController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
-
 
 	@DeleteMapping("/deleteSaleItem.do")
 	public ResponseEntity<String> deleteSaleItem(@RequestParam Integer saleItemId) {
