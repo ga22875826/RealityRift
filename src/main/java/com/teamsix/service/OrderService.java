@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,7 +29,6 @@ import java.util.HashMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.HttpEntity;
 
-import com.teamsix.config.NgrokUtil;
 import com.teamsix.model.bean.Member;
 import com.teamsix.model.bean.item.CartItem;
 import com.teamsix.model.bean.item.ItemDTO;
@@ -51,17 +51,25 @@ public class OrderService {
 	private static final String X_LINE_ChannelId = "2000061352";
 	private static final String X_LINE_ChannelSecret = "aea25491631106811c5456e50c82b528";
 
-	@Autowired
-	private OrderRepository orderRepository;
+    // please use "final" and constructor injection
+    private final OrderRepository orderRepository;
+    private final OrderDetailRepository orderDetailRepository;
+    private final MemberService memberService;
+    private final ItemRepository itemRepository;
+    private final String ngrokUrl;
 
-	@Autowired
-	private OrderDetailRepository orderDetailRepository;
-
-	@Autowired
-	private MemberService memberService;
-
-	@Autowired
-	private ItemRepository itemRepository;
+    @Autowired
+    OrderService(OrderRepository orderRepository,
+                 OrderDetailRepository orderDetailRepository,
+                 MemberService memberService,
+                 ItemRepository itemRepository,
+                 @Qualifier("ngrokUrl") String ngrokUrl) {
+        this.orderRepository = orderRepository;
+        this.orderDetailRepository = orderDetailRepository;
+        this.memberService = memberService;
+        this.itemRepository = itemRepository;
+        this.ngrokUrl = ngrokUrl;
+    }
 
 	@Transactional
 	public void createOrderAndDetails(OrderRequest oq) {
@@ -159,8 +167,6 @@ public class OrderService {
 	public String ecpayCheckout(Long orderid) {
 		Optional<Orders> optional = orderRepository.findById(orderid);
 
-		NgrokUtil util = new NgrokUtil();
-		String ngrokUrl = util.getNgrokUrl();
 		if (optional.isEmpty()) {
 			return null;
 		} else {
@@ -313,9 +319,8 @@ public class OrderService {
 		requestBody.put("productName", productNameBuilder.toString());
 		requestBody.put("amount", order.getTotalAmount().toString());
 		requestBody.put("currency", "TWD");
-		NgrokUtil util = new NgrokUtil();
-		requestBody.put("productImageUrl",util.getNgrokUrl()+"/rr/img/images/newlogo.png");
-		requestBody.put("confirmUrl", util.getNgrokUrl() + "/rr/managePage/paySucceed.do");
+		requestBody.put("productImageUrl",ngrokUrl + "/rr/img/images/newlogo.png");
+		requestBody.put("confirmUrl", ngrokUrl + "/rr/managePage/paySucceed.do");
 		requestBody.put("orderId", orderId.toString());
 
 		// Build the request
