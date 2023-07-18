@@ -2,6 +2,7 @@ package com.teamsix.service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -58,18 +59,22 @@ public class OrderService {
     private final ItemRepository itemRepository;
     private final String ngrokUrl;
 
+	private final Clock clock;
+
     @Autowired
     OrderService(OrderRepository orderRepository,
-                 OrderDetailRepository orderDetailRepository,
-                 MemberService memberService,
-                 ItemRepository itemRepository,
-                 @Qualifier("ngrokUrl") String ngrokUrl) {
+				 OrderDetailRepository orderDetailRepository,
+				 MemberService memberService,
+				 ItemRepository itemRepository,
+				 @Qualifier("ngrokUrl") String ngrokUrl,
+				 Clock clock) {
         this.orderRepository = orderRepository;
         this.orderDetailRepository = orderDetailRepository;
         this.memberService = memberService;
         this.itemRepository = itemRepository;
         this.ngrokUrl = ngrokUrl;
-    }
+		this.clock = clock;
+	}
 
 	@Transactional
 	public void createOrderAndDetails(OrderRequest oq) {
@@ -108,7 +113,7 @@ public class OrderService {
 	    Specification<Orders> spec = Specification.where(null);
 
 	    // 新增一個條件，確保訂單日期不超過當前時間
-	    Date now = new Date();
+	    Date now = new Date(clock.millis());
 	    spec = spec.and((root, query, cb) -> cb.lessThanOrEqualTo(root.get("orderDate"), now));
 
 	    if (memno != null) {
