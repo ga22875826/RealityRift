@@ -44,7 +44,7 @@ public class OrderController {
 	        @RequestParam(defaultValue = "0") int page,
 	        @RequestParam(defaultValue = "10") int size) {
 
-	    Page<Orders> result = orderService.getOrders(Optional.ofNullable(memno), Optional.ofNullable(period), Optional.ofNullable(status), page, size);
+	    Page<Orders> result = orderService.getOrders(memno, period, status, page, size);
 
 	    return new ResponseEntity<>(result, HttpStatus.OK);
 	}

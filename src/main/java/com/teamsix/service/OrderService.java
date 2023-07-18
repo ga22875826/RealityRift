@@ -101,7 +101,7 @@ public class OrderService {
 	}
 
 	@Transactional
-	public Page<Orders> getOrders(Optional<Integer> memno, Optional<String> period, Optional<String> status, int page,
+	public Page<Orders> getOrders(Integer memno, String period, String status, int page,
 	        int size) {
 	    Pageable pageable = PageRequest.of(page, size, Sort.by("orderId").descending());
 
@@ -111,20 +111,20 @@ public class OrderService {
 	    Date now = new Date();
 	    spec = spec.and((root, query, cb) -> cb.lessThanOrEqualTo(root.get("orderDate"), now));
 
-	    if (memno.isPresent()) {
+	    if (memno != null) {
 	        spec = spec.and((root, query, cb) -> {
 	            Join<Orders, Member> join = root.join("member");
-	            return cb.equal(join.get("memno"), memno.get());
+	            return cb.equal(join.get("memno"), memno);
 	        });
 	    }
 
-	    if (period.isPresent() && !period.get().equals("all")) {
-	        Date startDate = calculateStartDate(period.get());
+	    if (period != null && !period.equals("all")) {
+	        Date startDate = calculateStartDate(period);
 	        spec = spec.and((root, query, cb) -> cb.greaterThanOrEqualTo(root.get("orderDate"), startDate));
 	    }
 
-	    if (status.isPresent() && !status.get().equals("all")) {
-	        spec = spec.and((root, query, cb) -> cb.equal(root.get("orderStatus"), status.get()));
+	    if (status != null && !status.equals("all")) {
+	        spec = spec.and((root, query, cb) -> cb.equal(root.get("orderStatus"), status));
 	    }
 
 	    return orderRepository.findAll(spec, pageable);
