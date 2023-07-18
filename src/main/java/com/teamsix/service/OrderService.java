@@ -2,6 +2,7 @@ package com.teamsix.service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -13,6 +14,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,7 +30,6 @@ import java.util.HashMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.HttpEntity;
 
-import com.teamsix.config.NgrokUtil;
 import com.teamsix.model.bean.Member;
 import com.teamsix.model.bean.item.CartItem;
 import com.teamsix.model.bean.item.ItemDTO;
@@ -51,17 +52,29 @@ public class OrderService {
 	private static final String X_LINE_ChannelId = "2000061352";
 	private static final String X_LINE_ChannelSecret = "aea25491631106811c5456e50c82b528";
 
-	@Autowired
-	private OrderRepository orderRepository;
+    // please use "final" and constructor injection
+    private final OrderRepository orderRepository;
+    private final OrderDetailRepository orderDetailRepository;
+    private final MemberService memberService;
+    private final ItemRepository itemRepository;
+    private final String ngrokUrl;
 
-	@Autowired
-	private OrderDetailRepository orderDetailRepository;
+	private final Clock clock;
 
-	@Autowired
-	private MemberService memberService;
-
-	@Autowired
-	private ItemRepository itemRepository;
+    @Autowired
+    OrderService(OrderRepository orderRepository,
+				 OrderDetailRepository orderDetailRepository,
+				 MemberService memberService,
+				 ItemRepository itemRepository,
+				 @Qualifier("ngrokUrl") String ngrokUrl,
+				 Clock clock) {
+        this.orderRepository = orderRepository;
+        this.orderDetailRepository = orderDetailRepository;
+        this.memberService = memberService;
+        this.itemRepository = itemRepository;
+        this.ngrokUrl = ngrokUrl;
+		this.clock = clock;
+	}
 
 	@Transactional
 	public void createOrderAndDetails(OrderRequest oq) {
@@ -93,30 +106,30 @@ public class OrderService {
 	}
 
 	@Transactional
-	public Page<Orders> getOrders(Optional<Integer> memno, Optional<String> period, Optional<String> status, int page,
+	public Page<Orders> getOrders(Integer memno, String period, String status, int page,
 	        int size) {
 	    Pageable pageable = PageRequest.of(page, size, Sort.by("orderId").descending());
 
 	    Specification<Orders> spec = Specification.where(null);
 
 	    // 新增一個條件，確保訂單日期不超過當前時間
-	    Date now = new Date();
+	    Date now = new Date(clock.millis());
 	    spec = spec.and((root, query, cb) -> cb.lessThanOrEqualTo(root.get("orderDate"), now));
 
-	    if (memno.isPresent()) {
+	    if (memno != null) {
 	        spec = spec.and((root, query, cb) -> {
 	            Join<Orders, Member> join = root.join("member");
-	            return cb.equal(join.get("memno"), memno.get());
+	            return cb.equal(join.get("memno"), memno);
 	        });
 	    }
 
-	    if (period.isPresent() && !period.get().equals("all")) {
-	        Date startDate = calculateStartDate(period.get());
+	    if (period != null && !period.equals("all")) {
+	        Date startDate = calculateStartDate(period);
 	        spec = spec.and((root, query, cb) -> cb.greaterThanOrEqualTo(root.get("orderDate"), startDate));
 	    }
 
-	    if (status.isPresent() && !status.get().equals("all")) {
-	        spec = spec.and((root, query, cb) -> cb.equal(root.get("orderStatus"), status.get()));
+	    if (status != null && !status.equals("all")) {
+	        spec = spec.and((root, query, cb) -> cb.equal(root.get("orderStatus"), status));
 	    }
 
 	    return orderRepository.findAll(spec, pageable);
@@ -159,8 +172,6 @@ public class OrderService {
 	public String ecpayCheckout(Long orderid) {
 		Optional<Orders> optional = orderRepository.findById(orderid);
 
-		NgrokUtil util = new NgrokUtil();
-		String ngrokUrl = util.getNgrokUrl();
 		if (optional.isEmpty()) {
 			return null;
 		} else {
@@ -313,9 +324,8 @@ public class OrderService {
 		requestBody.put("productName", productNameBuilder.toString());
 		requestBody.put("amount", order.getTotalAmount().toString());
 		requestBody.put("currency", "TWD");
-		NgrokUtil util = new NgrokUtil();
-		requestBody.put("productImageUrl",util.getNgrokUrl()+"/rr/img/images/newlogo.png");
-		requestBody.put("confirmUrl", util.getNgrokUrl() + "/rr/managePage/paySucceed.do");
+		requestBody.put("productImageUrl",ngrokUrl + "/rr/img/images/newlogo.png");
+		requestBody.put("confirmUrl", ngrokUrl + "/rr/managePage/paySucceed.do");
 		requestBody.put("orderId", orderId.toString());
 
 		// Build the request

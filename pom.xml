@@ -133,15 +133,6 @@
 	        <artifactId>itext-pdfa</artifactId>
 	        <version>5.5.13.2</version>
 	    </dependency>-->
-		
-		
-		
-		<dependency>
-		    <groupId>com.h2database</groupId>
-		    <artifactId>h2</artifactId>
-		</dependency>
-		
-		
 		<dependency>
 		    <groupId>com.warrenstrange</groupId>
 		    <artifactId>googleauth</artifactId>
@@ -161,7 +152,7 @@
 			<version>2.5</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<!--websoket-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -169,9 +160,9 @@
 		</dependency>
 
 
-	
 
-		
+
+
 	</dependencies>
 
 	<build>
