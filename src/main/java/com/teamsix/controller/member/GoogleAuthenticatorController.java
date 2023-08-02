@@ -26,38 +26,6 @@ public class GoogleAuthenticatorController {
 	@Autowired
 	private GoogleAuthenticatorService gas;
 	
-//	private static String secret; // 儲存的密鑰
-//	
-//
-//    @GetMapping("/auth/qrcode")
-//    public RedirectView getSecretQrCode() {
-//
-//        secret = genSecretKey(); // 產生並儲存密鑰
-//
-//        String qrCodeData = createGoogleAuthenticatorKeyUri(secret);
-//
-//        String googleChartsQrCodeFormat = "https://www.google.com/chart?chs=200x200&cht=qr&chl=%s";
-//        String qrCodeUrl = String.format(googleChartsQrCodeFormat, qrCodeData);
-//
-//        return new RedirectView(qrCodeUrl); // 重新導向到指定的url
-//    }
-//
-//
-//    private String genSecretKey() {
-//        GoogleAuthenticator gAuth = new GoogleAuthenticator();
-//        final GoogleAuthenticatorKey key = gAuth.createCredentials();
-//        return key.getKey();
-//    }
-//
-//
-//    private String createGoogleAuthenticatorKeyUri(String secret) {
-//        String otpType = "totp";
-//        String account = "RealityRift:john@abc.com";
-//        String issuer = "RealityRift";
-//        String googleAuthenticatorKeyUriFormat = "otpauth://%s/%s?secret=%s&issuer=%s";
-//        return String.format(googleAuthenticatorKeyUriFormat, otpType, account, secret, issuer);
-//    }
-
 	@GetMapping("/api/auth/{code}")
 	@ResponseBody
 	public Boolean googleAuthenticatorAuth(@PathVariable("code") int code,@RequestParam("email") String email) {

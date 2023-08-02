@@ -33,7 +33,7 @@ public class CaptchaConfig {
         //長度
         properties.setProperty("kaptcha.textproducer.char.length", "4");
         //字體
-        properties.setProperty("kaptcha.textproducer.font.names", "宋体,楷体,微软雅黑");
+        properties.setProperty("kaptcha.textproducer.font.names", "宋體,楷體,微軟雅黑");
         Config config=new Config(properties);
         defaultKaptcha.setConfig(config);
         return defaultKaptcha;
