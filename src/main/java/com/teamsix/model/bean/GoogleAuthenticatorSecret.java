@@ -86,6 +86,7 @@ public class GoogleAuthenticatorSecret {
 	public void setIsenabled(int isenabled) {
 		this.isenabled = isenabled;
 	}
+	
 
 	public String getQrCode(String secret,String email) {
 

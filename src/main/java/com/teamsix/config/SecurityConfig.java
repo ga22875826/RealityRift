@@ -14,7 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 	
 	@Bean
-	//public可寫可不寫
+	//public可寫可不寫 密碼加密
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
@@ -24,13 +24,13 @@ public class SecurityConfig {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
 			.csrf()
-				.disable(); // 禁用CSRF保护
+				.disable(); // 禁用CSRF保護
 				
 		http
 			.authorizeRequests()
-				.requestMatchers("/googlelogin").authenticated() // 需要授权的URL
+				.requestMatchers("/googlelogin").authenticated() // 需要授權的URL
 				.and()
-			.oauth2Login(); // 启用OAuth 2.0登录
+			.oauth2Login(); // 啟用OAuth 2.0登入
 		
 		return http.build();
 	}

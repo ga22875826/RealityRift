@@ -38,18 +38,19 @@ public class CaptchaController {
 	    public ModelAndView getKaptchaImage(HttpServletResponse response,HttpSession session) throws Exception {
 	        ServletOutputStream out = response.getOutputStream();
 	        try {
+	        	// 指定回應過期時間為0，已過期不應緩存
 	            response.setDateHeader("Expires", 0);
 	            // Set standard HTTP/1.1 no-cache headers.
 	            response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
-	            // Set IE extended HTTP/1.1 no-cache headers (use addHeader).
-	            response.addHeader("Cache-Control", "post-check=0, pre-check=0");
+//	            // Set IE extended HTTP/1.1 no-cache headers (use addHeader).
+//	            response.addHeader("Cache-Control", "post-check=0, pre-check=0");
 	            // Set standard HTTP/1.0 no-cache header.
 	            response.setHeader("Pragma", "no-cache");
 	            // return a jpeg
 	            response.setContentType("image/jpeg");
 	            // create the text for the image
 	            String capText = captchaProducer.createText();
-	            //将验证码存到session
+	            //將驗證碼存到session
 	            session.setAttribute(Constants.KAPTCHA_SESSION_KEY, capText);
 	            logger.info(capText);
 	            // 創建驗證碼圖片

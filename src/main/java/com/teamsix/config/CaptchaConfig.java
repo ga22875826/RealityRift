@@ -14,25 +14,25 @@ public class CaptchaConfig {
     public DefaultKaptcha getKaptchaBean(){
         DefaultKaptcha defaultKaptcha=new DefaultKaptcha();
         Properties properties=new Properties();
-        //验证码字符范围
+        //驗證碼字符範圍
         properties.setProperty("kaptcha.textproducer.char.string", "23456789");
-        //图片边框颜色
+        //圖片邊框顏色
         properties.setProperty("kaptcha.border.color", "245,248,249");
-        //字体颜色
+        //字體顏色
         properties.setProperty("kaptcha.textproducer.font.color", "black");
-        //文字间隔
+        //文字間格
         properties.setProperty("kaptcha.textproducer.char.space", "1");
-        //图片宽度
+        //圖片寬度
         properties.setProperty("kaptcha.image.width", "100");
-        //图片高度
+        //圖片高度
         properties.setProperty("kaptcha.image.height", "35");
-        //字体大小
+        //字體大小
         properties.setProperty("kaptcha.textproducer.font.size", "30");
         //session的key
         //properties.setProperty("kaptcha.session.key", "code");
-        //长度
+        //長度
         properties.setProperty("kaptcha.textproducer.char.length", "4");
-        //字体
+        //字體
         properties.setProperty("kaptcha.textproducer.font.names", "宋体,楷体,微软雅黑");
         Config config=new Config(properties);
         defaultKaptcha.setConfig(config);

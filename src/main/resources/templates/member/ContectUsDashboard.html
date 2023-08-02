@@ -326,18 +326,26 @@
 								  },
 								  success:function(result){
 									  console.log(result);
-									  Swal.fire(
-									      '已成功回覆!',
-									      '已將回覆信件寄至提問人信箱',
-									      'success'
-									    ).then((result) => {
-										  if (result.isConfirmed) {
-										    $('#btn-close').click();
-										    $('#responseContent').val('');
-										    $('#response-expand-btn').click();
-										    $('tr[data-id="'+contectid+'"]').addClass('animate__animated animate__fadeOut');
-										  }
-										})
+									  if(result){
+										  Swal.fire(
+										      '已成功回覆!',
+										      '已將回覆信件寄至提問人信箱',
+										      'success'
+										    ).then((result) => {
+											  if (result.isConfirmed) {
+											    $('#btn-close').click();
+											    $('#responseContent').val('');
+											    $('#response-expand-btn').click();
+											    $('tr[data-id="'+contectid+'"]').addClass('animate__animated animate__fadeOut');
+											  }
+											})
+									  }else{
+										  Swal.fire(
+										      '發生錯誤!!',
+										      '回覆信件失敗',
+										      'error'
+										    )
+									  }
 								  },
 								  error:function(){
 									  console.log('error');

@@ -78,16 +78,21 @@ public class ContectUsController {
 	
 	@PutMapping("/api/contectresponse")
 	@ResponseBody
-	public Boolean ContectResponse(@RequestParam int contectid,@RequestParam String responsecontent) throws AddressException, GeneralSecurityException, IOException, MessagingException {
+	public Boolean ContectResponse(@RequestParam int contectid,@RequestParam String responsecontent){
 		ContectUs contectUs = cus.findById(contectid);
 		
 		ContectResponse contectResponse = new ContectResponse();
 		contectResponse.setResponsecontent(responsecontent);
 		cus.updateContectResponse(contectid, contectResponse);
 		
-		sendResponse(contectUs, responsecontent);
-		cus.updateStatusTo2(contectid);
-		return true;
+		try {
+			sendResponse(contectUs, responsecontent);
+			cus.updateStatusTo2(contectid);
+			return true;
+		} catch (GeneralSecurityException | IOException | MessagingException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 	
 	

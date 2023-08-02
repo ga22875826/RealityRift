@@ -34,27 +34,26 @@
 //            String html = templateEngine.process("/member/MemberPdf", context);
 //            
 //
-//            // 创建PDF文件
+//            // 創建PDF文件
 //            ITextRenderer renderer = new ITextRenderer();
 //            
-//            // 设置字体，支持中文字符
+//            // 設置字體
 //            ITextFontResolver fontResolver = renderer.getFontResolver();
 //            fontResolver.addFont("/static/fonts/NotoSansCJKtc-Bold.otf", BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
 //            renderer.setDocumentFromString(html);
 //            renderer.layout();
 //
-//            // 设置响应头
+//            // 設置響應
 //            response.setContentType("application/pdf");
 //            response.setHeader("Content-Disposition", "attachment; filename=your-file.pdf");
 //            response.setCharacterEncoding("UTF-8");
 //
-//            // 将PDF写入响应输出流
+//            // 將PDF寫入響應輸出
 //            OutputStream outputStream = response.getOutputStream();
 //            renderer.createPDF(outputStream);
 //            outputStream.close();
 //        } catch (Exception e) {
 //            e.printStackTrace();
-//            // 处理异常情况
 //        }
 //    }
 //	
